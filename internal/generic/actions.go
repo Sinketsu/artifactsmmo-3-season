@@ -3,13 +3,15 @@ package generic
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"time"
 	"unsafe"
 
 	"github.com/Sinketsu/artifactsmmo-3-season/gen/oas"
+	"github.com/Sinketsu/artifactsmmo-3-season/internal/game"
 )
 
-func (c *Character) Move(ctx context.Context, to Point) error {
+func (c *Character) Move(ctx context.Context, to game.Point) error {
 	resp, err := c.cli.ActionMoveMyNameActionMovePost(ctx, &oas.DestinationSchema{
 		X: to.X,
 		Y: to.Y,
@@ -84,7 +86,7 @@ func (c *Character) Fight(ctx context.Context) (*oas.CharacterFightDataSchemaFig
 	switch v := resp.(type) {
 	case *oas.CharacterFightResponseSchema:
 		c.syncState(unsafe.Pointer(&v.Data.Character))
-		// TODO log
+		c.logger.Debug("fight", slog.Int("xp", v.Data.Fight.Xp), slog.Int("gold", v.Data.Fight.Gold), slog.Any("items", v.Data.Fight.Drops))
 
 		time.Sleep(time.Duration(v.Data.Cooldown.RemainingSeconds) * time.Second)
 		return &v.Data.Fight, nil
@@ -187,7 +189,7 @@ func (c *Character) Gather(ctx context.Context) (*oas.SkillDataSchemaDetails, er
 	switch v := resp.(type) {
 	case *oas.SkillResponseSchema:
 		c.syncState(unsafe.Pointer(&v.Data.Character))
-		// TODO log
+		c.logger.Debug("gather", slog.Int("xp", v.Data.Details.Xp), slog.Any("items", v.Data.Details.Items))
 
 		time.Sleep(time.Duration(v.Data.Cooldown.RemainingSeconds) * time.Second)
 		return &v.Data.Details, nil

@@ -8,42 +8,42 @@ import (
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/generic"
 )
 
-type simpleFight struct {
+type simpleGather struct {
 	character *generic.Character
 	game      *game.Game
 
-	monster     string
+	spot        string
 	deposit     []string
 	depositGold bool
 }
 
-func SimpleFight(character *generic.Character, game *game.Game) *simpleFight {
-	return &simpleFight{
+func SimpleGather(character *generic.Character, game *game.Game) *simpleGather {
+	return &simpleGather{
 		character: character,
 		game:      game,
 	}
 }
 
-func (s *simpleFight) With(monster string) *simpleFight {
-	s.monster = monster
+func (s *simpleGather) Spot(spot string) *simpleGather {
+	s.spot = spot
 	return s
 }
 
-func (s *simpleFight) Deposit(items ...string) *simpleFight {
+func (s *simpleGather) Deposit(items ...string) *simpleGather {
 	s.deposit = items
 	return s
 }
 
-func (s *simpleFight) DepositGold() *simpleFight {
+func (s *simpleGather) DepositGold() *simpleGather {
 	s.depositGold = true
 	return s
 }
 
-func (s *simpleFight) Name() string {
-	return "fight with " + s.monster
+func (s *simpleGather) Name() string {
+	return "gather " + s.spot
 }
 
-func (s *simpleFight) Do(ctx context.Context) error {
+func (s *simpleGather) Do(ctx context.Context) error {
 	if s.character.InventoryFull() {
 		if err := s.character.Move(ctx, game.Bank); err != nil {
 			return fmt.Errorf("move: %w", err)
@@ -64,27 +64,21 @@ func (s *simpleFight) Do(ctx context.Context) error {
 		}
 	}
 
-	monster, err := s.game.Map().Get(ctx, s.monster)
+	spot, err := s.game.Map().Get(ctx, s.spot)
 	if err != nil {
 		return fmt.Errorf("get map: %w", err)
 	}
 
 	// TODO choose the gear
 
-	err = s.character.Move(ctx, monster)
+	err = s.character.Move(ctx, spot)
 	if err != nil {
 		return fmt.Errorf("move: %w", err)
 	}
 
-	_, err = s.character.Fight(ctx)
+	_, err = s.character.Gather(ctx)
 	if err != nil {
-		return fmt.Errorf("fight: %w", err)
-	}
-
-	if s.character.HealthPercent() < 60 {
-		if err := s.character.Rest(ctx); err != nil {
-			return fmt.Errorf("rest: %w", err)
-		}
+		return fmt.Errorf("gather: %w", err)
 	}
 
 	return nil

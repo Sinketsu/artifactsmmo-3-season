@@ -2,12 +2,18 @@ package game
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 
 	"github.com/Sinketsu/artifactsmmo-3-season/gen/oas"
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/api"
 	ycloggingslog "github.com/Sinketsu/yc-logging-slog"
-	"github.com/jellydator/ttlcache/v3"
+)
+
+var (
+	// TODO add more common macros
+	GrandExchange = Point{Name: "grand_exchange"}
+	Bank          = Point{Name: "bank"}
 )
 
 type Point struct {
@@ -19,7 +25,7 @@ type maps struct {
 	client *api.Client
 	logger *slog.Logger
 
-	cache *ttlcache.Cache[string, Point]
+	cache map[string]Point
 }
 
 func newMaps(client *api.Client) *maps {
@@ -27,7 +33,7 @@ func newMaps(client *api.Client) *maps {
 		client: client,
 		logger: slog.Default().With(ycloggingslog.Stream, "game").With("service", "map"),
 
-		cache: ttlcache.New[string, Point](),
+		cache: make(map[string]Point),
 	}
 
 	m.init()
@@ -50,15 +56,18 @@ func (s *maps) init() {
 				continue
 			}
 
-			s.cache.Set(
-				m.Content.MapContentSchema.Code,
-				Point{
-					X:    m.X,
-					Y:    m.Y,
-					Name: m.Content.MapContentSchema.Code,
-				},
-				ttlcache.NoTTL,
-			)
+			s.cache[m.Content.MapContentSchema.Code] = Point{
+				X:    m.X,
+				Y:    m.Y,
+				Name: m.Content.MapContentSchema.Code,
+			}
+
+			switch m.Content.MapContentSchema.Code {
+			case GrandExchange.Name:
+				GrandExchange.X, GrandExchange.Y = m.X, m.Y
+			case Bank.Name:
+				Bank.X, Bank.Y = m.X, m.Y
+			}
 		}
 
 		if page >= resp.Pages.Value.Int {
@@ -66,10 +75,15 @@ func (s *maps) init() {
 		}
 		page++
 	}
-	// TODO - maybe ignore event monsters?
 }
 
-func (m *maps) Get(code string) Point {
-	// TODO
-	return Point{}
+func (m *maps) Get(ctx context.Context, code string) (Point, error) {
+	mapRequestRate.Inc()
+
+	v, ok := m.cache[code]
+	if !ok {
+		return Point{}, fmt.Errorf("not found '%s' on map", code)
+	}
+
+	return v, nil
 }

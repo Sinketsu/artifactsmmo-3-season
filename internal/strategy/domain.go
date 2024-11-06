@@ -1,6 +1,8 @@
 package strategy
 
+import "context"
+
 type Strategy interface {
 	Name() string
-	Do() error
+	Do(ctx context.Context) error
 }
