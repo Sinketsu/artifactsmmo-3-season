@@ -8,3 +8,5 @@ go.work.sum
 
 # env file
 .env
+
+deploy.sh

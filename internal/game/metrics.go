@@ -5,5 +5,5 @@ import (
 )
 
 var (
-	mapRequestRate = ycmonitoringgo.NewRate("map_request_count", ycmonitoringgo.DefaultRegistry)
+	apiRequestCount = ycmonitoringgo.NewRate("game_api_request_count", ycmonitoringgo.DefaultRegistry, "service")
 )

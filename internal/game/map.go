@@ -43,6 +43,8 @@ func newMaps(client *api.Client) *maps {
 func (s *maps) init() {
 	page := 1
 	for {
+		apiRequestCount.Inc("maps")
+
 		resp, err := s.client.GetAllMapsMapsGet(context.Background(), oas.GetAllMapsMapsGetParams{
 			Page: oas.NewOptInt(page),
 		})
@@ -77,10 +79,8 @@ func (s *maps) init() {
 	}
 }
 
-func (m *maps) Get(ctx context.Context, code string) (Point, error) {
-	mapRequestRate.Inc()
-
-	v, ok := m.cache[code]
+func (s *maps) Get(ctx context.Context, code string) (Point, error) {
+	v, ok := s.cache[code]
 	if !ok {
 		return Point{}, fmt.Errorf("not found '%s' on map", code)
 	}

@@ -1,6 +1,8 @@
 package api
 
-import "github.com/Sinketsu/artifactsmmo-3-season/gen/oas"
+import (
+	"github.com/Sinketsu/artifactsmmo-3-season/gen/oas"
+)
 
 type Client struct {
 	*oas.Client

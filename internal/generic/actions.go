@@ -12,6 +12,8 @@ import (
 )
 
 func (c *Character) Move(ctx context.Context, to game.Point) error {
+	apiRequestCount.Inc()
+
 	resp, err := c.cli.ActionMoveMyNameActionMovePost(ctx, &oas.DestinationSchema{
 		X: to.X,
 		Y: to.Y,
@@ -50,6 +52,8 @@ func (c *Character) Move(ctx context.Context, to game.Point) error {
 }
 
 func (c *Character) Rest(ctx context.Context) error {
+	apiRequestCount.Inc()
+
 	resp, err := c.cli.ActionRestMyNameActionRestPost(ctx, oas.ActionRestMyNameActionRestPostParams{
 		Name: c.name,
 	})
@@ -76,6 +80,8 @@ func (c *Character) Rest(ctx context.Context) error {
 }
 
 func (c *Character) Fight(ctx context.Context) (*oas.CharacterFightDataSchemaFight, error) {
+	apiRequestCount.Inc()
+
 	resp, err := c.cli.ActionFightMyNameActionFightPost(ctx, oas.ActionFightMyNameActionFightPostParams{
 		Name: c.name,
 	})
@@ -106,6 +112,8 @@ func (c *Character) Fight(ctx context.Context) (*oas.CharacterFightDataSchemaFig
 }
 
 func (c *Character) Deposit(ctx context.Context, item string, quantity int) error {
+	apiRequestCount.Inc()
+
 	resp, err := c.cli.ActionDepositBankMyNameActionBankDepositPost(ctx, &oas.SimpleItemSchema{
 		Code:     item,
 		Quantity: quantity,
@@ -145,6 +153,8 @@ func (c *Character) Deposit(ctx context.Context, item string, quantity int) erro
 }
 
 func (c *Character) DepositGold(ctx context.Context, quantity int) error {
+	apiRequestCount.Inc()
+
 	resp, err := c.cli.ActionDepositBankGoldMyNameActionBankDepositGoldPost(ctx, &oas.DepositWithdrawGoldSchema{
 		Quantity: quantity,
 	}, oas.ActionDepositBankGoldMyNameActionBankDepositGoldPostParams{
@@ -179,6 +189,8 @@ func (c *Character) DepositGold(ctx context.Context, quantity int) error {
 }
 
 func (c *Character) Gather(ctx context.Context) (*oas.SkillDataSchemaDetails, error) {
+	apiRequestCount.Inc()
+
 	resp, err := c.cli.ActionGatheringMyNameActionGatheringPost(ctx, oas.ActionGatheringMyNameActionGatheringPostParams{
 		Name: c.name,
 	})
@@ -205,6 +217,47 @@ func (c *Character) Gather(ctx context.Context) (*oas.SkillDataSchemaDetails, er
 		return nil, fmt.Errorf("cooldown...")
 	case *oas.ActionGatheringMyNameActionGatheringPostCode598:
 		return nil, fmt.Errorf("resource not found on this map")
+	}
+
+	return nil, fmt.Errorf("unknown error: %v", resp)
+}
+
+func (c *Character) Craft(ctx context.Context, code string, quantity int) (*oas.SkillDataSchemaDetails, error) {
+	apiRequestCount.Inc()
+
+	resp, err := c.cli.ActionCraftingMyNameActionCraftingPost(ctx, &oas.CraftingSchema{
+		Code:     code,
+		Quantity: oas.NewOptInt(quantity),
+	}, oas.ActionCraftingMyNameActionCraftingPostParams{
+		Name: c.name,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	switch v := resp.(type) {
+	case *oas.SkillResponseSchema:
+		c.syncState(unsafe.Pointer(&v.Data.Character))
+		c.logger.Debug(fmt.Sprintf("craft %d %s", quantity, code), slog.Int("xp", v.Data.Details.Xp), slog.Any("items", v.Data.Details.Items))
+
+		time.Sleep(time.Duration(v.Data.Cooldown.RemainingSeconds) * time.Second)
+		return &v.Data.Details, nil
+	case *oas.ActionCraftingMyNameActionCraftingPostNotFound:
+		return nil, fmt.Errorf("craft not found")
+	case *oas.ActionCraftingMyNameActionCraftingPostCode478:
+		return nil, fmt.Errorf("missing item or insufficient quantity")
+	case *oas.ActionCraftingMyNameActionCraftingPostCode486:
+		return nil, fmt.Errorf("action is already in progress by your character")
+	case *oas.ActionCraftingMyNameActionCraftingPostCode493:
+		return nil, fmt.Errorf("skill level is too low")
+	case *oas.ActionCraftingMyNameActionCraftingPostCode497:
+		return nil, fmt.Errorf("inventory is full")
+	case *oas.ActionCraftingMyNameActionCraftingPostCode498:
+		return nil, fmt.Errorf("character not found")
+	case *oas.ActionCraftingMyNameActionCraftingPostCode499:
+		return nil, fmt.Errorf("cooldown...")
+	case *oas.ActionCraftingMyNameActionCraftingPostCode598:
+		return nil, fmt.Errorf("workshop not found on this map")
 	}
 
 	return nil, fmt.Errorf("unknown error: %v", resp)
