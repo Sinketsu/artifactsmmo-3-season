@@ -2514,7 +2514,7 @@ func (s *Server) handleActionRecyclingMyNameActionRecyclingPostRequest(args [1]s
 
 // handleActionRestMyNameActionRestPostRequest handles action_rest_my__name__action_rest_post operation.
 //
-// Recovers hit points by resting. (1 second per 10 HP, minimum 3 seconds).
+// Recovers hit points by resting. (1 second per 5 HP, minimum 3 seconds).
 //
 // POST /my/{name}/action/rest
 func (s *Server) handleActionRestMyNameActionRestPostRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {

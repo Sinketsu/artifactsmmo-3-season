@@ -770,6 +770,12 @@ func encodeActionGeCreateSellOrderMyNameActionGrandexchangeSellPostResponse(resp
 
 		return nil
 
+	case *ActionGeCreateSellOrderMyNameActionGrandexchangeSellPostCode437:
+		w.WriteHeader(437)
+		span.SetStatus(codes.Error, http.StatusText(437))
+
+		return nil
+
 	case *ActionGeCreateSellOrderMyNameActionGrandexchangeSellPostCode478:
 		w.WriteHeader(478)
 		span.SetStatus(codes.Error, http.StatusText(478))

@@ -1452,6 +1452,12 @@ type ActionGeCreateSellOrderMyNameActionGrandexchangeSellPostCode433 struct{}
 func (*ActionGeCreateSellOrderMyNameActionGrandexchangeSellPostCode433) actionGeCreateSellOrderMyNameActionGrandexchangeSellPostRes() {
 }
 
+// ActionGeCreateSellOrderMyNameActionGrandexchangeSellPostCode437 is response for ActionGeCreateSellOrderMyNameActionGrandexchangeSellPost operation.
+type ActionGeCreateSellOrderMyNameActionGrandexchangeSellPostCode437 struct{}
+
+func (*ActionGeCreateSellOrderMyNameActionGrandexchangeSellPostCode437) actionGeCreateSellOrderMyNameActionGrandexchangeSellPostRes() {
+}
+
 // ActionGeCreateSellOrderMyNameActionGrandexchangeSellPostCode478 is response for ActionGeCreateSellOrderMyNameActionGrandexchangeSellPost operation.
 type ActionGeCreateSellOrderMyNameActionGrandexchangeSellPostCode478 struct{}
 
@@ -6062,6 +6068,8 @@ type BankItemTransactionSchemaItem struct {
 	Effects []ItemEffectSchema `json:"effects"`
 	// Craft information. If applicable.
 	Craft OptBankItemTransactionSchemaItemCraft `json:"craft"`
+	// Item tradeable status. A non-tradeable item cannot be exchanged or sold.
+	Tradeable bool `json:"tradeable"`
 }
 
 // GetName returns the value of Name.
@@ -6104,6 +6112,11 @@ func (s *BankItemTransactionSchemaItem) GetCraft() OptBankItemTransactionSchemaI
 	return s.Craft
 }
 
+// GetTradeable returns the value of Tradeable.
+func (s *BankItemTransactionSchemaItem) GetTradeable() bool {
+	return s.Tradeable
+}
+
 // SetName sets the value of Name.
 func (s *BankItemTransactionSchemaItem) SetName(val string) {
 	s.Name = val
@@ -6142,6 +6155,11 @@ func (s *BankItemTransactionSchemaItem) SetEffects(val []ItemEffectSchema) {
 // SetCraft sets the value of Craft.
 func (s *BankItemTransactionSchemaItem) SetCraft(val OptBankItemTransactionSchemaItemCraft) {
 	s.Craft = val
+}
+
+// SetTradeable sets the value of Tradeable.
+func (s *BankItemTransactionSchemaItem) SetTradeable(val bool) {
+	s.Tradeable = val
 }
 
 // Craft information. If applicable.
@@ -19763,6 +19781,8 @@ type EquipRequestSchemaItem struct {
 	Effects []ItemEffectSchema `json:"effects"`
 	// Craft information. If applicable.
 	Craft OptEquipRequestSchemaItemCraft `json:"craft"`
+	// Item tradeable status. A non-tradeable item cannot be exchanged or sold.
+	Tradeable bool `json:"tradeable"`
 }
 
 // GetName returns the value of Name.
@@ -19805,6 +19825,11 @@ func (s *EquipRequestSchemaItem) GetCraft() OptEquipRequestSchemaItemCraft {
 	return s.Craft
 }
 
+// GetTradeable returns the value of Tradeable.
+func (s *EquipRequestSchemaItem) GetTradeable() bool {
+	return s.Tradeable
+}
+
 // SetName sets the value of Name.
 func (s *EquipRequestSchemaItem) SetName(val string) {
 	s.Name = val
@@ -19843,6 +19868,11 @@ func (s *EquipRequestSchemaItem) SetEffects(val []ItemEffectSchema) {
 // SetCraft sets the value of Craft.
 func (s *EquipRequestSchemaItem) SetCraft(val OptEquipRequestSchemaItemCraft) {
 	s.Craft = val
+}
+
+// SetTradeable sets the value of Tradeable.
+func (s *EquipRequestSchemaItem) SetTradeable(val bool) {
+	s.Tradeable = val
 }
 
 // Craft information. If applicable.
@@ -24191,6 +24221,8 @@ type ItemSchema struct {
 	Effects []ItemEffectSchema `json:"effects"`
 	// Craft information. If applicable.
 	Craft OptItemSchemaCraft `json:"craft"`
+	// Item tradeable status. A non-tradeable item cannot be exchanged or sold.
+	Tradeable bool `json:"tradeable"`
 }
 
 // GetName returns the value of Name.
@@ -24233,6 +24265,11 @@ func (s *ItemSchema) GetCraft() OptItemSchemaCraft {
 	return s.Craft
 }
 
+// GetTradeable returns the value of Tradeable.
+func (s *ItemSchema) GetTradeable() bool {
+	return s.Tradeable
+}
+
 // SetName sets the value of Name.
 func (s *ItemSchema) SetName(val string) {
 	s.Name = val
@@ -24271,6 +24308,11 @@ func (s *ItemSchema) SetEffects(val []ItemEffectSchema) {
 // SetCraft sets the value of Craft.
 func (s *ItemSchema) SetCraft(val OptItemSchemaCraft) {
 	s.Craft = val
+}
+
+// SetTradeable sets the value of Tradeable.
+func (s *ItemSchema) SetTradeable(val bool) {
+	s.Tradeable = val
 }
 
 // Craft information. If applicable.
@@ -24541,6 +24583,7 @@ const (
 	LogSchemaTypeTaskExchange     LogSchemaType = "task_exchange"
 	LogSchemaTypeTaskCancelled    LogSchemaType = "task_cancelled"
 	LogSchemaTypeTaskCompleted    LogSchemaType = "task_completed"
+	LogSchemaTypeTaskTrade        LogSchemaType = "task_trade"
 	LogSchemaTypeRecycling        LogSchemaType = "recycling"
 	LogSchemaTypeRest             LogSchemaType = "rest"
 	LogSchemaTypeUse              LogSchemaType = "use"
@@ -24570,6 +24613,7 @@ func (LogSchemaType) AllValues() []LogSchemaType {
 		LogSchemaTypeTaskExchange,
 		LogSchemaTypeTaskCancelled,
 		LogSchemaTypeTaskCompleted,
+		LogSchemaTypeTaskTrade,
 		LogSchemaTypeRecycling,
 		LogSchemaTypeRest,
 		LogSchemaTypeUse,
@@ -24618,6 +24662,8 @@ func (s LogSchemaType) MarshalText() ([]byte, error) {
 	case LogSchemaTypeTaskCancelled:
 		return []byte(s), nil
 	case LogSchemaTypeTaskCompleted:
+		return []byte(s), nil
+	case LogSchemaTypeTaskTrade:
 		return []byte(s), nil
 	case LogSchemaTypeRecycling:
 		return []byte(s), nil
@@ -24693,6 +24739,9 @@ func (s *LogSchemaType) UnmarshalText(data []byte) error {
 		return nil
 	case LogSchemaTypeTaskCompleted:
 		*s = LogSchemaTypeTaskCompleted
+		return nil
+	case LogSchemaTypeTaskTrade:
+		*s = LogSchemaTypeTaskTrade
 		return nil
 	case LogSchemaTypeRecycling:
 		*s = LogSchemaTypeRecycling
@@ -36753,6 +36802,8 @@ type UseItemSchemaItem struct {
 	Effects []ItemEffectSchema `json:"effects"`
 	// Craft information. If applicable.
 	Craft OptUseItemSchemaItemCraft `json:"craft"`
+	// Item tradeable status. A non-tradeable item cannot be exchanged or sold.
+	Tradeable bool `json:"tradeable"`
 }
 
 // GetName returns the value of Name.
@@ -36795,6 +36846,11 @@ func (s *UseItemSchemaItem) GetCraft() OptUseItemSchemaItemCraft {
 	return s.Craft
 }
 
+// GetTradeable returns the value of Tradeable.
+func (s *UseItemSchemaItem) GetTradeable() bool {
+	return s.Tradeable
+}
+
 // SetName sets the value of Name.
 func (s *UseItemSchemaItem) SetName(val string) {
 	s.Name = val
@@ -36833,6 +36889,11 @@ func (s *UseItemSchemaItem) SetEffects(val []ItemEffectSchema) {
 // SetCraft sets the value of Craft.
 func (s *UseItemSchemaItem) SetCraft(val OptUseItemSchemaItemCraft) {
 	s.Craft = val
+}
+
+// SetTradeable sets the value of Tradeable.
+func (s *UseItemSchemaItem) SetTradeable(val bool) {
+	s.Tradeable = val
 }
 
 // Craft information. If applicable.

@@ -7152,6 +7152,8 @@ func (s LogSchemaType) Validate() error {
 		return nil
 	case "task_completed":
 		return nil
+	case "task_trade":
+		return nil
 	case "recycling":
 		return nil
 	case "rest":

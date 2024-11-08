@@ -102,7 +102,7 @@ type Handler interface {
 	ActionRecyclingMyNameActionRecyclingPost(ctx context.Context, req *RecyclingSchema, params ActionRecyclingMyNameActionRecyclingPostParams) (ActionRecyclingMyNameActionRecyclingPostRes, error)
 	// ActionRestMyNameActionRestPost implements action_rest_my__name__action_rest_post operation.
 	//
-	// Recovers hit points by resting. (1 second per 10 HP, minimum 3 seconds).
+	// Recovers hit points by resting. (1 second per 5 HP, minimum 3 seconds).
 	//
 	// POST /my/{name}/action/rest
 	ActionRestMyNameActionRestPost(ctx context.Context, params ActionRestMyNameActionRestPostParams) (ActionRestMyNameActionRestPostRes, error)

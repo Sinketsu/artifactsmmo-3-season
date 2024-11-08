@@ -8285,9 +8285,13 @@ func (s *BankItemTransactionSchemaItem) encodeFields(e *jx.Encoder) {
 			s.Craft.Encode(e)
 		}
 	}
+	{
+		e.FieldStart("tradeable")
+		e.Bool(s.Tradeable)
+	}
 }
 
-var jsonFieldsNameOfBankItemTransactionSchemaItem = [8]string{
+var jsonFieldsNameOfBankItemTransactionSchemaItem = [9]string{
 	0: "name",
 	1: "code",
 	2: "level",
@@ -8296,6 +8300,7 @@ var jsonFieldsNameOfBankItemTransactionSchemaItem = [8]string{
 	5: "description",
 	6: "effects",
 	7: "craft",
+	8: "tradeable",
 }
 
 // Decode decodes BankItemTransactionSchemaItem from json.
@@ -8303,7 +8308,7 @@ func (s *BankItemTransactionSchemaItem) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode BankItemTransactionSchemaItem to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -8406,6 +8411,18 @@ func (s *BankItemTransactionSchemaItem) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"craft\"")
 			}
+		case "tradeable":
+			requiredBitSet[1] |= 1 << 0
+			if err := func() error {
+				v, err := d.Bool()
+				s.Tradeable = bool(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"tradeable\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -8415,8 +8432,9 @@ func (s *BankItemTransactionSchemaItem) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
+	for i, mask := range [2]uint8{
 		0b00111111,
+		0b00000001,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -27790,9 +27808,13 @@ func (s *EquipRequestSchemaItem) encodeFields(e *jx.Encoder) {
 			s.Craft.Encode(e)
 		}
 	}
+	{
+		e.FieldStart("tradeable")
+		e.Bool(s.Tradeable)
+	}
 }
 
-var jsonFieldsNameOfEquipRequestSchemaItem = [8]string{
+var jsonFieldsNameOfEquipRequestSchemaItem = [9]string{
 	0: "name",
 	1: "code",
 	2: "level",
@@ -27801,6 +27823,7 @@ var jsonFieldsNameOfEquipRequestSchemaItem = [8]string{
 	5: "description",
 	6: "effects",
 	7: "craft",
+	8: "tradeable",
 }
 
 // Decode decodes EquipRequestSchemaItem from json.
@@ -27808,7 +27831,7 @@ func (s *EquipRequestSchemaItem) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode EquipRequestSchemaItem to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -27911,6 +27934,18 @@ func (s *EquipRequestSchemaItem) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"craft\"")
 			}
+		case "tradeable":
+			requiredBitSet[1] |= 1 << 0
+			if err := func() error {
+				v, err := d.Bool()
+				s.Tradeable = bool(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"tradeable\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -27920,8 +27955,9 @@ func (s *EquipRequestSchemaItem) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
+	for i, mask := range [2]uint8{
 		0b00111111,
+		0b00000001,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -34105,9 +34141,13 @@ func (s *ItemSchema) encodeFields(e *jx.Encoder) {
 			s.Craft.Encode(e)
 		}
 	}
+	{
+		e.FieldStart("tradeable")
+		e.Bool(s.Tradeable)
+	}
 }
 
-var jsonFieldsNameOfItemSchema = [8]string{
+var jsonFieldsNameOfItemSchema = [9]string{
 	0: "name",
 	1: "code",
 	2: "level",
@@ -34116,6 +34156,7 @@ var jsonFieldsNameOfItemSchema = [8]string{
 	5: "description",
 	6: "effects",
 	7: "craft",
+	8: "tradeable",
 }
 
 // Decode decodes ItemSchema from json.
@@ -34123,7 +34164,7 @@ func (s *ItemSchema) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode ItemSchema to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -34226,6 +34267,18 @@ func (s *ItemSchema) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"craft\"")
 			}
+		case "tradeable":
+			requiredBitSet[1] |= 1 << 0
+			if err := func() error {
+				v, err := d.Bool()
+				s.Tradeable = bool(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"tradeable\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -34235,8 +34288,9 @@ func (s *ItemSchema) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
+	for i, mask := range [2]uint8{
 		0b00111111,
+		0b00000001,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -34645,6 +34699,8 @@ func (s *LogSchemaType) Decode(d *jx.Decoder) error {
 		*s = LogSchemaTypeTaskCancelled
 	case LogSchemaTypeTaskCompleted:
 		*s = LogSchemaTypeTaskCompleted
+	case LogSchemaTypeTaskTrade:
+		*s = LogSchemaTypeTaskTrade
 	case LogSchemaTypeRecycling:
 		*s = LogSchemaTypeRecycling
 	case LogSchemaTypeRest:
@@ -52671,9 +52727,13 @@ func (s *UseItemSchemaItem) encodeFields(e *jx.Encoder) {
 			s.Craft.Encode(e)
 		}
 	}
+	{
+		e.FieldStart("tradeable")
+		e.Bool(s.Tradeable)
+	}
 }
 
-var jsonFieldsNameOfUseItemSchemaItem = [8]string{
+var jsonFieldsNameOfUseItemSchemaItem = [9]string{
 	0: "name",
 	1: "code",
 	2: "level",
@@ -52682,6 +52742,7 @@ var jsonFieldsNameOfUseItemSchemaItem = [8]string{
 	5: "description",
 	6: "effects",
 	7: "craft",
+	8: "tradeable",
 }
 
 // Decode decodes UseItemSchemaItem from json.
@@ -52689,7 +52750,7 @@ func (s *UseItemSchemaItem) Decode(d *jx.Decoder) error {
 	if s == nil {
 		return errors.New("invalid: unable to decode UseItemSchemaItem to nil")
 	}
-	var requiredBitSet [1]uint8
+	var requiredBitSet [2]uint8
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
@@ -52792,6 +52853,18 @@ func (s *UseItemSchemaItem) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"craft\"")
 			}
+		case "tradeable":
+			requiredBitSet[1] |= 1 << 0
+			if err := func() error {
+				v, err := d.Bool()
+				s.Tradeable = bool(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"tradeable\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -52801,8 +52874,9 @@ func (s *UseItemSchemaItem) Decode(d *jx.Decoder) error {
 	}
 	// Validate required fields.
 	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
+	for i, mask := range [2]uint8{
 		0b00111111,
+		0b00000001,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.

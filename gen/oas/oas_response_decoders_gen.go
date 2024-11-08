@@ -912,6 +912,9 @@ func decodeActionGeCreateSellOrderMyNameActionGrandexchangeSellPostResponse(resp
 	case 433:
 		// Code 433.
 		return &ActionGeCreateSellOrderMyNameActionGrandexchangeSellPostCode433{}, nil
+	case 437:
+		// Code 437.
+		return &ActionGeCreateSellOrderMyNameActionGrandexchangeSellPostCode437{}, nil
 	case 478:
 		// Code 478.
 		return &ActionGeCreateSellOrderMyNameActionGrandexchangeSellPostCode478{}, nil

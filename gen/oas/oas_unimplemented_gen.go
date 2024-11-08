@@ -152,7 +152,7 @@ func (UnimplementedHandler) ActionRecyclingMyNameActionRecyclingPost(ctx context
 
 // ActionRestMyNameActionRestPost implements action_rest_my__name__action_rest_post operation.
 //
-// Recovers hit points by resting. (1 second per 10 HP, minimum 3 seconds).
+// Recovers hit points by resting. (1 second per 5 HP, minimum 3 seconds).
 //
 // POST /my/{name}/action/rest
 func (UnimplementedHandler) ActionRestMyNameActionRestPost(ctx context.Context, params ActionRestMyNameActionRestPostParams) (r ActionRestMyNameActionRestPostRes, _ error) {
