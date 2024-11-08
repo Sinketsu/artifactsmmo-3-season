@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/api"
-	"github.com/Sinketsu/artifactsmmo-3-season/internal/characters"
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/game"
+	"github.com/Sinketsu/artifactsmmo-3-season/internal/live"
 	ycloggingslog "github.com/Sinketsu/yc-logging-slog"
 	ycmonitoringgo "github.com/Sinketsu/yc-monitoring-go"
 	ycsdk "github.com/yandex-cloud/go-sdk"
@@ -26,11 +26,20 @@ func main() {
 	}
 
 	game := game.New(client)
-	ishtar := characters.NewIshtar(client, game)
+
+	ram := live.Character(live.Ram, client, game)
+	rem := live.Character(live.Rem, client, game)
+	emilia := live.Character(live.Emilia, client, game)
+	frederica := live.Character(live.Frederica, client, game)
+	subaru := live.Character(live.Subaru, client, game)
 
 	ctx, stopNotify := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 
-	go ishtar.Live(ctx)
+	go ram.Live(ctx)
+	go rem.Live(ctx)
+	go emilia.Live(ctx)
+	go frederica.Live(ctx)
+	go subaru.Live(ctx)
 
 	<-ctx.Done()
 	slog.Info("got stop signal...")

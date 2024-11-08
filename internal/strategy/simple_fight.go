@@ -6,6 +6,7 @@ import (
 
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/game"
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/generic"
+	"github.com/Sinketsu/artifactsmmo-3-season/internal/macro"
 )
 
 type simpleFight struct {
@@ -45,22 +46,10 @@ func (s *simpleFight) Name() string {
 
 func (s *simpleFight) Do(ctx context.Context) error {
 	if s.character.InventoryFull() {
-		if err := s.character.Move(ctx, game.Bank); err != nil {
-			return fmt.Errorf("move: %w", err)
-		}
+		macro.Deposit(ctx, s.character, s.deposit...)
 
-		for _, item := range s.deposit {
-			if q := s.character.InInventory(item); q > 0 {
-				if err := s.character.Deposit(ctx, item, q); err != nil {
-					return fmt.Errorf("deposit: %w", err)
-				}
-			}
-		}
-
-		if s.depositGold && s.character.Gold() > 0 {
-			if err := s.character.DepositGold(ctx, s.character.Gold()); err != nil {
-				return fmt.Errorf("deposit gold: %w", err)
-			}
+		if s.depositGold {
+			macro.DepositGold(ctx, s.character)
 		}
 	}
 

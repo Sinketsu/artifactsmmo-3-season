@@ -1,33 +1,15 @@
-package characters
+package live
 
 import (
-	"log/slog"
-
 	"github.com/Sinketsu/artifactsmmo-3-season/gen/oas"
-	"github.com/Sinketsu/artifactsmmo-3-season/internal/api"
-	"github.com/Sinketsu/artifactsmmo-3-season/internal/game"
-	"github.com/Sinketsu/artifactsmmo-3-season/internal/generic"
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/strategy"
-	ycloggingslog "github.com/Sinketsu/yc-logging-slog"
 )
 
-type ishtar struct {
-	*commonCharacter
-}
+const (
+	Ram string = "Ram"
+)
 
-func NewIshtar(client *api.Client, game *game.Game) *ishtar {
-	name := "Ishtar"
-
-	return &ishtar{
-		commonCharacter: &commonCharacter{
-			character: generic.NewCharacter(name, client),
-			game:      game,
-			logger:    slog.Default().With(ycloggingslog.Stream, name),
-		},
-	}
-}
-
-func (c *ishtar) getStrategy() Strategy {
+func (c *liveCharacter) ramStrategy() Strategy {
 	skills := c.character.Skills()
 
 	gather := strategy.SimpleGather(c.character, c.game).
@@ -35,7 +17,7 @@ func (c *ishtar) getStrategy() Strategy {
 		Craft("copper", "iron", "ash_plank", "spruce_plank", "small_health_potion").
 		Deposit(
 			"topaz_stone", "topaz", "emerald_stone", "emerald", "ruby_stone", "ruby", "sapphire_stone", "sapphire",
-			"gudgeon", "algae", "shrimp", "sap", "apple", "sunflower",
+			"gudgeon", "algae", "shrimp", "sap", "apple",
 		)
 
 	switch {

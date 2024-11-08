@@ -41,27 +41,33 @@ func (c *Character) syncState(p unsafe.Pointer) {
 	skillLevel.Set(int64(c.state.JewelrycraftingLevel), c.name, "jewelrycrafting")
 }
 
-func (c *Character) InventoryFull() bool {
-	slots := 0
-	items := 0
+func (c *Character) InventorySpace() (freeSpace int, freeSlots int) {
+	freeSpace = c.state.InventoryMaxItems
+	freeSlots = 20
 
-	for _, slot := range c.state.Inventory {
-		if slot.Code != "" {
-			slots++
-			items += slot.Quantity
-		}
+	for _, count := range c.Inventory() {
+		freeSlots--
+		freeSpace -= count
 	}
 
-	return c.state.InventoryMaxItems-5 < items || slots >= 19
+	return
 }
 
-func (c *Character) InInventory(code string) int {
+func (c *Character) InventoryFull() bool {
+	space, slots := c.InventorySpace()
+
+	return space < 5 || slots < 3
+}
+
+func (c *Character) Inventory() map[string]int {
+	result := map[string]int{}
 	for _, slot := range c.state.Inventory {
-		if slot.Code == code {
-			return slot.Quantity
+		if slot.Code != "" {
+			result[slot.Code] = slot.Quantity
 		}
 	}
-	return 0
+
+	return result
 }
 
 func (c *Character) Gold() int {
@@ -70,6 +76,10 @@ func (c *Character) Gold() int {
 
 func (c *Character) HealthPercent() float64 {
 	return float64(c.state.Hp) / float64(c.state.MaxHp) * 100
+}
+
+func (c *Character) Level() int {
+	return c.state.Level
 }
 
 func (c *Character) Skills() map[string]int {

@@ -152,6 +152,47 @@ func (c *Character) Deposit(ctx context.Context, item string, quantity int) erro
 	return fmt.Errorf("unknown error: %v", resp)
 }
 
+func (c *Character) Withdraw(ctx context.Context, item string, quantity int) error {
+	apiRequestCount.Inc()
+
+	resp, err := c.cli.ActionWithdrawBankMyNameActionBankWithdrawPost(ctx, &oas.SimpleItemSchema{
+		Code:     item,
+		Quantity: quantity,
+	}, oas.ActionWithdrawBankMyNameActionBankWithdrawPostParams{
+		Name: c.name,
+	})
+	if err != nil {
+		return err
+	}
+
+	switch v := resp.(type) {
+	case *oas.BankItemTransactionResponseSchema:
+		c.syncState(unsafe.Pointer(&v.Data.Character))
+		c.logger.Debug(fmt.Sprintf("withdraw: %d %s", quantity, item))
+
+		time.Sleep(time.Duration(v.Data.Cooldown.RemainingSeconds) * time.Second)
+		return nil
+	case *oas.ActionWithdrawBankMyNameActionBankWithdrawPostNotFound:
+		return fmt.Errorf("item not found")
+	case *oas.ActionWithdrawBankMyNameActionBankWithdrawPostCode461:
+		return fmt.Errorf("transaction is already in progress with this item/your gold in your bank")
+	case *oas.ActionWithdrawBankMyNameActionBankWithdrawPostCode478:
+		return fmt.Errorf("missing item or insufficient quantity")
+	case *oas.ActionWithdrawBankMyNameActionBankWithdrawPostCode486:
+		return fmt.Errorf("action is already in progress by your character")
+	case *oas.ActionWithdrawBankMyNameActionBankWithdrawPostCode497:
+		return fmt.Errorf("inventory is full")
+	case *oas.ActionWithdrawBankMyNameActionBankWithdrawPostCode498:
+		return fmt.Errorf("character not found")
+	case *oas.ActionWithdrawBankMyNameActionBankWithdrawPostCode499:
+		return fmt.Errorf("cooldown...")
+	case *oas.ActionWithdrawBankMyNameActionBankWithdrawPostCode598:
+		return fmt.Errorf("bank not found on this map")
+	}
+
+	return fmt.Errorf("unknown error: %v", resp)
+}
+
 func (c *Character) DepositGold(ctx context.Context, quantity int) error {
 	apiRequestCount.Inc()
 
@@ -257,6 +298,49 @@ func (c *Character) Craft(ctx context.Context, code string, quantity int) (*oas.
 	case *oas.ActionCraftingMyNameActionCraftingPostCode499:
 		return nil, fmt.Errorf("cooldown...")
 	case *oas.ActionCraftingMyNameActionCraftingPostCode598:
+		return nil, fmt.Errorf("workshop not found on this map")
+	}
+
+	return nil, fmt.Errorf("unknown error: %v", resp)
+}
+
+func (c *Character) Recycle(ctx context.Context, code string, quantity int) (*oas.RecyclingDataSchemaDetails, error) {
+	apiRequestCount.Inc()
+
+	resp, err := c.cli.ActionRecyclingMyNameActionRecyclingPost(ctx, &oas.RecyclingSchema{
+		Code:     code,
+		Quantity: oas.NewOptInt(quantity),
+	}, oas.ActionRecyclingMyNameActionRecyclingPostParams{
+		Name: c.name,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	switch v := resp.(type) {
+	case *oas.RecyclingResponseSchema:
+		c.syncState(unsafe.Pointer(&v.Data.Character))
+		c.logger.Debug(fmt.Sprintf("recycle %d %s", quantity, code), slog.Any("items", v.Data.Details.Items))
+
+		time.Sleep(time.Duration(v.Data.Cooldown.RemainingSeconds) * time.Second)
+		return &v.Data.Details, nil
+	case *oas.ActionRecyclingMyNameActionRecyclingPostNotFound:
+		return nil, fmt.Errorf("item not found")
+	case *oas.ActionRecyclingMyNameActionRecyclingPostCode473:
+		return nil, fmt.Errorf("item cannot be recycled")
+	case *oas.ActionRecyclingMyNameActionRecyclingPostCode478:
+		return nil, fmt.Errorf("missing item or insufficient quantity")
+	case *oas.ActionRecyclingMyNameActionRecyclingPostCode486:
+		return nil, fmt.Errorf("action is already in progress by your character")
+	case *oas.ActionRecyclingMyNameActionRecyclingPostCode493:
+		return nil, fmt.Errorf("skill level is too low")
+	case *oas.ActionRecyclingMyNameActionRecyclingPostCode497:
+		return nil, fmt.Errorf("inventory is full")
+	case *oas.ActionRecyclingMyNameActionRecyclingPostCode498:
+		return nil, fmt.Errorf("character not found")
+	case *oas.ActionRecyclingMyNameActionRecyclingPostCode499:
+		return nil, fmt.Errorf("cooldown...")
+	case *oas.ActionRecyclingMyNameActionRecyclingPostCode598:
 		return nil, fmt.Errorf("workshop not found on this map")
 	}
 
