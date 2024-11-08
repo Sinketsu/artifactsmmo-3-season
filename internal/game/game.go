@@ -13,6 +13,7 @@ type Game struct {
 	items       *itemService
 	bank        *bankService
 	achievments *achievmentService
+	events      *eventService
 
 	Bank          Point
 	GrandExchange Point
@@ -24,6 +25,7 @@ func New(client *api.Client) *Game {
 		items:       newItemService(client),
 		bank:        newBankService(client),
 		achievments: newAchievmentService(client, os.Getenv("SERVER_ACCOUNT")),
+		events:      newEventService(client),
 	}
 
 	g.Bank, _ = g.Find(context.Background(), "bank")
@@ -42,4 +44,8 @@ func (g *Game) GetItem(ctx context.Context, code string) (oas.ItemSchema, error)
 
 func (g *Game) BankItems(ctx context.Context) map[string]int {
 	return g.bank.Items(ctx)
+}
+
+func (g *Game) GetEvent(code string) (Point, error) {
+	return g.events.get(code)
 }

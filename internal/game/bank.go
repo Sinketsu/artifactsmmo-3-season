@@ -20,6 +20,8 @@ func newBankService(client *api.Client) *bankService {
 		client: client,
 		logger: slog.Default().With(ycloggingslog.Stream, "game").With("service", "bank"),
 	}
+
+	s.update()
 	go s.update()
 
 	return s

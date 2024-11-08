@@ -26,8 +26,10 @@ func newAchievmentService(client *api.Client, account string) *achievmentService
 	s := &achievmentService{
 		account: account,
 		client:  client,
-		logger:  slog.Default().With(ycloggingslog.Stream, "game").With("service", "bank"),
+		logger:  slog.Default().With(ycloggingslog.Stream, "game").With("service", "achievments"),
 	}
+
+	s.update()
 	go s.update()
 
 	return s
