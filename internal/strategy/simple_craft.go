@@ -38,7 +38,7 @@ func (s *simpleCraft) Do(ctx context.Context) error {
 	macro.Recycle(ctx, s.character, s.game, s.items...)
 
 	// deposit all items
-	macro.Deposit(ctx, s.character, maps.Keys(s.character.Inventory())...)
+	macro.Deposit(ctx, s.character, s.game, maps.Keys(s.character.Inventory())...)
 
 	macro.CraftFromBank(ctx, s.character, s.game, s.items...)
 

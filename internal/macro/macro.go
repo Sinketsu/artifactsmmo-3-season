@@ -11,7 +11,7 @@ import (
 
 func CraftFromInventory(ctx context.Context, character *generic.Character, game *game.Game, items ...string) {
 	for _, code := range items {
-		item, err := game.Item().Get(ctx, code)
+		item, err := game.GetItem(ctx, code)
 		if err != nil {
 			slog.Error("fail get item "+code, slog.Any("error", err))
 			continue
@@ -31,7 +31,7 @@ func CraftFromInventory(ctx context.Context, character *generic.Character, game 
 			continue
 		}
 
-		workshop, err := game.Map().Get(ctx, string(item.Craft.Value.CraftSchema.Skill.Value))
+		workshop, err := game.Find(ctx, string(item.Craft.Value.CraftSchema.Skill.Value))
 		if err != nil {
 			slog.Error("fail to find workshop", slog.Any("error", err))
 			continue
@@ -56,7 +56,7 @@ func Recycle(ctx context.Context, character *generic.Character, game *game.Game,
 			continue
 		}
 
-		item, err := game.Item().Get(ctx, code)
+		item, err := game.GetItem(ctx, code)
 		if err != nil {
 			slog.Error("fail get item "+code, slog.Any("error", err))
 			continue
@@ -67,7 +67,7 @@ func Recycle(ctx context.Context, character *generic.Character, game *game.Game,
 			continue
 		}
 
-		workshop, err := game.Map().Get(ctx, string(item.Craft.Value.CraftSchema.Skill.Value))
+		workshop, err := game.Find(ctx, string(item.Craft.Value.CraftSchema.Skill.Value))
 		if err != nil {
 			slog.Error("fail to find workshop", slog.Any("error", err))
 			continue
@@ -84,7 +84,7 @@ func Recycle(ctx context.Context, character *generic.Character, game *game.Game,
 	}
 }
 
-func Deposit(ctx context.Context, character *generic.Character, items ...string) {
+func Deposit(ctx context.Context, character *generic.Character, game *game.Game, items ...string) {
 	if len(items) == 0 {
 		return
 	}
@@ -102,7 +102,7 @@ func Deposit(ctx context.Context, character *generic.Character, items ...string)
 	}
 }
 
-func DepositGold(ctx context.Context, character *generic.Character) {
+func DepositGold(ctx context.Context, character *generic.Character, game *game.Game) {
 	if err := character.Move(ctx, game.Bank); err != nil {
 		slog.Error("fail to move", slog.Any("error", err))
 		return
@@ -120,10 +120,10 @@ func CraftFromBank(ctx context.Context, character *generic.Character, game *game
 		return
 	}
 
-	bank := game.Bank().Items()
+	bank := game.BankItems(ctx)
 
 	for _, code := range items {
-		item, err := game.Item().Get(ctx, code)
+		item, err := game.GetItem(ctx, code)
 		if err != nil {
 			slog.Error("fail get item "+code, slog.Any("error", err))
 			continue
@@ -148,8 +148,7 @@ func CraftFromBank(ctx context.Context, character *generic.Character, game *game
 			continue
 		}
 
-		bankLocation, _ := game.Map().Get(ctx, "bank")
-		if err := character.Move(ctx, bankLocation); err != nil {
+		if err := character.Move(ctx, game.Bank); err != nil {
 			slog.Error("fail to move", slog.Any("error", err))
 			return
 		}
@@ -161,7 +160,7 @@ func CraftFromBank(ctx context.Context, character *generic.Character, game *game
 			}
 		}
 
-		workshop, err := game.Map().Get(ctx, string(item.Craft.Value.CraftSchema.Skill.Value))
+		workshop, err := game.Find(ctx, string(item.Craft.Value.CraftSchema.Skill.Value))
 		if err != nil {
 			slog.Error("fail to find workshop", slog.Any("error", err))
 			continue

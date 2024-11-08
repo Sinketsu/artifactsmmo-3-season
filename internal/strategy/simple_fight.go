@@ -46,14 +46,14 @@ func (s *simpleFight) Name() string {
 
 func (s *simpleFight) Do(ctx context.Context) error {
 	if s.character.InventoryFull() {
-		macro.Deposit(ctx, s.character, s.deposit...)
+		macro.Deposit(ctx, s.character, s.game, s.deposit...)
 
 		if s.depositGold {
-			macro.DepositGold(ctx, s.character)
+			macro.DepositGold(ctx, s.character, s.game)
 		}
 	}
 
-	monster, err := s.game.Map().Get(ctx, s.monster)
+	monster, err := s.game.Find(ctx, s.monster)
 	if err != nil {
 		return fmt.Errorf("get map: %w", err)
 	}

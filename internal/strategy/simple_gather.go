@@ -55,14 +55,14 @@ func (s *simpleGather) Do(ctx context.Context) error {
 	if s.character.InventoryFull() {
 		macro.CraftFromInventory(ctx, s.character, s.game, s.craft...)
 
-		macro.Deposit(ctx, s.character, s.deposit...)
+		macro.Deposit(ctx, s.character, s.game, s.deposit...)
 
 		if s.depositGold {
-			macro.DepositGold(ctx, s.character)
+			macro.DepositGold(ctx, s.character, s.game)
 		}
 	}
 
-	spot, err := s.game.Map().Get(ctx, s.spot)
+	spot, err := s.game.Find(ctx, s.spot)
 	if err != nil {
 		return fmt.Errorf("get map: %w", err)
 	}

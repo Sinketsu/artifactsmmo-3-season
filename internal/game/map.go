@@ -10,26 +10,20 @@ import (
 	ycloggingslog "github.com/Sinketsu/yc-logging-slog"
 )
 
-var (
-	// TODO add more common macros
-	GrandExchange = Point{Name: "grand_exchange"}
-	Bank          = Point{Name: "bank"}
-)
-
 type Point struct {
 	X, Y int
 	Name string
 }
 
-type maps struct {
+type mapService struct {
 	client *api.Client
 	logger *slog.Logger
 
 	cache map[string]Point
 }
 
-func newMaps(client *api.Client) *maps {
-	m := &maps{
+func newMapService(client *api.Client) *mapService {
+	m := &mapService{
 		client: client,
 		logger: slog.Default().With(ycloggingslog.Stream, "game").With("service", "map"),
 
@@ -40,7 +34,7 @@ func newMaps(client *api.Client) *maps {
 	return m
 }
 
-func (s *maps) init() {
+func (s *mapService) init() {
 	page := 1
 	for {
 		apiRequestCount.Inc("maps")
@@ -63,13 +57,6 @@ func (s *maps) init() {
 				Y:    m.Y,
 				Name: m.Content.MapContentSchema.Code,
 			}
-
-			switch m.Content.MapContentSchema.Code {
-			case GrandExchange.Name:
-				GrandExchange.X, GrandExchange.Y = m.X, m.Y
-			case Bank.Name:
-				Bank.X, Bank.Y = m.X, m.Y
-			}
 		}
 
 		if page >= resp.Pages.Value.Int {
@@ -79,7 +66,7 @@ func (s *maps) init() {
 	}
 }
 
-func (s *maps) Get(ctx context.Context, code string) (Point, error) {
+func (s *mapService) get(ctx context.Context, code string) (Point, error) {
 	v, ok := s.cache[code]
 	if !ok {
 		return Point{}, fmt.Errorf("not found '%s' on map", code)

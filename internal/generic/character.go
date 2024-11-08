@@ -32,13 +32,15 @@ func (c *Character) syncState(p unsafe.Pointer) {
 
 	characterLevel.Set(int64(c.state.Level), c.name)
 
-	skillLevel.Set(int64(c.state.AlchemyLevel), c.name, "alchemy")
-	skillLevel.Set(int64(c.state.MiningLevel), c.name, "mining")
-	skillLevel.Set(int64(c.state.WoodcuttingLevel), c.name, "woodcutting")
-	skillLevel.Set(int64(c.state.FishingLevel), c.name, "fishing")
-	skillLevel.Set(int64(c.state.CookingLevel), c.name, "cooking")
-	skillLevel.Set(int64(c.state.GearcraftingLevel), c.name, "gearcrafting")
-	skillLevel.Set(int64(c.state.JewelrycraftingLevel), c.name, "jewelrycrafting")
+	skillLevel.Set(int64(c.state.AlchemyLevel), c.name, string(oas.CraftSchemaSkillAlchemy))
+	skillLevel.Set(int64(c.state.MiningLevel), c.name, string(oas.CraftSchemaSkillMining))
+	skillLevel.Set(int64(c.state.WoodcuttingLevel), c.name, string(oas.CraftSchemaSkillWoodcutting))
+	skillLevel.Set(int64(c.state.FishingLevel), c.name, string(oas.ResourceSchemaSkillFishing))
+	skillLevel.Set(int64(c.state.CookingLevel), c.name, string(oas.CraftSchemaSkillCooking))
+	skillLevel.Set(int64(c.state.GearcraftingLevel), c.name, string(oas.CraftSchemaSkillGearcrafting))
+	skillLevel.Set(int64(c.state.JewelrycraftingLevel), c.name, string(oas.CraftSchemaSkillJewelrycrafting))
+
+	goldCount.Set(int64(c.state.Gold), c.name)
 }
 
 func (c *Character) InventorySpace() (freeSpace int, freeSlots int) {

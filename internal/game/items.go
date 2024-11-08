@@ -10,15 +10,15 @@ import (
 	ycloggingslog "github.com/Sinketsu/yc-logging-slog"
 )
 
-type items struct {
+type itemService struct {
 	client *api.Client
 	logger *slog.Logger
 
 	cache map[string]oas.ItemSchema
 }
 
-func newItems(client *api.Client) *items {
-	s := &items{
+func newItemService(client *api.Client) *itemService {
+	s := &itemService{
 		client: client,
 		logger: slog.Default().With(ycloggingslog.Stream, "game").With("service", "items"),
 
@@ -29,7 +29,7 @@ func newItems(client *api.Client) *items {
 	return s
 }
 
-func (s *items) init() {
+func (s *itemService) init() {
 	page := 1
 	for {
 		apiRequestCount.Inc("items")
@@ -53,7 +53,7 @@ func (s *items) init() {
 	}
 }
 
-func (s *items) Get(ctx context.Context, code string) (oas.ItemSchema, error) {
+func (s *itemService) get(ctx context.Context, code string) (oas.ItemSchema, error) {
 	v, ok := s.cache[code]
 	if !ok {
 		return oas.ItemSchema{}, fmt.Errorf("not found '%s' item", code)
