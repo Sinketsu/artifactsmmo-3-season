@@ -31,7 +31,7 @@ func (s *simpleFight) With(monster string) *simpleFight {
 }
 
 func (s *simpleFight) Deposit(items ...string) *simpleFight {
-	s.deposit = items
+	s.deposit = append(s.deposit, items...)
 	return s
 }
 
@@ -65,15 +65,15 @@ func (s *simpleFight) Do(ctx context.Context) error {
 		return fmt.Errorf("move: %w", err)
 	}
 
-	_, err = s.character.Fight(ctx)
-	if err != nil {
-		return fmt.Errorf("fight: %w", err)
-	}
-
 	if s.character.HealthPercent() < 60 {
 		if err := s.character.Rest(ctx); err != nil {
 			return fmt.Errorf("rest: %w", err)
 		}
+	}
+
+	_, err = s.character.Fight(ctx)
+	if err != nil {
+		return fmt.Errorf("fight: %w", err)
 	}
 
 	return nil

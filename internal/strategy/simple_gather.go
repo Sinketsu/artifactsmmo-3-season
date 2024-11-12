@@ -32,13 +32,13 @@ func (s *simpleGather) Spot(spot string) *simpleGather {
 }
 
 func (s *simpleGather) Craft(items ...string) *simpleGather {
-	s.craft = items
+	s.craft = append(s.craft, items...)
 	s.deposit = append(s.deposit, items...)
 	return s
 }
 
 func (s *simpleGather) Deposit(items ...string) *simpleGather {
-	s.deposit = items
+	s.deposit = append(s.deposit, items...)
 	return s
 }
 

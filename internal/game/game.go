@@ -42,10 +42,18 @@ func (g *Game) GetItem(ctx context.Context, code string) (oas.ItemSchema, error)
 	return g.items.get(ctx, code)
 }
 
-func (g *Game) BankItems(ctx context.Context) map[string]int {
-	return g.bank.Items(ctx)
+func (g *Game) BankItems() map[string]int {
+	return g.bank.Items()
+}
+
+func (g *Game) SyncBank() {
+	g.bank.sync()
 }
 
 func (g *Game) GetEvent(code string) (Point, error) {
 	return g.events.get(code)
+}
+
+func (g *Game) GetAchievment(name string) achievment {
+	return g.achievments.get(name)
 }

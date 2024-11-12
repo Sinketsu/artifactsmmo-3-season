@@ -1,10 +1,10 @@
 module github.com/Sinketsu/artifactsmmo-3-season
 
-go 1.22.3
+go 1.22.7
 
 require (
 	github.com/Sinketsu/yc-logging-slog v0.0.5-dev
-	github.com/Sinketsu/yc-monitoring-go v0.0.2-dev
+	github.com/Sinketsu/yc-monitoring-go v0.0.4-dev
 	github.com/go-faster/errors v0.7.1
 	github.com/go-faster/jx v1.1.0
 	github.com/ogen-go/ogen v1.6.0

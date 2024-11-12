@@ -4,6 +4,7 @@ import (
 	"context"
 	"log/slog"
 	"math"
+	"slices"
 
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/game"
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/generic"
@@ -24,7 +25,7 @@ func CraftFromInventory(ctx context.Context, character *generic.Character, game 
 
 		q := math.MaxInt64
 		for _, res := range item.Craft.Value.CraftSchema.Items {
-			q = min(q, character.Inventory()[code]/res.Quantity)
+			q = min(q, character.Inventory()[res.Code]/res.Quantity)
 		}
 
 		if q == 0 {
@@ -67,6 +68,11 @@ func Recycle(ctx context.Context, character *generic.Character, game *game.Game,
 			continue
 		}
 
+		if item.Subtype == "food" || item.Subtype == "potion" {
+			// these types are not recyclable
+			continue
+		}
+
 		workshop, err := game.Find(ctx, string(item.Craft.Value.CraftSchema.Skill.Value))
 		if err != nil {
 			slog.Error("fail to find workshop", slog.Any("error", err))
@@ -94,11 +100,23 @@ func Deposit(ctx context.Context, character *generic.Character, game *game.Game,
 		return
 	}
 
+	needSync := false
+	defer func() {
+		if needSync {
+			game.SyncBank()
+		}
+	}()
+
 	for code, q := range character.Inventory() {
+		if !slices.Contains(items, code) {
+			continue
+		}
+
 		if err := character.Deposit(ctx, code, q); err != nil {
 			slog.Error("fail to deposit item "+code, slog.Any("error", err))
 			continue
 		}
+		needSync = true
 	}
 }
 
@@ -108,10 +126,18 @@ func DepositGold(ctx context.Context, character *generic.Character, game *game.G
 		return
 	}
 
+	needSync := false
+	defer func() {
+		if needSync {
+			game.SyncBank()
+		}
+	}()
+
 	if q := character.Gold(); q > 0 {
 		if err := character.DepositGold(ctx, q); err != nil {
 			slog.Error("fail to deposit gold", slog.Any("error", err))
 		}
+		needSync = true
 	}
 }
 
@@ -120,7 +146,13 @@ func CraftFromBank(ctx context.Context, character *generic.Character, game *game
 		return
 	}
 
-	bank := game.BankItems(ctx)
+	bank := game.BankItems()
+	needSync := false
+	defer func() {
+		if needSync {
+			game.SyncBank()
+		}
+	}()
 
 	for _, code := range items {
 		item, err := game.GetItem(ctx, code)
@@ -137,7 +169,7 @@ func CraftFromBank(ctx context.Context, character *generic.Character, game *game
 		q := math.MaxInt64
 		resourcesForOneCraft := 0
 		for _, res := range item.Craft.Value.CraftSchema.Items {
-			q = min(q, bank[code]/res.Quantity)
+			q = min(q, bank[res.Code]/res.Quantity)
 			resourcesForOneCraft += res.Quantity
 		}
 
@@ -152,6 +184,7 @@ func CraftFromBank(ctx context.Context, character *generic.Character, game *game
 			slog.Error("fail to move", slog.Any("error", err))
 			return
 		}
+		needSync = true
 
 		for _, res := range item.Craft.Value.CraftSchema.Items {
 			if err := character.Withdraw(ctx, res.Code, res.Quantity*q); err != nil {

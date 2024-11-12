@@ -1,7 +1,7 @@
 github.com/Sinketsu/yc-logging-slog v0.0.5-dev h1:OY2+60RQRoXBVS3sLD1bOcUBWJfdJDVd3edrVXFJ/CI=
 github.com/Sinketsu/yc-logging-slog v0.0.5-dev/go.mod h1:JZev7VVaUswlgbPy8NwI37rK9gvvkS9ZYZFCKHTL+9g=
-github.com/Sinketsu/yc-monitoring-go v0.0.2-dev h1:4BspUL1DK4JnXpvlNwFX4Wxeup0SbV9pK1bURxloJtM=
-github.com/Sinketsu/yc-monitoring-go v0.0.2-dev/go.mod h1:+axwPhdWbLulYwojwcCE1XwERhvIe4qKAqK3adOg+eQ=
+github.com/Sinketsu/yc-monitoring-go v0.0.4-dev h1:i9nIIlR2SNZUzDgxleI2nvBtLBUcSziPhV6KBivkG1M=
+github.com/Sinketsu/yc-monitoring-go v0.0.4-dev/go.mod h1:+axwPhdWbLulYwojwcCE1XwERhvIe4qKAqK3adOg+eQ=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dlclark/regexp2 v1.11.4 h1:rPYF9/LECdNymJufQKmri9gV604RvvABwgOA8un7yAo=

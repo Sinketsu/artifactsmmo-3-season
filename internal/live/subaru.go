@@ -12,28 +12,14 @@ const (
 func (c *liveCharacter) subaruStrategy() Strategy {
 	items := []string{}
 
-	// cooking
-	if c.character.Skills()[string(oas.CraftSchemaSkillCooking)] < 10 {
-		items = append(items, "cooked_chicken", "cooked_gudgeon")
-
-		if c.character.Skills()[string(oas.CraftSchemaSkillCooking)] >= 5 {
-			items = append(items, "fried_eggs")
-		}
-	}
-
-	// weaponcrafting
-	if c.character.Skills()[string(oas.CraftSchemaSkillWeaponcrafting)] < 10 {
-		items = append(items, "copper_dagger")
-	}
-
-	// gearcrafting
-	if c.character.Skills()[string(oas.CraftSchemaSkillGearcrafting)] < 10 {
-		items = append(items, "copper_helmet", "wooden_shield")
-	}
-
 	// jewerlycrafting
 	if c.character.Skills()[string(oas.CraftSchemaSkillJewelrycrafting)] < 10 {
-		items = append(items, "copper_ring")
+		items = append(items, "copper_ring", "life_amulet")
+	}
+
+	// cooking
+	if c.character.Skills()[string(oas.CraftSchemaSkillCooking)] < 20 {
+		items = append(items, "cheese")
 	}
 
 	return strategy.SimpleCraft(c.character, c.game).Items(items...)

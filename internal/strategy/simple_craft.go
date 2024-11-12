@@ -26,7 +26,7 @@ func SimpleCraft(character *generic.Character, game *game.Game) *simpleCraft {
 }
 
 func (s *simpleCraft) Items(items ...string) *simpleCraft {
-	s.items = items
+	s.items = append(s.items, items...)
 	return s
 }
 

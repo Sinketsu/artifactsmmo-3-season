@@ -30,11 +30,12 @@ func newMapService(client *api.Client) *mapService {
 		cache: make(map[string]Point),
 	}
 
-	m.init()
+	m.sync()
+
 	return m
 }
 
-func (s *mapService) init() {
+func (s *mapService) sync() {
 	page := 1
 	for {
 		apiRequestCount.Inc("maps")

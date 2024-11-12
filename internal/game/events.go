@@ -17,7 +17,7 @@ type eventService struct {
 	logger *slog.Logger
 
 	events []oas.ActiveEventSchema
-	mu     sync.Mutex
+	mu     sync.Mutex // protects events
 }
 
 func newEventService(client *api.Client) *eventService {
@@ -26,23 +26,29 @@ func newEventService(client *api.Client) *eventService {
 		logger: slog.Default().With(ycloggingslog.Stream, "game").With("service", "events"),
 	}
 
-	s.update()
+	s.sync()
 	go s.update()
 
 	return s
 }
 
+func (s *eventService) sync() {
+	resp, err := s.client.GetAllActiveEventsEventsActiveGet(context.Background(), oas.GetAllActiveEventsEventsActiveGetParams{
+		Size: oas.NewOptInt(50), // assume that active events count will be < 50 always (now limit is 7)
+	})
+	if err != nil {
+		slog.With("error", err).Error("fail to list events")
+		return
+	}
+
+	s.mu.Lock()
+	s.events = resp.Data
+	s.mu.Unlock()
+}
+
 func (s *eventService) update() {
 	for range time.Tick(30 * time.Second) {
-		resp, err := s.client.GetAllActiveEventsEventsActiveGet(context.Background(), oas.GetAllActiveEventsEventsActiveGetParams{})
-		if err != nil {
-			slog.With("error", err).Error("fail to list events")
-			continue
-		}
-
-		s.mu.Lock()
-		s.events = resp.Data
-		s.mu.Unlock()
+		s.sync()
 	}
 }
 

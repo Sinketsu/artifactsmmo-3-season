@@ -25,11 +25,12 @@ func newItemService(client *api.Client) *itemService {
 		cache: make(map[string]oas.ItemSchema),
 	}
 
-	s.init()
+	s.sync()
+
 	return s
 }
 
-func (s *itemService) init() {
+func (s *itemService) sync() {
 	page := 1
 	for {
 		apiRequestCount.Inc("items")
