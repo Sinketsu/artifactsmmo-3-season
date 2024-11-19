@@ -6,13 +6,14 @@ import (
 	"math"
 	"slices"
 
+	"github.com/Sinketsu/artifactsmmo-3-season/gen/oas"
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/game"
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/generic"
 )
 
 func CraftFromInventory(ctx context.Context, character *generic.Character, game *game.Game, items ...string) {
 	for _, code := range items {
-		item, err := game.GetItem(ctx, code)
+		item, err := game.GetItem(code)
 		if err != nil {
 			slog.Error("fail get item "+code, slog.Any("error", err))
 			continue
@@ -32,7 +33,7 @@ func CraftFromInventory(ctx context.Context, character *generic.Character, game 
 			continue
 		}
 
-		workshop, err := game.Find(ctx, string(item.Craft.Value.CraftSchema.Skill.Value))
+		workshop, err := game.Find(string(item.Craft.Value.CraftSchema.Skill.Value), character.Location())
 		if err != nil {
 			slog.Error("fail to find workshop", slog.Any("error", err))
 			continue
@@ -57,23 +58,20 @@ func Recycle(ctx context.Context, character *generic.Character, game *game.Game,
 			continue
 		}
 
-		item, err := game.GetItem(ctx, code)
+		item, err := game.GetItem(code)
 		if err != nil {
 			slog.Error("fail get item "+code, slog.Any("error", err))
 			continue
 		}
 
-		if !item.Craft.IsSet() {
-			slog.Warn("item " + code + " is not recyclable...")
-			continue
-		}
-
-		if item.Subtype == "food" || item.Subtype == "potion" {
+		if !item.Craft.IsSet() ||
+			item.Type == string(oas.GetAllItemsItemsGetTypeConsumable) ||
+			item.Type == string(oas.GetAllItemsItemsGetTypeUtility) {
 			// these types are not recyclable
 			continue
 		}
 
-		workshop, err := game.Find(ctx, string(item.Craft.Value.CraftSchema.Skill.Value))
+		workshop, err := game.Find(string(item.Craft.Value.CraftSchema.Skill.Value), character.Location())
 		if err != nil {
 			slog.Error("fail to find workshop", slog.Any("error", err))
 			continue
@@ -95,7 +93,7 @@ func Deposit(ctx context.Context, character *generic.Character, game *game.Game,
 		return
 	}
 
-	if err := character.Move(ctx, game.Bank); err != nil {
+	if err := character.Move(ctx, game.BankLocation(character.Location())); err != nil {
 		slog.Error("fail to move", slog.Any("error", err))
 		return
 	}
@@ -121,7 +119,7 @@ func Deposit(ctx context.Context, character *generic.Character, game *game.Game,
 }
 
 func DepositGold(ctx context.Context, character *generic.Character, game *game.Game) {
-	if err := character.Move(ctx, game.Bank); err != nil {
+	if err := character.Move(ctx, game.BankLocation(character.Location())); err != nil {
 		slog.Error("fail to move", slog.Any("error", err))
 		return
 	}
@@ -155,7 +153,7 @@ func CraftFromBank(ctx context.Context, character *generic.Character, game *game
 	}()
 
 	for _, code := range items {
-		item, err := game.GetItem(ctx, code)
+		item, err := game.GetItem(code)
 		if err != nil {
 			slog.Error("fail get item "+code, slog.Any("error", err))
 			continue
@@ -180,7 +178,7 @@ func CraftFromBank(ctx context.Context, character *generic.Character, game *game
 			continue
 		}
 
-		if err := character.Move(ctx, game.Bank); err != nil {
+		if err := character.Move(ctx, game.BankLocation(character.Location())); err != nil {
 			slog.Error("fail to move", slog.Any("error", err))
 			return
 		}
@@ -193,7 +191,7 @@ func CraftFromBank(ctx context.Context, character *generic.Character, game *game
 			}
 		}
 
-		workshop, err := game.Find(ctx, string(item.Craft.Value.CraftSchema.Skill.Value))
+		workshop, err := game.Find(string(item.Craft.Value.CraftSchema.Skill.Value), character.Location())
 		if err != nil {
 			slog.Error("fail to find workshop", slog.Any("error", err))
 			continue
@@ -207,5 +205,41 @@ func CraftFromBank(ctx context.Context, character *generic.Character, game *game
 		if _, err := character.Craft(ctx, code, q); err != nil {
 			slog.Error("fail to craft", slog.Any("error", err))
 		}
+	}
+}
+
+func AcceptItemTask(ctx context.Context, character *generic.Character, game *game.Game) {
+	if err := character.Move(ctx, game.TaskMasterItemsLocation(character.Location())); err != nil {
+		slog.Error("fail to move", slog.Any("error", err))
+		return
+	}
+
+	if _, err := character.AcceptNewTask(ctx); err != nil {
+		slog.Error("fail to accept new task", slog.Any("error", err))
+		return
+	}
+}
+
+func TradeItemTask(ctx context.Context, character *generic.Character, game *game.Game, code string, quantity int) {
+	if err := character.Move(ctx, game.TaskMasterItemsLocation(character.Location())); err != nil {
+		slog.Error("fail to move", slog.Any("error", err))
+		return
+	}
+
+	if err := character.TaskTrade(ctx, code, quantity); err != nil {
+		slog.Error("fail to trade task", slog.Any("error", err))
+		return
+	}
+}
+
+func CompleteTask(ctx context.Context, character *generic.Character, game *game.Game) {
+	if err := character.Move(ctx, game.TaskMasterItemsLocation(character.Location())); err != nil {
+		slog.Error("fail to move", slog.Any("error", err))
+		return
+	}
+
+	if _, err := character.CompleteTask(ctx); err != nil {
+		slog.Error("fail to complete task", slog.Any("error", err))
+		return
 	}
 }

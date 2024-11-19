@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"time"
 
 	"github.com/Sinketsu/artifactsmmo-3-season/gen/oas"
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/api"
@@ -25,7 +26,9 @@ func newItemService(client *api.Client) *itemService {
 		cache: make(map[string]oas.ItemSchema),
 	}
 
+	start := time.Now()
 	s.sync()
+	s.logger.Info("items sync done: " + time.Since(start).String())
 
 	return s
 }
@@ -39,7 +42,7 @@ func (s *itemService) sync() {
 			Page: oas.NewOptInt(page),
 		})
 		if err != nil {
-			s.logger.With("error", err).Error("fail get all maps")
+			s.logger.With("error", err).Error("fail get all items")
 			continue
 		}
 
@@ -54,7 +57,7 @@ func (s *itemService) sync() {
 	}
 }
 
-func (s *itemService) get(ctx context.Context, code string) (oas.ItemSchema, error) {
+func (s *itemService) get(code string) (oas.ItemSchema, error) {
 	v, ok := s.cache[code]
 	if !ok {
 		return oas.ItemSchema{}, fmt.Errorf("not found '%s' item", code)

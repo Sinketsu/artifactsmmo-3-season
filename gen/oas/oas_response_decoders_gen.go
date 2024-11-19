@@ -1394,6 +1394,9 @@ func decodeActionUnequipItemMyNameActionUnequipPostResponse(resp *http.Response)
 	case 478:
 		// Code 478.
 		return &ActionUnequipItemMyNameActionUnequipPostCode478{}, nil
+	case 483:
+		// Code 483.
+		return &ActionUnequipItemMyNameActionUnequipPostCode483{}, nil
 	case 486:
 		// Code 486.
 		return &ActionUnequipItemMyNameActionUnequipPostCode486{}, nil

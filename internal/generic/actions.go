@@ -27,6 +27,7 @@ func (c *Character) Move(ctx context.Context, to game.Point) error {
 	switch v := resp.(type) {
 	case *oas.CharacterMovementResponseSchema:
 		c.syncState(unsafe.Pointer(&v.Data.Character))
+		c.point = to
 		if to.Name != "" {
 			c.logger.Debug(fmt.Sprintf("go to: %s", to.Name))
 		} else {
@@ -41,6 +42,7 @@ func (c *Character) Move(ctx context.Context, to game.Point) error {
 		return fmt.Errorf("action is already in progress by your character")
 	case *oas.ActionMoveMyNameActionMovePostCode490:
 		// character already at destination
+		c.point = to
 		return nil
 	case *oas.ActionMoveMyNameActionMovePostCode498:
 		return fmt.Errorf("character not found")
@@ -92,7 +94,12 @@ func (c *Character) Fight(ctx context.Context) (*oas.CharacterFightDataSchemaFig
 	switch v := resp.(type) {
 	case *oas.CharacterFightResponseSchema:
 		c.syncState(unsafe.Pointer(&v.Data.Character))
-		c.logger.Debug("fight", slog.Int("xp", v.Data.Fight.Xp), slog.Int("gold", v.Data.Fight.Gold), slog.Any("items", v.Data.Fight.Drops))
+
+		if c.point.Name != "" {
+			c.logger.Debug("fight: "+c.point.Name, slog.Int("xp", v.Data.Fight.Xp), slog.Int("gold", v.Data.Fight.Gold), slog.Any("items", v.Data.Fight.Drops))
+		} else {
+			c.logger.Debug(fmt.Sprintf("fight at (%d, %d)", c.state.X, c.state.Y), slog.Int("xp", v.Data.Fight.Xp), slog.Int("gold", v.Data.Fight.Gold), slog.Any("items", v.Data.Fight.Drops))
+		}
 
 		time.Sleep(time.Duration(v.Data.Cooldown.RemainingSeconds) * time.Second)
 		return &v.Data.Fight, nil
@@ -242,7 +249,12 @@ func (c *Character) Gather(ctx context.Context) (*oas.SkillDataSchemaDetails, er
 	switch v := resp.(type) {
 	case *oas.SkillResponseSchema:
 		c.syncState(unsafe.Pointer(&v.Data.Character))
-		c.logger.Debug("gather", slog.Int("xp", v.Data.Details.Xp), slog.Any("items", v.Data.Details.Items))
+
+		if c.point.Name != "" {
+			c.logger.Debug("gather: "+c.point.Name, slog.Int("xp", v.Data.Details.Xp), slog.Any("items", v.Data.Details.Items))
+		} else {
+			c.logger.Debug(fmt.Sprintf("gather at (%d, %d)", c.state.X, c.state.Y), slog.Int("xp", v.Data.Details.Xp), slog.Any("items", v.Data.Details.Items))
+		}
 
 		time.Sleep(time.Duration(v.Data.Cooldown.RemainingSeconds) * time.Second)
 		return &v.Data.Details, nil
@@ -345,4 +357,199 @@ func (c *Character) Recycle(ctx context.Context, code string, quantity int) (*oa
 	}
 
 	return nil, fmt.Errorf("unknown error: %v", resp)
+}
+
+func (c *Character) AcceptNewTask(ctx context.Context) (*oas.TaskDataSchemaTask, error) {
+	apiRequestCount.Inc()
+
+	resp, err := c.cli.ActionAcceptNewTaskMyNameActionTaskNewPost(ctx, oas.ActionAcceptNewTaskMyNameActionTaskNewPostParams{
+		Name: c.name,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	switch v := resp.(type) {
+	case *oas.TaskResponseSchema:
+		c.syncState(unsafe.Pointer(&v.Data.Character))
+		c.logger.Debug(fmt.Sprintf("accept new task: %d %s", v.Data.Task.Total, v.Data.Task.Code))
+
+		time.Sleep(time.Duration(v.Data.Cooldown.RemainingSeconds) * time.Second)
+		return &v.Data.Task, nil
+	case *oas.ActionAcceptNewTaskMyNameActionTaskNewPostCode486:
+		return nil, fmt.Errorf("action is already in progress by your character")
+	case *oas.ActionAcceptNewTaskMyNameActionTaskNewPostCode489:
+		return nil, fmt.Errorf("character already has a task")
+	case *oas.ActionAcceptNewTaskMyNameActionTaskNewPostCode498:
+		return nil, fmt.Errorf("character not found")
+	case *oas.ActionAcceptNewTaskMyNameActionTaskNewPostCode499:
+		return nil, fmt.Errorf("cooldown...")
+	case *oas.ActionAcceptNewTaskMyNameActionTaskNewPostCode598:
+		return nil, fmt.Errorf("task master not found on this map")
+	}
+
+	return nil, fmt.Errorf("unknown error: %v", resp)
+}
+
+func (c *Character) TaskTrade(ctx context.Context, code string, quantity int) error {
+	apiRequestCount.Inc()
+
+	resp, err := c.cli.ActionTaskTradeMyNameActionTaskTradePost(ctx, &oas.SimpleItemSchema{
+		Code:     code,
+		Quantity: quantity,
+	}, oas.ActionTaskTradeMyNameActionTaskTradePostParams{
+		Name: c.name,
+	})
+	if err != nil {
+		return err
+	}
+
+	switch v := resp.(type) {
+	case *oas.TaskTradeResponseSchema:
+		c.syncState(unsafe.Pointer(&v.Data.Character))
+		c.logger.Debug(fmt.Sprintf("trade: %d %s", quantity, code))
+
+		time.Sleep(time.Duration(v.Data.Cooldown.RemainingSeconds) * time.Second)
+		return nil
+	case *oas.ActionTaskTradeMyNameActionTaskTradePostCode474:
+		return fmt.Errorf("character does not have this task")
+	case *oas.ActionTaskTradeMyNameActionTaskTradePostCode475:
+		return fmt.Errorf("task already completed or too many items in trade")
+	case *oas.ActionTaskTradeMyNameActionTaskTradePostCode478:
+		return fmt.Errorf("missing item or insufficient quantity")
+	case *oas.ActionTaskTradeMyNameActionTaskTradePostCode486:
+		return fmt.Errorf("action is already in progress by your character")
+	case *oas.ActionTaskTradeMyNameActionTaskTradePostCode498:
+		return fmt.Errorf("character not found")
+	case *oas.ActionTaskTradeMyNameActionTaskTradePostCode499:
+		return fmt.Errorf("cooldown...")
+	case *oas.ActionTaskTradeMyNameActionTaskTradePostCode598:
+		return fmt.Errorf("task master not found on this map")
+	}
+
+	return fmt.Errorf("unknown error: %v", resp)
+}
+
+func (c *Character) CompleteTask(ctx context.Context) (*oas.TasksRewardDataSchemaRewards, error) {
+	apiRequestCount.Inc()
+
+	resp, err := c.cli.ActionCompleteTaskMyNameActionTaskCompletePost(ctx, oas.ActionCompleteTaskMyNameActionTaskCompletePostParams{
+		Name: c.name,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	switch v := resp.(type) {
+	case *oas.TasksRewardDataResponseSchema:
+		c.syncState(unsafe.Pointer(&v.Data.Character))
+		c.logger.Debug("complete task")
+
+		time.Sleep(time.Duration(v.Data.Cooldown.RemainingSeconds) * time.Second)
+		return &v.Data.Rewards, nil
+	case *oas.ActionCompleteTaskMyNameActionTaskCompletePostCode486:
+		return nil, fmt.Errorf("action is already in progress by your character")
+	case *oas.ActionCompleteTaskMyNameActionTaskCompletePostCode487:
+		return nil, fmt.Errorf("character has no task")
+	case *oas.ActionCompleteTaskMyNameActionTaskCompletePostCode488:
+		return nil, fmt.Errorf("character has not completed the tas")
+	case *oas.ActionCompleteTaskMyNameActionTaskCompletePostCode497:
+		return nil, fmt.Errorf("inventory is full")
+	case *oas.ActionCompleteTaskMyNameActionTaskCompletePostCode498:
+		return nil, fmt.Errorf("character not found")
+	case *oas.ActionCompleteTaskMyNameActionTaskCompletePostCode499:
+		return nil, fmt.Errorf("cooldown...")
+	case *oas.ActionCompleteTaskMyNameActionTaskCompletePostCode598:
+		return nil, fmt.Errorf("task master not found on this map")
+	}
+
+	return nil, fmt.Errorf("unknown error: %v", resp)
+}
+
+func (c *Character) Equip(ctx context.Context, item string, slot oas.EquipSchemaSlot, quantity int) error {
+	apiRequestCount.Inc()
+
+	resp, err := c.cli.ActionEquipItemMyNameActionEquipPost(ctx, &oas.EquipSchema{
+		Code:     item,
+		Slot:     slot,
+		Quantity: oas.NewOptInt(quantity),
+	}, oas.ActionEquipItemMyNameActionEquipPostParams{
+		Name: c.name,
+	})
+	if err != nil {
+		return err
+	}
+
+	switch v := resp.(type) {
+	case *oas.EquipmentResponseSchema:
+		c.syncState(unsafe.Pointer(&v.Data.Character))
+		c.logger.Debug(fmt.Sprintf("equip: %d %s", quantity, item))
+
+		time.Sleep(time.Duration(v.Data.Cooldown.RemainingSeconds) * time.Second)
+		return nil
+	case *oas.ActionEquipItemMyNameActionEquipPostNotFound:
+		return fmt.Errorf("item not found")
+	case *oas.ActionEquipItemMyNameActionEquipPostCode478:
+		return fmt.Errorf("missing item or insufficient quantity")
+	case *oas.ActionEquipItemMyNameActionEquipPostCode484:
+		return fmt.Errorf("character can't equip more than 100 utilitys in the same slot.")
+	case *oas.ActionEquipItemMyNameActionEquipPostCode485:
+		// item is already equipped
+		return nil
+	case *oas.ActionEquipItemMyNameActionEquipPostCode486:
+		return fmt.Errorf("action is already in progress by your character")
+	case *oas.ActionEquipItemMyNameActionEquipPostCode491:
+		return fmt.Errorf("slot is not empty")
+	case *oas.ActionEquipItemMyNameActionEquipPostCode496:
+		return fmt.Errorf("character level is insufficient")
+	case *oas.ActionEquipItemMyNameActionEquipPostCode497:
+		return fmt.Errorf("inventory is full")
+	case *oas.ActionEquipItemMyNameActionEquipPostCode498:
+		return fmt.Errorf("character not found")
+	case *oas.ActionEquipItemMyNameActionEquipPostCode499:
+		return fmt.Errorf("cooldown...")
+	}
+
+	return fmt.Errorf("unknown error: %v", resp)
+}
+
+func (c *Character) Unequip(ctx context.Context, slot oas.UnequipSchemaSlot, quantity int) error {
+	apiRequestCount.Inc()
+
+	resp, err := c.cli.ActionUnequipItemMyNameActionUnequipPost(ctx, &oas.UnequipSchema{
+		Slot:     slot,
+		Quantity: oas.NewOptInt(quantity),
+	}, oas.ActionUnequipItemMyNameActionUnequipPostParams{
+		Name: c.name,
+	})
+	if err != nil {
+		return err
+	}
+
+	switch v := resp.(type) {
+	case *oas.EquipmentResponseSchema:
+		c.syncState(unsafe.Pointer(&v.Data.Character))
+		c.logger.Debug(fmt.Sprintf("unequip: %d %s", quantity, v.Data.Item.Code))
+
+		time.Sleep(time.Duration(v.Data.Cooldown.RemainingSeconds) * time.Second)
+		return nil
+	case *oas.ActionUnequipItemMyNameActionUnequipPostNotFound:
+		return fmt.Errorf("item not found")
+	case *oas.ActionUnequipItemMyNameActionUnequipPostCode478:
+		return fmt.Errorf("missing item or insufficient quantity")
+	case *oas.ActionUnequipItemMyNameActionUnequipPostCode483:
+		return fmt.Errorf("character has no enough HP to unequip this item")
+	case *oas.ActionUnequipItemMyNameActionUnequipPostCode486:
+		return fmt.Errorf("action is already in progress by your character")
+	case *oas.ActionUnequipItemMyNameActionUnequipPostCode491:
+		return fmt.Errorf("slot is empty")
+	case *oas.ActionUnequipItemMyNameActionUnequipPostCode497:
+		return fmt.Errorf("inventory is full")
+	case *oas.ActionUnequipItemMyNameActionUnequipPostCode498:
+		return fmt.Errorf("character not found")
+	case *oas.ActionUnequipItemMyNameActionUnequipPostCode499:
+		return fmt.Errorf("cooldown...")
+	}
+
+	return fmt.Errorf("unknown error: %v", resp)
 }

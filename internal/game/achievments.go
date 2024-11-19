@@ -15,6 +15,7 @@ type achievment struct {
 	Name    string
 	Total   int
 	Current int
+	Points  int
 }
 
 type achievmentService struct {
@@ -34,7 +35,10 @@ func newAchievmentService(client *api.Client, account string) *achievmentService
 		achievments: make(map[string]achievment),
 	}
 
+	start := time.Now()
 	s.sync()
+	s.logger.Info("achievments sync done: " + time.Since(start).String())
+
 	go s.update()
 
 	return s
@@ -44,11 +48,22 @@ func (s *achievmentService) sync() {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
+	currentPoints := 0
+	totalPoints := 0
+
 	for _, a := range s.actualAchievments() {
 		s.achievments[a.Name] = a
 
 		achievmentsStatus.Set(float64(a.Current)/float64(a.Total), a.Name)
+
+		totalPoints += a.Points
+		if a.Current == a.Total {
+			currentPoints += a.Points
+		}
 	}
+
+	achievmentsPointsCurrent.Set(float64(currentPoints))
+	achievmentsPointsTotal.Set(float64(totalPoints))
 }
 
 func (s *achievmentService) update() {
@@ -91,6 +106,7 @@ func (s *achievmentService) actualAchievments() []achievment {
 					Name:    a.Name,
 					Total:   a.Total,
 					Current: a.Current,
+					Points:  a.Points,
 				})
 			}
 

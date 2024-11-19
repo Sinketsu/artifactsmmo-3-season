@@ -26,7 +26,10 @@ func newEventService(client *api.Client) *eventService {
 		logger: slog.Default().With(ycloggingslog.Stream, "game").With("service", "events"),
 	}
 
+	start := time.Now()
 	s.sync()
+	s.logger.Info("events sync done: " + time.Since(start).String())
+
 	go s.update()
 
 	return s

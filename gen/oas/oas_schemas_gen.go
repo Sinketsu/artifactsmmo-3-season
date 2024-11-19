@@ -1708,6 +1708,12 @@ type ActionUnequipItemMyNameActionUnequipPostCode478 struct{}
 func (*ActionUnequipItemMyNameActionUnequipPostCode478) actionUnequipItemMyNameActionUnequipPostRes() {
 }
 
+// ActionUnequipItemMyNameActionUnequipPostCode483 is response for ActionUnequipItemMyNameActionUnequipPost operation.
+type ActionUnequipItemMyNameActionUnequipPostCode483 struct{}
+
+func (*ActionUnequipItemMyNameActionUnequipPostCode483) actionUnequipItemMyNameActionUnequipPostRes() {
+}
+
 // ActionUnequipItemMyNameActionUnequipPostCode486 is response for ActionUnequipItemMyNameActionUnequipPost operation.
 type ActionUnequipItemMyNameActionUnequipPostCode486 struct{}
 
@@ -23513,7 +23519,6 @@ type GetAllCharactersLogsMyLogsGetNotFound struct{}
 
 func (*GetAllCharactersLogsMyLogsGetNotFound) getAllCharactersLogsMyLogsGetRes() {}
 
-// Skill to craft items.
 type GetAllItemsItemsGetCraftSkill string
 
 const (
@@ -23590,22 +23595,22 @@ func (s *GetAllItemsItemsGetCraftSkill) UnmarshalText(data []byte) error {
 	}
 }
 
-// Type of items.
 type GetAllItemsItemsGetType string
 
 const (
-	GetAllItemsItemsGetTypeUtility   GetAllItemsItemsGetType = "utility"
-	GetAllItemsItemsGetTypeBodyArmor GetAllItemsItemsGetType = "body_armor"
-	GetAllItemsItemsGetTypeWeapon    GetAllItemsItemsGetType = "weapon"
-	GetAllItemsItemsGetTypeResource  GetAllItemsItemsGetType = "resource"
-	GetAllItemsItemsGetTypeLegArmor  GetAllItemsItemsGetType = "leg_armor"
-	GetAllItemsItemsGetTypeHelmet    GetAllItemsItemsGetType = "helmet"
-	GetAllItemsItemsGetTypeBoots     GetAllItemsItemsGetType = "boots"
-	GetAllItemsItemsGetTypeShield    GetAllItemsItemsGetType = "shield"
-	GetAllItemsItemsGetTypeAmulet    GetAllItemsItemsGetType = "amulet"
-	GetAllItemsItemsGetTypeRing      GetAllItemsItemsGetType = "ring"
-	GetAllItemsItemsGetTypeArtifact  GetAllItemsItemsGetType = "artifact"
-	GetAllItemsItemsGetTypeCurrency  GetAllItemsItemsGetType = "currency"
+	GetAllItemsItemsGetTypeUtility    GetAllItemsItemsGetType = "utility"
+	GetAllItemsItemsGetTypeBodyArmor  GetAllItemsItemsGetType = "body_armor"
+	GetAllItemsItemsGetTypeWeapon     GetAllItemsItemsGetType = "weapon"
+	GetAllItemsItemsGetTypeResource   GetAllItemsItemsGetType = "resource"
+	GetAllItemsItemsGetTypeLegArmor   GetAllItemsItemsGetType = "leg_armor"
+	GetAllItemsItemsGetTypeHelmet     GetAllItemsItemsGetType = "helmet"
+	GetAllItemsItemsGetTypeBoots      GetAllItemsItemsGetType = "boots"
+	GetAllItemsItemsGetTypeShield     GetAllItemsItemsGetType = "shield"
+	GetAllItemsItemsGetTypeAmulet     GetAllItemsItemsGetType = "amulet"
+	GetAllItemsItemsGetTypeRing       GetAllItemsItemsGetType = "ring"
+	GetAllItemsItemsGetTypeArtifact   GetAllItemsItemsGetType = "artifact"
+	GetAllItemsItemsGetTypeCurrency   GetAllItemsItemsGetType = "currency"
+	GetAllItemsItemsGetTypeConsumable GetAllItemsItemsGetType = "consumable"
 )
 
 // AllValues returns all GetAllItemsItemsGetType values.
@@ -23623,6 +23628,7 @@ func (GetAllItemsItemsGetType) AllValues() []GetAllItemsItemsGetType {
 		GetAllItemsItemsGetTypeRing,
 		GetAllItemsItemsGetTypeArtifact,
 		GetAllItemsItemsGetTypeCurrency,
+		GetAllItemsItemsGetTypeConsumable,
 	}
 }
 
@@ -23652,6 +23658,8 @@ func (s GetAllItemsItemsGetType) MarshalText() ([]byte, error) {
 	case GetAllItemsItemsGetTypeArtifact:
 		return []byte(s), nil
 	case GetAllItemsItemsGetTypeCurrency:
+		return []byte(s), nil
+	case GetAllItemsItemsGetTypeConsumable:
 		return []byte(s), nil
 	default:
 		return nil, errors.Errorf("invalid value: %q", s)
@@ -23696,6 +23704,9 @@ func (s *GetAllItemsItemsGetType) UnmarshalText(data []byte) error {
 		return nil
 	case GetAllItemsItemsGetTypeCurrency:
 		*s = GetAllItemsItemsGetTypeCurrency
+		return nil
+	case GetAllItemsItemsGetTypeConsumable:
+		*s = GetAllItemsItemsGetTypeConsumable
 		return nil
 	default:
 		return errors.Errorf("invalid value: %q", data)

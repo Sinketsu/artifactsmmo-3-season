@@ -52,6 +52,8 @@ func Character(name string, client *api.Client, game *game.Game) *liveCharacter 
 }
 
 func (c *liveCharacter) Live(ctx context.Context) {
+	c.character.Init()
+
 	for {
 		select {
 		case <-ctx.Done():

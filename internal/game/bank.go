@@ -26,7 +26,10 @@ func newBankService(client *api.Client) *bankService {
 		logger: slog.Default().With(ycloggingslog.Stream, "game").With("service", "bank"),
 	}
 
+	start := time.Now()
 	s.sync()
+	s.logger.Info("bank sync done: " + time.Since(start).String())
+
 	go s.update()
 
 	return s
@@ -36,12 +39,9 @@ func (s *bankService) sync() {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	// TODO need ResetAll() on metrics
-	for item := range s.items {
-		bankItemCount.Reset(item)
-	}
-
 	s.items = s.actualItems()
+
+	bankItemCount.ResetAll()
 	for item, quantity := range s.items {
 		bankItemCount.Set(int64(quantity), item)
 	}

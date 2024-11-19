@@ -1,7 +1,6 @@
 package game
 
 import (
-	"context"
 	"os"
 
 	"github.com/Sinketsu/artifactsmmo-3-season/gen/oas"
@@ -11,35 +10,53 @@ import (
 type Game struct {
 	maps        *mapService
 	items       *itemService
+	resources   *resourceService
 	bank        *bankService
 	achievments *achievmentService
 	events      *eventService
-
-	Bank          Point
-	GrandExchange Point
+	intercom    *intercomService
 }
 
 func New(client *api.Client) *Game {
 	g := &Game{
 		maps:        newMapService(client),
 		items:       newItemService(client),
+		resources:   newResourceService(client),
 		bank:        newBankService(client),
 		achievments: newAchievmentService(client, os.Getenv("SERVER_ACCOUNT")),
 		events:      newEventService(client),
+		intercom:    newIntercomService(),
 	}
-
-	g.Bank, _ = g.Find(context.Background(), "bank")
-	g.GrandExchange, _ = g.Find(context.Background(), "grand_exchange")
 
 	return g
 }
 
-func (g *Game) Find(ctx context.Context, code string) (Point, error) {
-	return g.maps.get(ctx, code)
+func (g *Game) BankLocation(closestTo Point) Point {
+	location, _ := g.maps.get("bank", closestTo)
+	return location
 }
 
-func (g *Game) GetItem(ctx context.Context, code string) (oas.ItemSchema, error) {
-	return g.items.get(ctx, code)
+func (g *Game) GrandExchangeLocation(closestTo Point) Point {
+	location, _ := g.maps.get("grand_exchange", closestTo)
+	return location
+}
+
+func (g *Game) TaskMasterItemsLocation(closestTo Point) Point {
+	location, _ := g.maps.get("items", closestTo)
+	return location
+}
+
+func (g *Game) TaskMasterMonstersLocation(closestTo Point) Point {
+	location, _ := g.maps.get("monsters", closestTo)
+	return location
+}
+
+func (g *Game) Find(code string, closestTo Point) (Point, error) {
+	return g.maps.get(code, closestTo)
+}
+
+func (g *Game) GetItem(code string) (oas.ItemSchema, error) {
+	return g.items.get(code)
 }
 
 func (g *Game) BankItems() map[string]int {
@@ -56,4 +73,20 @@ func (g *Game) GetEvent(code string) (Point, error) {
 
 func (g *Game) GetAchievment(name string) achievment {
 	return g.achievments.get(name)
+}
+
+func (g *Game) GetResource(code string) (oas.ResourceSchema, error) {
+	return g.resources.get(code)
+}
+
+func (g *Game) IntercomSet(character string, name string) {
+	g.intercom.Set(character, name)
+}
+
+func (g *Game) IntercomUnSet(character string, name string) {
+	g.intercom.UnSet(character, name)
+}
+
+func (g *Game) IntercomGet(character string, name string) bool {
+	return g.intercom.Get(character, name)
 }

@@ -1174,6 +1174,12 @@ func encodeActionUnequipItemMyNameActionUnequipPostResponse(response ActionUnequ
 
 		return nil
 
+	case *ActionUnequipItemMyNameActionUnequipPostCode483:
+		w.WriteHeader(483)
+		span.SetStatus(codes.Error, http.StatusText(483))
+
+		return nil
+
 	case *ActionUnequipItemMyNameActionUnequipPostCode486:
 		w.WriteHeader(486)
 		span.SetStatus(codes.Error, http.StatusText(486))

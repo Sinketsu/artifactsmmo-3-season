@@ -7,8 +7,9 @@ const (
 )
 
 func (c *liveCharacter) fredericaStrategy() Strategy {
-	return strategy.SimpleFight(c.character, c.game).
-		With("cow").
-		Deposit("feather", "raw_chicken", "egg", "green_slimeball", "apple", "red_slimeball", "raw_beef", "milk_bucket", "cowhide").
+	fight := strategy.SimpleFight(c.character, c.game).
+		Deposit("raw_wolf_meat", "wolf_bone", "wolf_hair", "blue_slimeball", "apple", "raw_chicken", "egg", "feather").
 		DepositGold()
+
+	return fight.With("blue_slime")
 }

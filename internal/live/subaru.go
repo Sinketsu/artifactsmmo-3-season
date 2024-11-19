@@ -10,16 +10,30 @@ const (
 )
 
 func (c *liveCharacter) subaruStrategy() Strategy {
+	skills := c.character.Skills()
 	items := []string{}
 
-	// jewerlycrafting
-	if c.character.Skills()[string(oas.CraftSchemaSkillJewelrycrafting)] < 10 {
-		items = append(items, "copper_ring", "life_amulet")
+	needIron := false
+
+	if skills[string(oas.CraftSchemaSkillWeaponcrafting)] < 20 {
+		items = append(items, "iron_sword", "fire_bow")
+		needIron = true
 	}
 
-	// cooking
-	if c.character.Skills()[string(oas.CraftSchemaSkillCooking)] < 20 {
-		items = append(items, "cheese")
+	if skills[string(oas.CraftSchemaSkillGearcrafting)] < 20 {
+		items = append(items, "leather_armor", "iron_armor", "iron_helm")
+		needIron = true
+	}
+
+	if skills[string(oas.CraftSchemaSkillJewelrycrafting)] < 20 {
+		items = append(items, "iron_ring", "air_ring")
+		needIron = true
+	}
+
+	if needIron {
+		c.game.IntercomSet(c.character.Name(), "need_iron")
+	} else {
+		c.game.IntercomUnSet(c.character.Name(), "need_iron")
 	}
 
 	return strategy.SimpleCraft(c.character, c.game).Items(items...)

@@ -3,16 +3,19 @@ package generic
 import (
 	"context"
 	"log/slog"
+	"time"
 	"unsafe"
 
 	"github.com/Sinketsu/artifactsmmo-3-season/gen/oas"
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/api"
+	"github.com/Sinketsu/artifactsmmo-3-season/internal/game"
 	ycloggingslog "github.com/Sinketsu/yc-logging-slog"
 )
 
 type Character struct {
 	name  string
 	state oas.CharacterSchema
+	point game.Point
 
 	cli    *api.Client
 	logger *slog.Logger
@@ -26,12 +29,10 @@ func NewCharacter(name string, client *api.Client) *Character {
 		logger: slog.Default().With(ycloggingslog.Stream, name),
 	}
 
-	c.init()
-
 	return c
 }
 
-func (c *Character) init() {
+func (c *Character) Init() {
 	for {
 		resp, err := c.cli.GetCharacterCharactersNameGet(context.Background(), oas.GetCharacterCharactersNameGetParams{Name: c.name})
 		if err != nil {
@@ -42,6 +43,13 @@ func (c *Character) init() {
 		switch v := resp.(type) {
 		case *oas.CharacterResponseSchema:
 			c.syncState(unsafe.Pointer(&v.Data))
+			if t, ok := c.state.CooldownExpiration.Get(); ok {
+				if cooldown := time.Until(t); cooldown > 0 {
+					c.logger.Warn("cooldown at init: " + cooldown.String())
+					time.Sleep(cooldown)
+				}
+			}
+
 		default:
 			c.logger.Warn("fail to init character data: got unexpected response", "response", v)
 			continue
@@ -52,12 +60,6 @@ func (c *Character) init() {
 }
 
 func (c *Character) syncState(p unsafe.Pointer) {
-	for _, slot := range c.state.Inventory {
-		if slot.Code != "" {
-			itemCount.Reset(slot.Code)
-		}
-	}
-
 	// tricky hack, because `ogen` generates different models for Character state from different methods instead of reusing one. But fields are the same - so we can cast it
 	c.state = *(*oas.CharacterSchema)(p)
 
@@ -74,6 +76,7 @@ func (c *Character) syncState(p unsafe.Pointer) {
 
 	goldCount.Set(int64(c.state.Gold), c.name)
 
+	itemCount.ResetAll()
 	for _, slot := range c.state.Inventory {
 		if slot.Code != "" {
 			itemCount.Set(int64(slot.Quantity), c.name, slot.Code)
@@ -133,4 +136,62 @@ func (c *Character) Skills() map[string]int {
 		string(oas.CraftSchemaSkillMining):          c.state.MiningLevel,
 		string(oas.ResourceSchemaSkillFishing):      c.state.FishingLevel,
 	}
+}
+
+func (c *Character) Equiped() map[oas.EquipSchemaSlot]string {
+	return map[oas.EquipSchemaSlot]string{
+		oas.EquipSchemaSlotWeapon:    c.state.WeaponSlot,
+		oas.EquipSchemaSlotBodyArmor: c.state.BodyArmorSlot,
+		oas.EquipSchemaSlotLegArmor:  c.state.LegArmorSlot,
+		oas.EquipSchemaSlotShield:    c.state.ShieldSlot,
+		oas.EquipSchemaSlotHelmet:    c.state.HelmetSlot,
+		oas.EquipSchemaSlotBoots:     c.state.BootsSlot,
+		oas.EquipSchemaSlotRing1:     c.state.Ring1Slot,
+		oas.EquipSchemaSlotRing2:     c.state.Ring2Slot,
+		oas.EquipSchemaSlotAmulet:    c.state.AmuletSlot,
+		oas.EquipSchemaSlotArtifact1: c.state.Artifact1Slot,
+		oas.EquipSchemaSlotArtifact2: c.state.Artifact2Slot,
+		oas.EquipSchemaSlotArtifact3: c.state.Artifact3Slot,
+		oas.EquipSchemaSlotUtility1:  c.state.Utility1Slot,
+		oas.EquipSchemaSlotUtility2:  c.state.Utility2Slot,
+	}
+}
+
+func (c *Character) Location() game.Point {
+	return game.Point{
+		X: c.state.X,
+		Y: c.state.Y,
+	}
+}
+
+type Task struct {
+	Code    string
+	Current int
+	Total   int
+	Type    string
+}
+
+var (
+	NoTask = Task{}
+)
+
+func (c *Character) Task() Task {
+	if c.state.Task == "" {
+		return NoTask
+	}
+
+	return Task{
+		Code:    c.state.Task,
+		Current: c.state.TaskProgress,
+		Total:   c.state.TaskTotal,
+		Type:    c.state.TaskType,
+	}
+}
+
+func (c *Character) Log(msg string, args ...any) {
+	c.logger.Debug(msg, args...)
+}
+
+func (c *Character) Name() string {
+	return c.name
 }

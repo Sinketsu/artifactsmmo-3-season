@@ -53,7 +53,7 @@ func (s *simpleFight) Do(ctx context.Context) error {
 		}
 	}
 
-	monster, err := s.game.Find(ctx, s.monster)
+	monster, err := s.game.Find(s.monster, s.character.Location())
 	if err != nil {
 		return fmt.Errorf("get map: %w", err)
 	}

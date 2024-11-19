@@ -6902,6 +6902,8 @@ func (s GetAllItemsItemsGetType) Validate() error {
 		return nil
 	case "currency":
 		return nil
+	case "consumable":
+		return nil
 	default:
 		return errors.Errorf("invalid value: %v", s)
 	}
