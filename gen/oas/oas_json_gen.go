@@ -524,9 +524,15 @@ func (s *AccountDetails) encodeFields(e *jx.Encoder) {
 		s.Status.Encode(e)
 	}
 	{
-		if s.Badges.Set {
+		if s.Badges != nil {
 			e.FieldStart("badges")
-			s.Badges.Encode(e)
+			e.ArrStart()
+			for _, elem := range s.Badges {
+				if len(elem) != 0 {
+					e.Raw(elem)
+				}
+			}
+			e.ArrEnd()
 		}
 	}
 	{
@@ -600,8 +606,17 @@ func (s *AccountDetails) Decode(d *jx.Decoder) error {
 			}
 		case "badges":
 			if err := func() error {
-				s.Badges.Reset()
-				if err := s.Badges.Decode(d); err != nil {
+				s.Badges = make([]jx.Raw, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem jx.Raw
+					v, err := d.RawAppend(nil)
+					elem = jx.Raw(v)
+					if err != nil {
+						return err
+					}
+					s.Badges = append(s.Badges, elem)
+					return nil
+				}); err != nil {
 					return err
 				}
 				return nil
@@ -694,69 +709,6 @@ func (s *AccountDetails) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *AccountDetails) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode encodes AccountDetailsBadges as json.
-func (s AccountDetailsBadges) Encode(e *jx.Encoder) {
-	switch s.Type {
-	case AnyArrayAccountDetailsBadges:
-		e.ArrStart()
-		for _, elem := range s.AnyArray {
-			if len(elem) != 0 {
-				e.Raw(elem)
-			}
-		}
-		e.ArrEnd()
-	case NullAccountDetailsBadges:
-		_ = s.Null
-		e.Null()
-	}
-}
-
-// Decode decodes AccountDetailsBadges from json.
-func (s *AccountDetailsBadges) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode AccountDetailsBadges to nil")
-	}
-	// Sum type type_discriminator.
-	switch t := d.Next(); t {
-	case jx.Array:
-		s.AnyArray = make([]jx.Raw, 0)
-		if err := d.Arr(func(d *jx.Decoder) error {
-			var elem jx.Raw
-			v, err := d.RawAppend(nil)
-			elem = jx.Raw(v)
-			if err != nil {
-				return err
-			}
-			s.AnyArray = append(s.AnyArray, elem)
-			return nil
-		}); err != nil {
-			return err
-		}
-		s.Type = AnyArrayAccountDetailsBadges
-	case jx.Null:
-		if err := d.Null(); err != nil {
-			return err
-		}
-		s.Type = NullAccountDetailsBadges
-	default:
-		return errors.Errorf("unexpected json type %q", t)
-	}
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s AccountDetailsBadges) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *AccountDetailsBadges) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -2011,8 +1963,10 @@ func (s *AddAccountSchema) encodeFields(e *jx.Encoder) {
 		e.Str(s.Password)
 	}
 	{
-		e.FieldStart("email")
-		e.Str(s.Email)
+		if s.Email.Set {
+			e.FieldStart("email")
+			s.Email.Encode(e)
+		}
 	}
 }
 
@@ -2056,11 +2010,9 @@ func (s *AddAccountSchema) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"password\"")
 			}
 		case "email":
-			requiredBitSet[0] |= 1 << 2
 			if err := func() error {
-				v, err := d.Str()
-				s.Email = string(v)
-				if err != nil {
+				s.Email.Reset()
+				if err := s.Email.Decode(d); err != nil {
 					return err
 				}
 				return nil
@@ -2077,7 +2029,7 @@ func (s *AddAccountSchema) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000111,
+		0b00000011,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -2391,6 +2343,466 @@ func (s *AnnouncementSchema) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *AnnouncementSchema) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *BadgeConditionSchema) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *BadgeConditionSchema) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("code")
+		e.Str(s.Code)
+	}
+	{
+		e.FieldStart("quantity")
+		s.Quantity.Encode(e)
+	}
+}
+
+var jsonFieldsNameOfBadgeConditionSchema = [2]string{
+	0: "code",
+	1: "quantity",
+}
+
+// Decode decodes BadgeConditionSchema from json.
+func (s *BadgeConditionSchema) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode BadgeConditionSchema to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "code":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.Code = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"code\"")
+			}
+		case "quantity":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				if err := s.Quantity.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"quantity\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode BadgeConditionSchema")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000011,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfBadgeConditionSchema) {
+					name = jsonFieldsNameOfBadgeConditionSchema[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *BadgeConditionSchema) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *BadgeConditionSchema) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes BadgeConditionSchemaQuantity as json.
+func (s BadgeConditionSchemaQuantity) Encode(e *jx.Encoder) {
+	switch s.Type {
+	case IntBadgeConditionSchemaQuantity:
+		e.Int(s.Int)
+	case NullBadgeConditionSchemaQuantity:
+		_ = s.Null
+		e.Null()
+	}
+}
+
+// Decode decodes BadgeConditionSchemaQuantity from json.
+func (s *BadgeConditionSchemaQuantity) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode BadgeConditionSchemaQuantity to nil")
+	}
+	// Sum type type_discriminator.
+	switch t := d.Next(); t {
+	case jx.Null:
+		if err := d.Null(); err != nil {
+			return err
+		}
+		s.Type = NullBadgeConditionSchemaQuantity
+	case jx.Number:
+		v, err := d.Int()
+		s.Int = int(v)
+		if err != nil {
+			return err
+		}
+		s.Type = IntBadgeConditionSchemaQuantity
+	default:
+		return errors.Errorf("unexpected json type %q", t)
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s BadgeConditionSchemaQuantity) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *BadgeConditionSchemaQuantity) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *BadgeResponseSchema) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *BadgeResponseSchema) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("data")
+		s.Data.Encode(e)
+	}
+}
+
+var jsonFieldsNameOfBadgeResponseSchema = [1]string{
+	0: "data",
+}
+
+// Decode decodes BadgeResponseSchema from json.
+func (s *BadgeResponseSchema) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode BadgeResponseSchema to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "data":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				if err := s.Data.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"data\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode BadgeResponseSchema")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000001,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfBadgeResponseSchema) {
+					name = jsonFieldsNameOfBadgeResponseSchema[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *BadgeResponseSchema) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *BadgeResponseSchema) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *BadgeSchema) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *BadgeSchema) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("code")
+		e.Str(s.Code)
+	}
+	{
+		if s.Season.Set {
+			e.FieldStart("season")
+			s.Season.Encode(e)
+		}
+	}
+	{
+		e.FieldStart("description")
+		e.Str(s.Description)
+	}
+	{
+		e.FieldStart("conditions")
+		e.ArrStart()
+		for _, elem := range s.Conditions {
+			elem.Encode(e)
+		}
+		e.ArrEnd()
+	}
+}
+
+var jsonFieldsNameOfBadgeSchema = [4]string{
+	0: "code",
+	1: "season",
+	2: "description",
+	3: "conditions",
+}
+
+// Decode decodes BadgeSchema from json.
+func (s *BadgeSchema) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode BadgeSchema to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "code":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.Code = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"code\"")
+			}
+		case "season":
+			if err := func() error {
+				s.Season.Reset()
+				if err := s.Season.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"season\"")
+			}
+		case "description":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.Description = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"description\"")
+			}
+		case "conditions":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				s.Conditions = make([]BadgeConditionSchema, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem BadgeConditionSchema
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.Conditions = append(s.Conditions, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"conditions\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode BadgeSchema")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00001101,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfBadgeSchema) {
+					name = jsonFieldsNameOfBadgeSchema[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *BadgeSchema) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *BadgeSchema) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes BadgeSchemaSeason as json.
+func (s BadgeSchemaSeason) Encode(e *jx.Encoder) {
+	switch s.Type {
+	case IntBadgeSchemaSeason:
+		e.Int(s.Int)
+	case NullBadgeSchemaSeason:
+		_ = s.Null
+		e.Null()
+	}
+}
+
+// Decode decodes BadgeSchemaSeason from json.
+func (s *BadgeSchemaSeason) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode BadgeSchemaSeason to nil")
+	}
+	// Sum type type_discriminator.
+	switch t := d.Next(); t {
+	case jx.Null:
+		if err := d.Null(); err != nil {
+			return err
+		}
+		s.Type = NullBadgeSchemaSeason
+	case jx.Number:
+		v, err := d.Int()
+		s.Int = int(v)
+		if err != nil {
+			return err
+		}
+		s.Type = IntBadgeSchemaSeason
+	default:
+		return errors.Errorf("unexpected json type %q", t)
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s BadgeSchemaSeason) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *BadgeSchemaSeason) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -4241,6 +4653,8 @@ func (s *BankExtensionTransactionSchemaCooldownReason) Decode(d *jx.Decoder) err
 		*s = BankExtensionTransactionSchemaCooldownReasonUnequip
 	case BankExtensionTransactionSchemaCooldownReasonTask:
 		*s = BankExtensionTransactionSchemaCooldownReasonTask
+	case BankExtensionTransactionSchemaCooldownReasonChristmasExchange:
+		*s = BankExtensionTransactionSchemaCooldownReasonChristmasExchange
 	case BankExtensionTransactionSchemaCooldownReasonRecycling:
 		*s = BankExtensionTransactionSchemaCooldownReasonRecycling
 	case BankExtensionTransactionSchemaCooldownReasonRest:
@@ -6307,6 +6721,8 @@ func (s *BankGoldTransactionSchemaCooldownReason) Decode(d *jx.Decoder) error {
 		*s = BankGoldTransactionSchemaCooldownReasonUnequip
 	case BankGoldTransactionSchemaCooldownReasonTask:
 		*s = BankGoldTransactionSchemaCooldownReasonTask
+	case BankGoldTransactionSchemaCooldownReasonChristmasExchange:
+		*s = BankGoldTransactionSchemaCooldownReasonChristmasExchange
 	case BankGoldTransactionSchemaCooldownReasonRecycling:
 		*s = BankGoldTransactionSchemaCooldownReasonRecycling
 	case BankGoldTransactionSchemaCooldownReasonRest:
@@ -8208,6 +8624,8 @@ func (s *BankItemTransactionSchemaCooldownReason) Decode(d *jx.Decoder) error {
 		*s = BankItemTransactionSchemaCooldownReasonUnequip
 	case BankItemTransactionSchemaCooldownReasonTask:
 		*s = BankItemTransactionSchemaCooldownReasonTask
+	case BankItemTransactionSchemaCooldownReasonChristmasExchange:
+		*s = BankItemTransactionSchemaCooldownReasonChristmasExchange
 	case BankItemTransactionSchemaCooldownReasonRecycling:
 		*s = BankItemTransactionSchemaCooldownReasonRecycling
 	case BankItemTransactionSchemaCooldownReasonRest:
@@ -10633,6 +11051,8 @@ func (s *CharacterFightDataSchemaCooldownReason) Decode(d *jx.Decoder) error {
 		*s = CharacterFightDataSchemaCooldownReasonUnequip
 	case CharacterFightDataSchemaCooldownReasonTask:
 		*s = CharacterFightDataSchemaCooldownReasonTask
+	case CharacterFightDataSchemaCooldownReasonChristmasExchange:
+		*s = CharacterFightDataSchemaCooldownReasonChristmasExchange
 	case CharacterFightDataSchemaCooldownReasonRecycling:
 		*s = CharacterFightDataSchemaCooldownReasonRecycling
 	case CharacterFightDataSchemaCooldownReasonRest:
@@ -13578,6 +13998,8 @@ func (s *CharacterMovementDataSchemaCooldownReason) Decode(d *jx.Decoder) error 
 		*s = CharacterMovementDataSchemaCooldownReasonUnequip
 	case CharacterMovementDataSchemaCooldownReasonTask:
 		*s = CharacterMovementDataSchemaCooldownReasonTask
+	case CharacterMovementDataSchemaCooldownReasonChristmasExchange:
+		*s = CharacterMovementDataSchemaCooldownReasonChristmasExchange
 	case CharacterMovementDataSchemaCooldownReasonRecycling:
 		*s = CharacterMovementDataSchemaCooldownReasonRecycling
 	case CharacterMovementDataSchemaCooldownReasonRest:
@@ -15757,6 +16179,8 @@ func (s *CharacterRestDataSchemaCooldownReason) Decode(d *jx.Decoder) error {
 		*s = CharacterRestDataSchemaCooldownReasonUnequip
 	case CharacterRestDataSchemaCooldownReasonTask:
 		*s = CharacterRestDataSchemaCooldownReasonTask
+	case CharacterRestDataSchemaCooldownReasonChristmasExchange:
+		*s = CharacterRestDataSchemaCooldownReasonChristmasExchange
 	case CharacterRestDataSchemaCooldownReasonRecycling:
 		*s = CharacterRestDataSchemaCooldownReasonRecycling
 	case CharacterRestDataSchemaCooldownReasonRest:
@@ -19040,6 +19464,370 @@ func (s DataPageActiveEventSchemaTotal) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *DataPageActiveEventSchemaTotal) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *DataPageBadgeSchema) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *DataPageBadgeSchema) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("data")
+		e.ArrStart()
+		for _, elem := range s.Data {
+			elem.Encode(e)
+		}
+		e.ArrEnd()
+	}
+	{
+		e.FieldStart("total")
+		s.Total.Encode(e)
+	}
+	{
+		e.FieldStart("page")
+		s.Page.Encode(e)
+	}
+	{
+		e.FieldStart("size")
+		s.Size.Encode(e)
+	}
+	{
+		if s.Pages.Set {
+			e.FieldStart("pages")
+			s.Pages.Encode(e)
+		}
+	}
+}
+
+var jsonFieldsNameOfDataPageBadgeSchema = [5]string{
+	0: "data",
+	1: "total",
+	2: "page",
+	3: "size",
+	4: "pages",
+}
+
+// Decode decodes DataPageBadgeSchema from json.
+func (s *DataPageBadgeSchema) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode DataPageBadgeSchema to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "data":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				s.Data = make([]BadgeSchema, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem BadgeSchema
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.Data = append(s.Data, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"data\"")
+			}
+		case "total":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				if err := s.Total.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"total\"")
+			}
+		case "page":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				if err := s.Page.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"page\"")
+			}
+		case "size":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				if err := s.Size.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"size\"")
+			}
+		case "pages":
+			if err := func() error {
+				s.Pages.Reset()
+				if err := s.Pages.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"pages\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode DataPageBadgeSchema")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00001111,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfDataPageBadgeSchema) {
+					name = jsonFieldsNameOfDataPageBadgeSchema[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *DataPageBadgeSchema) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *DataPageBadgeSchema) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes DataPageBadgeSchemaPage as json.
+func (s DataPageBadgeSchemaPage) Encode(e *jx.Encoder) {
+	switch s.Type {
+	case IntDataPageBadgeSchemaPage:
+		e.Int(s.Int)
+	case NullDataPageBadgeSchemaPage:
+		_ = s.Null
+		e.Null()
+	}
+}
+
+// Decode decodes DataPageBadgeSchemaPage from json.
+func (s *DataPageBadgeSchemaPage) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode DataPageBadgeSchemaPage to nil")
+	}
+	// Sum type type_discriminator.
+	switch t := d.Next(); t {
+	case jx.Null:
+		if err := d.Null(); err != nil {
+			return err
+		}
+		s.Type = NullDataPageBadgeSchemaPage
+	case jx.Number:
+		v, err := d.Int()
+		s.Int = int(v)
+		if err != nil {
+			return err
+		}
+		s.Type = IntDataPageBadgeSchemaPage
+	default:
+		return errors.Errorf("unexpected json type %q", t)
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s DataPageBadgeSchemaPage) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *DataPageBadgeSchemaPage) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes DataPageBadgeSchemaPages as json.
+func (s DataPageBadgeSchemaPages) Encode(e *jx.Encoder) {
+	switch s.Type {
+	case IntDataPageBadgeSchemaPages:
+		e.Int(s.Int)
+	case NullDataPageBadgeSchemaPages:
+		_ = s.Null
+		e.Null()
+	}
+}
+
+// Decode decodes DataPageBadgeSchemaPages from json.
+func (s *DataPageBadgeSchemaPages) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode DataPageBadgeSchemaPages to nil")
+	}
+	// Sum type type_discriminator.
+	switch t := d.Next(); t {
+	case jx.Null:
+		if err := d.Null(); err != nil {
+			return err
+		}
+		s.Type = NullDataPageBadgeSchemaPages
+	case jx.Number:
+		v, err := d.Int()
+		s.Int = int(v)
+		if err != nil {
+			return err
+		}
+		s.Type = IntDataPageBadgeSchemaPages
+	default:
+		return errors.Errorf("unexpected json type %q", t)
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s DataPageBadgeSchemaPages) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *DataPageBadgeSchemaPages) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes DataPageBadgeSchemaSize as json.
+func (s DataPageBadgeSchemaSize) Encode(e *jx.Encoder) {
+	switch s.Type {
+	case IntDataPageBadgeSchemaSize:
+		e.Int(s.Int)
+	case NullDataPageBadgeSchemaSize:
+		_ = s.Null
+		e.Null()
+	}
+}
+
+// Decode decodes DataPageBadgeSchemaSize from json.
+func (s *DataPageBadgeSchemaSize) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode DataPageBadgeSchemaSize to nil")
+	}
+	// Sum type type_discriminator.
+	switch t := d.Next(); t {
+	case jx.Null:
+		if err := d.Null(); err != nil {
+			return err
+		}
+		s.Type = NullDataPageBadgeSchemaSize
+	case jx.Number:
+		v, err := d.Int()
+		s.Int = int(v)
+		if err != nil {
+			return err
+		}
+		s.Type = IntDataPageBadgeSchemaSize
+	default:
+		return errors.Errorf("unexpected json type %q", t)
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s DataPageBadgeSchemaSize) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *DataPageBadgeSchemaSize) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes DataPageBadgeSchemaTotal as json.
+func (s DataPageBadgeSchemaTotal) Encode(e *jx.Encoder) {
+	switch s.Type {
+	case IntDataPageBadgeSchemaTotal:
+		e.Int(s.Int)
+	case NullDataPageBadgeSchemaTotal:
+		_ = s.Null
+		e.Null()
+	}
+}
+
+// Decode decodes DataPageBadgeSchemaTotal from json.
+func (s *DataPageBadgeSchemaTotal) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode DataPageBadgeSchemaTotal to nil")
+	}
+	// Sum type type_discriminator.
+	switch t := d.Next(); t {
+	case jx.Null:
+		if err := d.Null(); err != nil {
+			return err
+		}
+		s.Type = NullDataPageBadgeSchemaTotal
+	case jx.Number:
+		v, err := d.Int()
+		s.Int = int(v)
+		if err != nil {
+			return err
+		}
+		s.Type = IntDataPageBadgeSchemaTotal
+	default:
+		return errors.Errorf("unexpected json type %q", t)
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s DataPageBadgeSchemaTotal) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *DataPageBadgeSchemaTotal) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -25354,6 +26142,8 @@ func (s *DeleteItemSchemaCooldownReason) Decode(d *jx.Decoder) error {
 		*s = DeleteItemSchemaCooldownReasonUnequip
 	case DeleteItemSchemaCooldownReasonTask:
 		*s = DeleteItemSchemaCooldownReasonTask
+	case DeleteItemSchemaCooldownReasonChristmasExchange:
+		*s = DeleteItemSchemaCooldownReasonChristmasExchange
 	case DeleteItemSchemaCooldownReasonRecycling:
 		*s = DeleteItemSchemaCooldownReasonRecycling
 	case DeleteItemSchemaCooldownReasonRest:
@@ -27731,6 +28521,8 @@ func (s *EquipRequestSchemaCooldownReason) Decode(d *jx.Decoder) error {
 		*s = EquipRequestSchemaCooldownReasonUnequip
 	case EquipRequestSchemaCooldownReasonTask:
 		*s = EquipRequestSchemaCooldownReasonTask
+	case EquipRequestSchemaCooldownReasonChristmasExchange:
+		*s = EquipRequestSchemaCooldownReasonChristmasExchange
 	case EquipRequestSchemaCooldownReasonRecycling:
 		*s = EquipRequestSchemaCooldownReasonRecycling
 	case EquipRequestSchemaCooldownReasonRest:
@@ -31293,6 +32085,8 @@ func (s *GEOrderTransactionSchemaCooldownReason) Decode(d *jx.Decoder) error {
 		*s = GEOrderTransactionSchemaCooldownReasonUnequip
 	case GEOrderTransactionSchemaCooldownReasonTask:
 		*s = GEOrderTransactionSchemaCooldownReasonTask
+	case GEOrderTransactionSchemaCooldownReasonChristmasExchange:
+		*s = GEOrderTransactionSchemaCooldownReasonChristmasExchange
 	case GEOrderTransactionSchemaCooldownReasonRecycling:
 		*s = GEOrderTransactionSchemaCooldownReasonRecycling
 	case GEOrderTransactionSchemaCooldownReasonRest:
@@ -33271,6 +34065,8 @@ func (s *GETransactionListSchemaCooldownReason) Decode(d *jx.Decoder) error {
 		*s = GETransactionListSchemaCooldownReasonUnequip
 	case GETransactionListSchemaCooldownReasonTask:
 		*s = GETransactionListSchemaCooldownReasonTask
+	case GETransactionListSchemaCooldownReasonChristmasExchange:
+		*s = GETransactionListSchemaCooldownReasonChristmasExchange
 	case GETransactionListSchemaCooldownReasonRecycling:
 		*s = GETransactionListSchemaCooldownReasonRecycling
 	case GETransactionListSchemaCooldownReasonRest:
@@ -34701,6 +35497,8 @@ func (s *LogSchemaType) Decode(d *jx.Decoder) error {
 		*s = LogSchemaTypeTaskCompleted
 	case LogSchemaTypeTaskTrade:
 		*s = LogSchemaTypeTaskTrade
+	case LogSchemaTypeChristmasExchange:
+		*s = LogSchemaTypeChristmasExchange
 	case LogSchemaTypeRecycling:
 		*s = LogSchemaTypeRecycling
 	case LogSchemaTypeRest:
@@ -35612,9 +36410,15 @@ func (s *MyAccountDetails) encodeFields(e *jx.Encoder) {
 		s.Status.Encode(e)
 	}
 	{
-		if s.Badges.Set {
+		if s.Badges != nil {
 			e.FieldStart("badges")
-			s.Badges.Encode(e)
+			e.ArrStart()
+			for _, elem := range s.Badges {
+				if len(elem) != 0 {
+					e.Raw(elem)
+				}
+			}
+			e.ArrEnd()
 		}
 	}
 	{
@@ -35706,8 +36510,17 @@ func (s *MyAccountDetails) Decode(d *jx.Decoder) error {
 			}
 		case "badges":
 			if err := func() error {
-				s.Badges.Reset()
-				if err := s.Badges.Decode(d); err != nil {
+				s.Badges = make([]jx.Raw, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem jx.Raw
+					v, err := d.RawAppend(nil)
+					elem = jx.Raw(v)
+					if err != nil {
+						return err
+					}
+					s.Badges = append(s.Badges, elem)
+					return nil
+				}); err != nil {
 					return err
 				}
 				return nil
@@ -35813,69 +36626,6 @@ func (s *MyAccountDetails) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *MyAccountDetails) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode encodes MyAccountDetailsBadges as json.
-func (s MyAccountDetailsBadges) Encode(e *jx.Encoder) {
-	switch s.Type {
-	case AnyArrayMyAccountDetailsBadges:
-		e.ArrStart()
-		for _, elem := range s.AnyArray {
-			if len(elem) != 0 {
-				e.Raw(elem)
-			}
-		}
-		e.ArrEnd()
-	case NullMyAccountDetailsBadges:
-		_ = s.Null
-		e.Null()
-	}
-}
-
-// Decode decodes MyAccountDetailsBadges from json.
-func (s *MyAccountDetailsBadges) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode MyAccountDetailsBadges to nil")
-	}
-	// Sum type type_discriminator.
-	switch t := d.Next(); t {
-	case jx.Array:
-		s.AnyArray = make([]jx.Raw, 0)
-		if err := d.Arr(func(d *jx.Decoder) error {
-			var elem jx.Raw
-			v, err := d.RawAppend(nil)
-			elem = jx.Raw(v)
-			if err != nil {
-				return err
-			}
-			s.AnyArray = append(s.AnyArray, elem)
-			return nil
-		}); err != nil {
-			return err
-		}
-		s.Type = AnyArrayMyAccountDetailsBadges
-	case jx.Null:
-		if err := d.Null(); err != nil {
-			return err
-		}
-		s.Type = NullMyAccountDetailsBadges
-	default:
-		return errors.Errorf("unexpected json type %q", t)
-	}
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s MyAccountDetailsBadges) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *MyAccountDetailsBadges) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -36124,18 +36874,18 @@ func (s *MyCharactersListSchema) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
-// Encode encodes AccountDetailsBadges as json.
-func (o OptAccountDetailsBadges) Encode(e *jx.Encoder) {
+// Encode encodes BadgeSchemaSeason as json.
+func (o OptBadgeSchemaSeason) Encode(e *jx.Encoder) {
 	if !o.Set {
 		return
 	}
 	o.Value.Encode(e)
 }
 
-// Decode decodes AccountDetailsBadges from json.
-func (o *OptAccountDetailsBadges) Decode(d *jx.Decoder) error {
+// Decode decodes BadgeSchemaSeason from json.
+func (o *OptBadgeSchemaSeason) Decode(d *jx.Decoder) error {
 	if o == nil {
-		return errors.New("invalid: unable to decode OptAccountDetailsBadges to nil")
+		return errors.New("invalid: unable to decode OptBadgeSchemaSeason to nil")
 	}
 	o.Set = true
 	if err := o.Value.Decode(d); err != nil {
@@ -36145,14 +36895,14 @@ func (o *OptAccountDetailsBadges) Decode(d *jx.Decoder) error {
 }
 
 // MarshalJSON implements stdjson.Marshaler.
-func (s OptAccountDetailsBadges) MarshalJSON() ([]byte, error) {
+func (s OptBadgeSchemaSeason) MarshalJSON() ([]byte, error) {
 	e := jx.Encoder{}
 	s.Encode(&e)
 	return e.Bytes(), nil
 }
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *OptAccountDetailsBadges) UnmarshalJSON(data []byte) error {
+func (s *OptBadgeSchemaSeason) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -36351,6 +37101,39 @@ func (s OptDataPageActiveEventSchemaPages) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OptDataPageActiveEventSchemaPages) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes DataPageBadgeSchemaPages as json.
+func (o OptDataPageBadgeSchemaPages) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	o.Value.Encode(e)
+}
+
+// Decode decodes DataPageBadgeSchemaPages from json.
+func (o *OptDataPageBadgeSchemaPages) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptDataPageBadgeSchemaPages to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptDataPageBadgeSchemaPages) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptDataPageBadgeSchemaPages) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -36883,39 +37666,6 @@ func (s OptItemSchemaCraft) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OptItemSchemaCraft) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode encodes MyAccountDetailsBadges as json.
-func (o OptMyAccountDetailsBadges) Encode(e *jx.Encoder) {
-	if !o.Set {
-		return
-	}
-	o.Value.Encode(e)
-}
-
-// Decode decodes MyAccountDetailsBadges from json.
-func (o *OptMyAccountDetailsBadges) Decode(d *jx.Decoder) error {
-	if o == nil {
-		return errors.New("invalid: unable to decode OptMyAccountDetailsBadges to nil")
-	}
-	o.Set = true
-	if err := o.Value.Decode(d); err != nil {
-		return err
-	}
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s OptMyAccountDetailsBadges) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *OptMyAccountDetailsBadges) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -38740,6 +39490,8 @@ func (s *RecyclingDataSchemaCooldownReason) Decode(d *jx.Decoder) error {
 		*s = RecyclingDataSchemaCooldownReasonUnequip
 	case RecyclingDataSchemaCooldownReasonTask:
 		*s = RecyclingDataSchemaCooldownReasonTask
+	case RecyclingDataSchemaCooldownReasonChristmasExchange:
+		*s = RecyclingDataSchemaCooldownReasonChristmasExchange
 	case RecyclingDataSchemaCooldownReasonRecycling:
 		*s = RecyclingDataSchemaCooldownReasonRecycling
 	case RecyclingDataSchemaCooldownReasonRest:
@@ -39484,6 +40236,2099 @@ func (s *ResponseSchema) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *ResponseSchema) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *RewardDataResponseSchema) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *RewardDataResponseSchema) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("data")
+		s.Data.Encode(e)
+	}
+}
+
+var jsonFieldsNameOfRewardDataResponseSchema = [1]string{
+	0: "data",
+}
+
+// Decode decodes RewardDataResponseSchema from json.
+func (s *RewardDataResponseSchema) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode RewardDataResponseSchema to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "data":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				if err := s.Data.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"data\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode RewardDataResponseSchema")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000001,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfRewardDataResponseSchema) {
+					name = jsonFieldsNameOfRewardDataResponseSchema[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *RewardDataResponseSchema) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *RewardDataResponseSchema) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *RewardDataSchema) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *RewardDataSchema) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("cooldown")
+		s.Cooldown.Encode(e)
+	}
+	{
+		e.FieldStart("rewards")
+		s.Rewards.Encode(e)
+	}
+	{
+		e.FieldStart("character")
+		s.Character.Encode(e)
+	}
+}
+
+var jsonFieldsNameOfRewardDataSchema = [3]string{
+	0: "cooldown",
+	1: "rewards",
+	2: "character",
+}
+
+// Decode decodes RewardDataSchema from json.
+func (s *RewardDataSchema) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode RewardDataSchema to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "cooldown":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				if err := s.Cooldown.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"cooldown\"")
+			}
+		case "rewards":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				if err := s.Rewards.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"rewards\"")
+			}
+		case "character":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				if err := s.Character.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"character\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode RewardDataSchema")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000111,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfRewardDataSchema) {
+					name = jsonFieldsNameOfRewardDataSchema[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *RewardDataSchema) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *RewardDataSchema) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *RewardDataSchemaCharacter) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *RewardDataSchemaCharacter) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("name")
+		e.Str(s.Name)
+	}
+	{
+		e.FieldStart("account")
+		e.Str(s.Account)
+	}
+	{
+		e.FieldStart("skin")
+		s.Skin.Encode(e)
+	}
+	{
+		e.FieldStart("level")
+		e.Int(s.Level)
+	}
+	{
+		e.FieldStart("xp")
+		e.Int(s.Xp)
+	}
+	{
+		e.FieldStart("max_xp")
+		e.Int(s.MaxXp)
+	}
+	{
+		e.FieldStart("gold")
+		e.Int(s.Gold)
+	}
+	{
+		e.FieldStart("speed")
+		e.Int(s.Speed)
+	}
+	{
+		e.FieldStart("mining_level")
+		e.Int(s.MiningLevel)
+	}
+	{
+		e.FieldStart("mining_xp")
+		e.Int(s.MiningXp)
+	}
+	{
+		e.FieldStart("mining_max_xp")
+		e.Int(s.MiningMaxXp)
+	}
+	{
+		e.FieldStart("woodcutting_level")
+		e.Int(s.WoodcuttingLevel)
+	}
+	{
+		e.FieldStart("woodcutting_xp")
+		e.Int(s.WoodcuttingXp)
+	}
+	{
+		e.FieldStart("woodcutting_max_xp")
+		e.Int(s.WoodcuttingMaxXp)
+	}
+	{
+		e.FieldStart("fishing_level")
+		e.Int(s.FishingLevel)
+	}
+	{
+		e.FieldStart("fishing_xp")
+		e.Int(s.FishingXp)
+	}
+	{
+		e.FieldStart("fishing_max_xp")
+		e.Int(s.FishingMaxXp)
+	}
+	{
+		e.FieldStart("weaponcrafting_level")
+		e.Int(s.WeaponcraftingLevel)
+	}
+	{
+		e.FieldStart("weaponcrafting_xp")
+		e.Int(s.WeaponcraftingXp)
+	}
+	{
+		e.FieldStart("weaponcrafting_max_xp")
+		e.Int(s.WeaponcraftingMaxXp)
+	}
+	{
+		e.FieldStart("gearcrafting_level")
+		e.Int(s.GearcraftingLevel)
+	}
+	{
+		e.FieldStart("gearcrafting_xp")
+		e.Int(s.GearcraftingXp)
+	}
+	{
+		e.FieldStart("gearcrafting_max_xp")
+		e.Int(s.GearcraftingMaxXp)
+	}
+	{
+		e.FieldStart("jewelrycrafting_level")
+		e.Int(s.JewelrycraftingLevel)
+	}
+	{
+		e.FieldStart("jewelrycrafting_xp")
+		e.Int(s.JewelrycraftingXp)
+	}
+	{
+		e.FieldStart("jewelrycrafting_max_xp")
+		e.Int(s.JewelrycraftingMaxXp)
+	}
+	{
+		e.FieldStart("cooking_level")
+		e.Int(s.CookingLevel)
+	}
+	{
+		e.FieldStart("cooking_xp")
+		e.Int(s.CookingXp)
+	}
+	{
+		e.FieldStart("cooking_max_xp")
+		e.Int(s.CookingMaxXp)
+	}
+	{
+		e.FieldStart("alchemy_level")
+		e.Int(s.AlchemyLevel)
+	}
+	{
+		e.FieldStart("alchemy_xp")
+		e.Int(s.AlchemyXp)
+	}
+	{
+		e.FieldStart("alchemy_max_xp")
+		e.Int(s.AlchemyMaxXp)
+	}
+	{
+		e.FieldStart("hp")
+		e.Int(s.Hp)
+	}
+	{
+		e.FieldStart("max_hp")
+		e.Int(s.MaxHp)
+	}
+	{
+		e.FieldStart("haste")
+		e.Int(s.Haste)
+	}
+	{
+		e.FieldStart("critical_strike")
+		e.Int(s.CriticalStrike)
+	}
+	{
+		e.FieldStart("stamina")
+		e.Int(s.Stamina)
+	}
+	{
+		e.FieldStart("attack_fire")
+		e.Int(s.AttackFire)
+	}
+	{
+		e.FieldStart("attack_earth")
+		e.Int(s.AttackEarth)
+	}
+	{
+		e.FieldStart("attack_water")
+		e.Int(s.AttackWater)
+	}
+	{
+		e.FieldStart("attack_air")
+		e.Int(s.AttackAir)
+	}
+	{
+		e.FieldStart("dmg_fire")
+		e.Int(s.DmgFire)
+	}
+	{
+		e.FieldStart("dmg_earth")
+		e.Int(s.DmgEarth)
+	}
+	{
+		e.FieldStart("dmg_water")
+		e.Int(s.DmgWater)
+	}
+	{
+		e.FieldStart("dmg_air")
+		e.Int(s.DmgAir)
+	}
+	{
+		e.FieldStart("res_fire")
+		e.Int(s.ResFire)
+	}
+	{
+		e.FieldStart("res_earth")
+		e.Int(s.ResEarth)
+	}
+	{
+		e.FieldStart("res_water")
+		e.Int(s.ResWater)
+	}
+	{
+		e.FieldStart("res_air")
+		e.Int(s.ResAir)
+	}
+	{
+		e.FieldStart("x")
+		e.Int(s.X)
+	}
+	{
+		e.FieldStart("y")
+		e.Int(s.Y)
+	}
+	{
+		e.FieldStart("cooldown")
+		e.Int(s.Cooldown)
+	}
+	{
+		if s.CooldownExpiration.Set {
+			e.FieldStart("cooldown_expiration")
+			s.CooldownExpiration.Encode(e, json.EncodeDateTime)
+		}
+	}
+	{
+		e.FieldStart("weapon_slot")
+		e.Str(s.WeaponSlot)
+	}
+	{
+		e.FieldStart("shield_slot")
+		e.Str(s.ShieldSlot)
+	}
+	{
+		e.FieldStart("helmet_slot")
+		e.Str(s.HelmetSlot)
+	}
+	{
+		e.FieldStart("body_armor_slot")
+		e.Str(s.BodyArmorSlot)
+	}
+	{
+		e.FieldStart("leg_armor_slot")
+		e.Str(s.LegArmorSlot)
+	}
+	{
+		e.FieldStart("boots_slot")
+		e.Str(s.BootsSlot)
+	}
+	{
+		e.FieldStart("ring1_slot")
+		e.Str(s.Ring1Slot)
+	}
+	{
+		e.FieldStart("ring2_slot")
+		e.Str(s.Ring2Slot)
+	}
+	{
+		e.FieldStart("amulet_slot")
+		e.Str(s.AmuletSlot)
+	}
+	{
+		e.FieldStart("artifact1_slot")
+		e.Str(s.Artifact1Slot)
+	}
+	{
+		e.FieldStart("artifact2_slot")
+		e.Str(s.Artifact2Slot)
+	}
+	{
+		e.FieldStart("artifact3_slot")
+		e.Str(s.Artifact3Slot)
+	}
+	{
+		e.FieldStart("utility1_slot")
+		e.Str(s.Utility1Slot)
+	}
+	{
+		e.FieldStart("utility1_slot_quantity")
+		e.Int(s.Utility1SlotQuantity)
+	}
+	{
+		e.FieldStart("utility2_slot")
+		e.Str(s.Utility2Slot)
+	}
+	{
+		e.FieldStart("utility2_slot_quantity")
+		e.Int(s.Utility2SlotQuantity)
+	}
+	{
+		e.FieldStart("task")
+		e.Str(s.Task)
+	}
+	{
+		e.FieldStart("task_type")
+		e.Str(s.TaskType)
+	}
+	{
+		e.FieldStart("task_progress")
+		e.Int(s.TaskProgress)
+	}
+	{
+		e.FieldStart("task_total")
+		e.Int(s.TaskTotal)
+	}
+	{
+		e.FieldStart("inventory_max_items")
+		e.Int(s.InventoryMaxItems)
+	}
+	{
+		if s.Inventory != nil {
+			e.FieldStart("inventory")
+			e.ArrStart()
+			for _, elem := range s.Inventory {
+				elem.Encode(e)
+			}
+			e.ArrEnd()
+		}
+	}
+}
+
+var jsonFieldsNameOfRewardDataSchemaCharacter = [75]string{
+	0:  "name",
+	1:  "account",
+	2:  "skin",
+	3:  "level",
+	4:  "xp",
+	5:  "max_xp",
+	6:  "gold",
+	7:  "speed",
+	8:  "mining_level",
+	9:  "mining_xp",
+	10: "mining_max_xp",
+	11: "woodcutting_level",
+	12: "woodcutting_xp",
+	13: "woodcutting_max_xp",
+	14: "fishing_level",
+	15: "fishing_xp",
+	16: "fishing_max_xp",
+	17: "weaponcrafting_level",
+	18: "weaponcrafting_xp",
+	19: "weaponcrafting_max_xp",
+	20: "gearcrafting_level",
+	21: "gearcrafting_xp",
+	22: "gearcrafting_max_xp",
+	23: "jewelrycrafting_level",
+	24: "jewelrycrafting_xp",
+	25: "jewelrycrafting_max_xp",
+	26: "cooking_level",
+	27: "cooking_xp",
+	28: "cooking_max_xp",
+	29: "alchemy_level",
+	30: "alchemy_xp",
+	31: "alchemy_max_xp",
+	32: "hp",
+	33: "max_hp",
+	34: "haste",
+	35: "critical_strike",
+	36: "stamina",
+	37: "attack_fire",
+	38: "attack_earth",
+	39: "attack_water",
+	40: "attack_air",
+	41: "dmg_fire",
+	42: "dmg_earth",
+	43: "dmg_water",
+	44: "dmg_air",
+	45: "res_fire",
+	46: "res_earth",
+	47: "res_water",
+	48: "res_air",
+	49: "x",
+	50: "y",
+	51: "cooldown",
+	52: "cooldown_expiration",
+	53: "weapon_slot",
+	54: "shield_slot",
+	55: "helmet_slot",
+	56: "body_armor_slot",
+	57: "leg_armor_slot",
+	58: "boots_slot",
+	59: "ring1_slot",
+	60: "ring2_slot",
+	61: "amulet_slot",
+	62: "artifact1_slot",
+	63: "artifact2_slot",
+	64: "artifact3_slot",
+	65: "utility1_slot",
+	66: "utility1_slot_quantity",
+	67: "utility2_slot",
+	68: "utility2_slot_quantity",
+	69: "task",
+	70: "task_type",
+	71: "task_progress",
+	72: "task_total",
+	73: "inventory_max_items",
+	74: "inventory",
+}
+
+// Decode decodes RewardDataSchemaCharacter from json.
+func (s *RewardDataSchemaCharacter) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode RewardDataSchemaCharacter to nil")
+	}
+	var requiredBitSet [10]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "name":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.Name = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"name\"")
+			}
+		case "account":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.Account = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"account\"")
+			}
+		case "skin":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				if err := s.Skin.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"skin\"")
+			}
+		case "level":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				v, err := d.Int()
+				s.Level = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"level\"")
+			}
+		case "xp":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				v, err := d.Int()
+				s.Xp = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"xp\"")
+			}
+		case "max_xp":
+			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				v, err := d.Int()
+				s.MaxXp = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"max_xp\"")
+			}
+		case "gold":
+			requiredBitSet[0] |= 1 << 6
+			if err := func() error {
+				v, err := d.Int()
+				s.Gold = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"gold\"")
+			}
+		case "speed":
+			requiredBitSet[0] |= 1 << 7
+			if err := func() error {
+				v, err := d.Int()
+				s.Speed = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"speed\"")
+			}
+		case "mining_level":
+			requiredBitSet[1] |= 1 << 0
+			if err := func() error {
+				v, err := d.Int()
+				s.MiningLevel = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"mining_level\"")
+			}
+		case "mining_xp":
+			requiredBitSet[1] |= 1 << 1
+			if err := func() error {
+				v, err := d.Int()
+				s.MiningXp = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"mining_xp\"")
+			}
+		case "mining_max_xp":
+			requiredBitSet[1] |= 1 << 2
+			if err := func() error {
+				v, err := d.Int()
+				s.MiningMaxXp = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"mining_max_xp\"")
+			}
+		case "woodcutting_level":
+			requiredBitSet[1] |= 1 << 3
+			if err := func() error {
+				v, err := d.Int()
+				s.WoodcuttingLevel = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"woodcutting_level\"")
+			}
+		case "woodcutting_xp":
+			requiredBitSet[1] |= 1 << 4
+			if err := func() error {
+				v, err := d.Int()
+				s.WoodcuttingXp = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"woodcutting_xp\"")
+			}
+		case "woodcutting_max_xp":
+			requiredBitSet[1] |= 1 << 5
+			if err := func() error {
+				v, err := d.Int()
+				s.WoodcuttingMaxXp = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"woodcutting_max_xp\"")
+			}
+		case "fishing_level":
+			requiredBitSet[1] |= 1 << 6
+			if err := func() error {
+				v, err := d.Int()
+				s.FishingLevel = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"fishing_level\"")
+			}
+		case "fishing_xp":
+			requiredBitSet[1] |= 1 << 7
+			if err := func() error {
+				v, err := d.Int()
+				s.FishingXp = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"fishing_xp\"")
+			}
+		case "fishing_max_xp":
+			requiredBitSet[2] |= 1 << 0
+			if err := func() error {
+				v, err := d.Int()
+				s.FishingMaxXp = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"fishing_max_xp\"")
+			}
+		case "weaponcrafting_level":
+			requiredBitSet[2] |= 1 << 1
+			if err := func() error {
+				v, err := d.Int()
+				s.WeaponcraftingLevel = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"weaponcrafting_level\"")
+			}
+		case "weaponcrafting_xp":
+			requiredBitSet[2] |= 1 << 2
+			if err := func() error {
+				v, err := d.Int()
+				s.WeaponcraftingXp = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"weaponcrafting_xp\"")
+			}
+		case "weaponcrafting_max_xp":
+			requiredBitSet[2] |= 1 << 3
+			if err := func() error {
+				v, err := d.Int()
+				s.WeaponcraftingMaxXp = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"weaponcrafting_max_xp\"")
+			}
+		case "gearcrafting_level":
+			requiredBitSet[2] |= 1 << 4
+			if err := func() error {
+				v, err := d.Int()
+				s.GearcraftingLevel = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"gearcrafting_level\"")
+			}
+		case "gearcrafting_xp":
+			requiredBitSet[2] |= 1 << 5
+			if err := func() error {
+				v, err := d.Int()
+				s.GearcraftingXp = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"gearcrafting_xp\"")
+			}
+		case "gearcrafting_max_xp":
+			requiredBitSet[2] |= 1 << 6
+			if err := func() error {
+				v, err := d.Int()
+				s.GearcraftingMaxXp = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"gearcrafting_max_xp\"")
+			}
+		case "jewelrycrafting_level":
+			requiredBitSet[2] |= 1 << 7
+			if err := func() error {
+				v, err := d.Int()
+				s.JewelrycraftingLevel = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"jewelrycrafting_level\"")
+			}
+		case "jewelrycrafting_xp":
+			requiredBitSet[3] |= 1 << 0
+			if err := func() error {
+				v, err := d.Int()
+				s.JewelrycraftingXp = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"jewelrycrafting_xp\"")
+			}
+		case "jewelrycrafting_max_xp":
+			requiredBitSet[3] |= 1 << 1
+			if err := func() error {
+				v, err := d.Int()
+				s.JewelrycraftingMaxXp = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"jewelrycrafting_max_xp\"")
+			}
+		case "cooking_level":
+			requiredBitSet[3] |= 1 << 2
+			if err := func() error {
+				v, err := d.Int()
+				s.CookingLevel = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"cooking_level\"")
+			}
+		case "cooking_xp":
+			requiredBitSet[3] |= 1 << 3
+			if err := func() error {
+				v, err := d.Int()
+				s.CookingXp = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"cooking_xp\"")
+			}
+		case "cooking_max_xp":
+			requiredBitSet[3] |= 1 << 4
+			if err := func() error {
+				v, err := d.Int()
+				s.CookingMaxXp = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"cooking_max_xp\"")
+			}
+		case "alchemy_level":
+			requiredBitSet[3] |= 1 << 5
+			if err := func() error {
+				v, err := d.Int()
+				s.AlchemyLevel = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"alchemy_level\"")
+			}
+		case "alchemy_xp":
+			requiredBitSet[3] |= 1 << 6
+			if err := func() error {
+				v, err := d.Int()
+				s.AlchemyXp = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"alchemy_xp\"")
+			}
+		case "alchemy_max_xp":
+			requiredBitSet[3] |= 1 << 7
+			if err := func() error {
+				v, err := d.Int()
+				s.AlchemyMaxXp = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"alchemy_max_xp\"")
+			}
+		case "hp":
+			requiredBitSet[4] |= 1 << 0
+			if err := func() error {
+				v, err := d.Int()
+				s.Hp = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"hp\"")
+			}
+		case "max_hp":
+			requiredBitSet[4] |= 1 << 1
+			if err := func() error {
+				v, err := d.Int()
+				s.MaxHp = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"max_hp\"")
+			}
+		case "haste":
+			requiredBitSet[4] |= 1 << 2
+			if err := func() error {
+				v, err := d.Int()
+				s.Haste = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"haste\"")
+			}
+		case "critical_strike":
+			requiredBitSet[4] |= 1 << 3
+			if err := func() error {
+				v, err := d.Int()
+				s.CriticalStrike = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"critical_strike\"")
+			}
+		case "stamina":
+			requiredBitSet[4] |= 1 << 4
+			if err := func() error {
+				v, err := d.Int()
+				s.Stamina = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"stamina\"")
+			}
+		case "attack_fire":
+			requiredBitSet[4] |= 1 << 5
+			if err := func() error {
+				v, err := d.Int()
+				s.AttackFire = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"attack_fire\"")
+			}
+		case "attack_earth":
+			requiredBitSet[4] |= 1 << 6
+			if err := func() error {
+				v, err := d.Int()
+				s.AttackEarth = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"attack_earth\"")
+			}
+		case "attack_water":
+			requiredBitSet[4] |= 1 << 7
+			if err := func() error {
+				v, err := d.Int()
+				s.AttackWater = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"attack_water\"")
+			}
+		case "attack_air":
+			requiredBitSet[5] |= 1 << 0
+			if err := func() error {
+				v, err := d.Int()
+				s.AttackAir = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"attack_air\"")
+			}
+		case "dmg_fire":
+			requiredBitSet[5] |= 1 << 1
+			if err := func() error {
+				v, err := d.Int()
+				s.DmgFire = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"dmg_fire\"")
+			}
+		case "dmg_earth":
+			requiredBitSet[5] |= 1 << 2
+			if err := func() error {
+				v, err := d.Int()
+				s.DmgEarth = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"dmg_earth\"")
+			}
+		case "dmg_water":
+			requiredBitSet[5] |= 1 << 3
+			if err := func() error {
+				v, err := d.Int()
+				s.DmgWater = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"dmg_water\"")
+			}
+		case "dmg_air":
+			requiredBitSet[5] |= 1 << 4
+			if err := func() error {
+				v, err := d.Int()
+				s.DmgAir = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"dmg_air\"")
+			}
+		case "res_fire":
+			requiredBitSet[5] |= 1 << 5
+			if err := func() error {
+				v, err := d.Int()
+				s.ResFire = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"res_fire\"")
+			}
+		case "res_earth":
+			requiredBitSet[5] |= 1 << 6
+			if err := func() error {
+				v, err := d.Int()
+				s.ResEarth = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"res_earth\"")
+			}
+		case "res_water":
+			requiredBitSet[5] |= 1 << 7
+			if err := func() error {
+				v, err := d.Int()
+				s.ResWater = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"res_water\"")
+			}
+		case "res_air":
+			requiredBitSet[6] |= 1 << 0
+			if err := func() error {
+				v, err := d.Int()
+				s.ResAir = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"res_air\"")
+			}
+		case "x":
+			requiredBitSet[6] |= 1 << 1
+			if err := func() error {
+				v, err := d.Int()
+				s.X = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"x\"")
+			}
+		case "y":
+			requiredBitSet[6] |= 1 << 2
+			if err := func() error {
+				v, err := d.Int()
+				s.Y = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"y\"")
+			}
+		case "cooldown":
+			requiredBitSet[6] |= 1 << 3
+			if err := func() error {
+				v, err := d.Int()
+				s.Cooldown = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"cooldown\"")
+			}
+		case "cooldown_expiration":
+			if err := func() error {
+				s.CooldownExpiration.Reset()
+				if err := s.CooldownExpiration.Decode(d, json.DecodeDateTime); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"cooldown_expiration\"")
+			}
+		case "weapon_slot":
+			requiredBitSet[6] |= 1 << 5
+			if err := func() error {
+				v, err := d.Str()
+				s.WeaponSlot = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"weapon_slot\"")
+			}
+		case "shield_slot":
+			requiredBitSet[6] |= 1 << 6
+			if err := func() error {
+				v, err := d.Str()
+				s.ShieldSlot = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"shield_slot\"")
+			}
+		case "helmet_slot":
+			requiredBitSet[6] |= 1 << 7
+			if err := func() error {
+				v, err := d.Str()
+				s.HelmetSlot = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"helmet_slot\"")
+			}
+		case "body_armor_slot":
+			requiredBitSet[7] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.BodyArmorSlot = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"body_armor_slot\"")
+			}
+		case "leg_armor_slot":
+			requiredBitSet[7] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.LegArmorSlot = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"leg_armor_slot\"")
+			}
+		case "boots_slot":
+			requiredBitSet[7] |= 1 << 2
+			if err := func() error {
+				v, err := d.Str()
+				s.BootsSlot = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"boots_slot\"")
+			}
+		case "ring1_slot":
+			requiredBitSet[7] |= 1 << 3
+			if err := func() error {
+				v, err := d.Str()
+				s.Ring1Slot = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"ring1_slot\"")
+			}
+		case "ring2_slot":
+			requiredBitSet[7] |= 1 << 4
+			if err := func() error {
+				v, err := d.Str()
+				s.Ring2Slot = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"ring2_slot\"")
+			}
+		case "amulet_slot":
+			requiredBitSet[7] |= 1 << 5
+			if err := func() error {
+				v, err := d.Str()
+				s.AmuletSlot = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"amulet_slot\"")
+			}
+		case "artifact1_slot":
+			requiredBitSet[7] |= 1 << 6
+			if err := func() error {
+				v, err := d.Str()
+				s.Artifact1Slot = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"artifact1_slot\"")
+			}
+		case "artifact2_slot":
+			requiredBitSet[7] |= 1 << 7
+			if err := func() error {
+				v, err := d.Str()
+				s.Artifact2Slot = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"artifact2_slot\"")
+			}
+		case "artifact3_slot":
+			requiredBitSet[8] |= 1 << 0
+			if err := func() error {
+				v, err := d.Str()
+				s.Artifact3Slot = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"artifact3_slot\"")
+			}
+		case "utility1_slot":
+			requiredBitSet[8] |= 1 << 1
+			if err := func() error {
+				v, err := d.Str()
+				s.Utility1Slot = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"utility1_slot\"")
+			}
+		case "utility1_slot_quantity":
+			requiredBitSet[8] |= 1 << 2
+			if err := func() error {
+				v, err := d.Int()
+				s.Utility1SlotQuantity = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"utility1_slot_quantity\"")
+			}
+		case "utility2_slot":
+			requiredBitSet[8] |= 1 << 3
+			if err := func() error {
+				v, err := d.Str()
+				s.Utility2Slot = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"utility2_slot\"")
+			}
+		case "utility2_slot_quantity":
+			requiredBitSet[8] |= 1 << 4
+			if err := func() error {
+				v, err := d.Int()
+				s.Utility2SlotQuantity = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"utility2_slot_quantity\"")
+			}
+		case "task":
+			requiredBitSet[8] |= 1 << 5
+			if err := func() error {
+				v, err := d.Str()
+				s.Task = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"task\"")
+			}
+		case "task_type":
+			requiredBitSet[8] |= 1 << 6
+			if err := func() error {
+				v, err := d.Str()
+				s.TaskType = string(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"task_type\"")
+			}
+		case "task_progress":
+			requiredBitSet[8] |= 1 << 7
+			if err := func() error {
+				v, err := d.Int()
+				s.TaskProgress = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"task_progress\"")
+			}
+		case "task_total":
+			requiredBitSet[9] |= 1 << 0
+			if err := func() error {
+				v, err := d.Int()
+				s.TaskTotal = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"task_total\"")
+			}
+		case "inventory_max_items":
+			requiredBitSet[9] |= 1 << 1
+			if err := func() error {
+				v, err := d.Int()
+				s.InventoryMaxItems = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"inventory_max_items\"")
+			}
+		case "inventory":
+			if err := func() error {
+				s.Inventory = make([]InventorySlot, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem InventorySlot
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.Inventory = append(s.Inventory, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"inventory\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode RewardDataSchemaCharacter")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [10]uint8{
+		0b11111111,
+		0b11111111,
+		0b11111111,
+		0b11111111,
+		0b11111111,
+		0b11111111,
+		0b11101111,
+		0b11111111,
+		0b11111111,
+		0b00000011,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfRewardDataSchemaCharacter) {
+					name = jsonFieldsNameOfRewardDataSchemaCharacter[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *RewardDataSchemaCharacter) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *RewardDataSchemaCharacter) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes RewardDataSchemaCharacterSkin as json.
+func (s RewardDataSchemaCharacterSkin) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes RewardDataSchemaCharacterSkin from json.
+func (s *RewardDataSchemaCharacterSkin) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode RewardDataSchemaCharacterSkin to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch RewardDataSchemaCharacterSkin(v) {
+	case RewardDataSchemaCharacterSkinMen1:
+		*s = RewardDataSchemaCharacterSkinMen1
+	case RewardDataSchemaCharacterSkinMen2:
+		*s = RewardDataSchemaCharacterSkinMen2
+	case RewardDataSchemaCharacterSkinMen3:
+		*s = RewardDataSchemaCharacterSkinMen3
+	case RewardDataSchemaCharacterSkinWomen1:
+		*s = RewardDataSchemaCharacterSkinWomen1
+	case RewardDataSchemaCharacterSkinWomen2:
+		*s = RewardDataSchemaCharacterSkinWomen2
+	case RewardDataSchemaCharacterSkinWomen3:
+		*s = RewardDataSchemaCharacterSkinWomen3
+	default:
+		*s = RewardDataSchemaCharacterSkin(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s RewardDataSchemaCharacterSkin) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *RewardDataSchemaCharacterSkin) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *RewardDataSchemaCooldown) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *RewardDataSchemaCooldown) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("total_seconds")
+		e.Int(s.TotalSeconds)
+	}
+	{
+		e.FieldStart("remaining_seconds")
+		e.Int(s.RemainingSeconds)
+	}
+	{
+		e.FieldStart("started_at")
+		json.EncodeDateTime(e, s.StartedAt)
+	}
+	{
+		e.FieldStart("expiration")
+		json.EncodeDateTime(e, s.Expiration)
+	}
+	{
+		e.FieldStart("reason")
+		s.Reason.Encode(e)
+	}
+}
+
+var jsonFieldsNameOfRewardDataSchemaCooldown = [5]string{
+	0: "total_seconds",
+	1: "remaining_seconds",
+	2: "started_at",
+	3: "expiration",
+	4: "reason",
+}
+
+// Decode decodes RewardDataSchemaCooldown from json.
+func (s *RewardDataSchemaCooldown) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode RewardDataSchemaCooldown to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "total_seconds":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				v, err := d.Int()
+				s.TotalSeconds = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"total_seconds\"")
+			}
+		case "remaining_seconds":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Int()
+				s.RemainingSeconds = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"remaining_seconds\"")
+			}
+		case "started_at":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.StartedAt = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"started_at\"")
+			}
+		case "expiration":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				v, err := json.DecodeDateTime(d)
+				s.Expiration = v
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"expiration\"")
+			}
+		case "reason":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				if err := s.Reason.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"reason\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode RewardDataSchemaCooldown")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00011111,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfRewardDataSchemaCooldown) {
+					name = jsonFieldsNameOfRewardDataSchemaCooldown[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *RewardDataSchemaCooldown) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *RewardDataSchemaCooldown) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes RewardDataSchemaCooldownReason as json.
+func (s RewardDataSchemaCooldownReason) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes RewardDataSchemaCooldownReason from json.
+func (s *RewardDataSchemaCooldownReason) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode RewardDataSchemaCooldownReason to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch RewardDataSchemaCooldownReason(v) {
+	case RewardDataSchemaCooldownReasonMovement:
+		*s = RewardDataSchemaCooldownReasonMovement
+	case RewardDataSchemaCooldownReasonFight:
+		*s = RewardDataSchemaCooldownReasonFight
+	case RewardDataSchemaCooldownReasonCrafting:
+		*s = RewardDataSchemaCooldownReasonCrafting
+	case RewardDataSchemaCooldownReasonGathering:
+		*s = RewardDataSchemaCooldownReasonGathering
+	case RewardDataSchemaCooldownReasonBuyGe:
+		*s = RewardDataSchemaCooldownReasonBuyGe
+	case RewardDataSchemaCooldownReasonSellGe:
+		*s = RewardDataSchemaCooldownReasonSellGe
+	case RewardDataSchemaCooldownReasonCancelGe:
+		*s = RewardDataSchemaCooldownReasonCancelGe
+	case RewardDataSchemaCooldownReasonDeleteItem:
+		*s = RewardDataSchemaCooldownReasonDeleteItem
+	case RewardDataSchemaCooldownReasonDeposit:
+		*s = RewardDataSchemaCooldownReasonDeposit
+	case RewardDataSchemaCooldownReasonWithdraw:
+		*s = RewardDataSchemaCooldownReasonWithdraw
+	case RewardDataSchemaCooldownReasonDepositGold:
+		*s = RewardDataSchemaCooldownReasonDepositGold
+	case RewardDataSchemaCooldownReasonWithdrawGold:
+		*s = RewardDataSchemaCooldownReasonWithdrawGold
+	case RewardDataSchemaCooldownReasonEquip:
+		*s = RewardDataSchemaCooldownReasonEquip
+	case RewardDataSchemaCooldownReasonUnequip:
+		*s = RewardDataSchemaCooldownReasonUnequip
+	case RewardDataSchemaCooldownReasonTask:
+		*s = RewardDataSchemaCooldownReasonTask
+	case RewardDataSchemaCooldownReasonChristmasExchange:
+		*s = RewardDataSchemaCooldownReasonChristmasExchange
+	case RewardDataSchemaCooldownReasonRecycling:
+		*s = RewardDataSchemaCooldownReasonRecycling
+	case RewardDataSchemaCooldownReasonRest:
+		*s = RewardDataSchemaCooldownReasonRest
+	case RewardDataSchemaCooldownReasonUse:
+		*s = RewardDataSchemaCooldownReasonUse
+	case RewardDataSchemaCooldownReasonBuyBankExpansion:
+		*s = RewardDataSchemaCooldownReasonBuyBankExpansion
+	default:
+		*s = RewardDataSchemaCooldownReason(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s RewardDataSchemaCooldownReason) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *RewardDataSchemaCooldownReason) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *RewardDataSchemaRewards) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *RewardDataSchemaRewards) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("items")
+		e.ArrStart()
+		for _, elem := range s.Items {
+			elem.Encode(e)
+		}
+		e.ArrEnd()
+	}
+	{
+		e.FieldStart("gold")
+		e.Int(s.Gold)
+	}
+}
+
+var jsonFieldsNameOfRewardDataSchemaRewards = [2]string{
+	0: "items",
+	1: "gold",
+}
+
+// Decode decodes RewardDataSchemaRewards from json.
+func (s *RewardDataSchemaRewards) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode RewardDataSchemaRewards to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "items":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				s.Items = make([]SimpleItemSchema, 0)
+				if err := d.Arr(func(d *jx.Decoder) error {
+					var elem SimpleItemSchema
+					if err := elem.Decode(d); err != nil {
+						return err
+					}
+					s.Items = append(s.Items, elem)
+					return nil
+				}); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"items\"")
+			}
+		case "gold":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				v, err := d.Int()
+				s.Gold = int(v)
+				if err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"gold\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode RewardDataSchemaRewards")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000011,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfRewardDataSchemaRewards) {
+					name = jsonFieldsNameOfRewardDataSchemaRewards[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *RewardDataSchemaRewards) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *RewardDataSchemaRewards) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode implements json.Marshaler.
+func (s *RewardResponseSchema) Encode(e *jx.Encoder) {
+	e.ObjStart()
+	s.encodeFields(e)
+	e.ObjEnd()
+}
+
+// encodeFields encodes fields.
+func (s *RewardResponseSchema) encodeFields(e *jx.Encoder) {
+	{
+		e.FieldStart("data")
+		s.Data.Encode(e)
+	}
+}
+
+var jsonFieldsNameOfRewardResponseSchema = [1]string{
+	0: "data",
+}
+
+// Decode decodes RewardResponseSchema from json.
+func (s *RewardResponseSchema) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode RewardResponseSchema to nil")
+	}
+	var requiredBitSet [1]uint8
+
+	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
+		switch string(k) {
+		case "data":
+			requiredBitSet[0] |= 1 << 0
+			if err := func() error {
+				if err := s.Data.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"data\"")
+			}
+		default:
+			return d.Skip()
+		}
+		return nil
+	}); err != nil {
+		return errors.Wrap(err, "decode RewardResponseSchema")
+	}
+	// Validate required fields.
+	var failures []validate.FieldError
+	for i, mask := range [1]uint8{
+		0b00000001,
+	} {
+		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
+			// Mask only required fields and check equality to mask using XOR.
+			//
+			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
+			// Bits of fields which would be set are actually bits of missed fields.
+			missed := bits.OnesCount8(result)
+			for bitN := 0; bitN < missed; bitN++ {
+				bitIdx := bits.TrailingZeros8(result)
+				fieldIdx := i*8 + bitIdx
+				var name string
+				if fieldIdx < len(jsonFieldsNameOfRewardResponseSchema) {
+					name = jsonFieldsNameOfRewardResponseSchema[fieldIdx]
+				} else {
+					name = strconv.Itoa(fieldIdx)
+				}
+				failures = append(failures, validate.FieldError{
+					Name:  name,
+					Error: validate.ErrFieldRequired,
+				})
+				// Reset bit.
+				result &^= 1 << bitIdx
+			}
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s *RewardResponseSchema) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *RewardResponseSchema) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -41353,6 +44198,8 @@ func (s *SkillDataSchemaCooldownReason) Decode(d *jx.Decoder) error {
 		*s = SkillDataSchemaCooldownReasonUnequip
 	case SkillDataSchemaCooldownReasonTask:
 		*s = SkillDataSchemaCooldownReasonTask
+	case SkillDataSchemaCooldownReasonChristmasExchange:
+		*s = SkillDataSchemaCooldownReasonChristmasExchange
 	case SkillDataSchemaCooldownReasonRecycling:
 		*s = SkillDataSchemaCooldownReasonRecycling
 	case SkillDataSchemaCooldownReasonRest:
@@ -43748,6 +46595,8 @@ func (s *TaskCancelledSchemaCooldownReason) Decode(d *jx.Decoder) error {
 		*s = TaskCancelledSchemaCooldownReasonUnequip
 	case TaskCancelledSchemaCooldownReasonTask:
 		*s = TaskCancelledSchemaCooldownReasonTask
+	case TaskCancelledSchemaCooldownReasonChristmasExchange:
+		*s = TaskCancelledSchemaCooldownReasonChristmasExchange
 	case TaskCancelledSchemaCooldownReasonRecycling:
 		*s = TaskCancelledSchemaCooldownReasonRecycling
 	case TaskCancelledSchemaCooldownReasonRest:
@@ -45528,6 +48377,8 @@ func (s *TaskDataSchemaCooldownReason) Decode(d *jx.Decoder) error {
 		*s = TaskDataSchemaCooldownReasonUnequip
 	case TaskDataSchemaCooldownReasonTask:
 		*s = TaskDataSchemaCooldownReasonTask
+	case TaskDataSchemaCooldownReasonChristmasExchange:
+		*s = TaskDataSchemaCooldownReasonChristmasExchange
 	case TaskDataSchemaCooldownReasonRecycling:
 		*s = TaskDataSchemaCooldownReasonRecycling
 	case TaskDataSchemaCooldownReasonRest:
@@ -48206,6 +51057,8 @@ func (s *TaskTradeDataSchemaCooldownReason) Decode(d *jx.Decoder) error {
 		*s = TaskTradeDataSchemaCooldownReasonUnequip
 	case TaskTradeDataSchemaCooldownReasonTask:
 		*s = TaskTradeDataSchemaCooldownReasonTask
+	case TaskTradeDataSchemaCooldownReasonChristmasExchange:
+		*s = TaskTradeDataSchemaCooldownReasonChristmasExchange
 	case TaskTradeDataSchemaCooldownReasonRecycling:
 		*s = TaskTradeDataSchemaCooldownReasonRecycling
 	case TaskTradeDataSchemaCooldownReasonRest:
@@ -48437,2097 +51290,6 @@ func (s *TaskTradeResponseSchema) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *TaskTradeResponseSchema) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *TasksRewardDataResponseSchema) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *TasksRewardDataResponseSchema) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("data")
-		s.Data.Encode(e)
-	}
-}
-
-var jsonFieldsNameOfTasksRewardDataResponseSchema = [1]string{
-	0: "data",
-}
-
-// Decode decodes TasksRewardDataResponseSchema from json.
-func (s *TasksRewardDataResponseSchema) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode TasksRewardDataResponseSchema to nil")
-	}
-	var requiredBitSet [1]uint8
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "data":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				if err := s.Data.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"data\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode TasksRewardDataResponseSchema")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b00000001,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfTasksRewardDataResponseSchema) {
-					name = jsonFieldsNameOfTasksRewardDataResponseSchema[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *TasksRewardDataResponseSchema) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *TasksRewardDataResponseSchema) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *TasksRewardDataSchema) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *TasksRewardDataSchema) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("cooldown")
-		s.Cooldown.Encode(e)
-	}
-	{
-		e.FieldStart("rewards")
-		s.Rewards.Encode(e)
-	}
-	{
-		e.FieldStart("character")
-		s.Character.Encode(e)
-	}
-}
-
-var jsonFieldsNameOfTasksRewardDataSchema = [3]string{
-	0: "cooldown",
-	1: "rewards",
-	2: "character",
-}
-
-// Decode decodes TasksRewardDataSchema from json.
-func (s *TasksRewardDataSchema) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode TasksRewardDataSchema to nil")
-	}
-	var requiredBitSet [1]uint8
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "cooldown":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				if err := s.Cooldown.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"cooldown\"")
-			}
-		case "rewards":
-			requiredBitSet[0] |= 1 << 1
-			if err := func() error {
-				if err := s.Rewards.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"rewards\"")
-			}
-		case "character":
-			requiredBitSet[0] |= 1 << 2
-			if err := func() error {
-				if err := s.Character.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"character\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode TasksRewardDataSchema")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b00000111,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfTasksRewardDataSchema) {
-					name = jsonFieldsNameOfTasksRewardDataSchema[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *TasksRewardDataSchema) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *TasksRewardDataSchema) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *TasksRewardDataSchemaCharacter) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *TasksRewardDataSchemaCharacter) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("name")
-		e.Str(s.Name)
-	}
-	{
-		e.FieldStart("account")
-		e.Str(s.Account)
-	}
-	{
-		e.FieldStart("skin")
-		s.Skin.Encode(e)
-	}
-	{
-		e.FieldStart("level")
-		e.Int(s.Level)
-	}
-	{
-		e.FieldStart("xp")
-		e.Int(s.Xp)
-	}
-	{
-		e.FieldStart("max_xp")
-		e.Int(s.MaxXp)
-	}
-	{
-		e.FieldStart("gold")
-		e.Int(s.Gold)
-	}
-	{
-		e.FieldStart("speed")
-		e.Int(s.Speed)
-	}
-	{
-		e.FieldStart("mining_level")
-		e.Int(s.MiningLevel)
-	}
-	{
-		e.FieldStart("mining_xp")
-		e.Int(s.MiningXp)
-	}
-	{
-		e.FieldStart("mining_max_xp")
-		e.Int(s.MiningMaxXp)
-	}
-	{
-		e.FieldStart("woodcutting_level")
-		e.Int(s.WoodcuttingLevel)
-	}
-	{
-		e.FieldStart("woodcutting_xp")
-		e.Int(s.WoodcuttingXp)
-	}
-	{
-		e.FieldStart("woodcutting_max_xp")
-		e.Int(s.WoodcuttingMaxXp)
-	}
-	{
-		e.FieldStart("fishing_level")
-		e.Int(s.FishingLevel)
-	}
-	{
-		e.FieldStart("fishing_xp")
-		e.Int(s.FishingXp)
-	}
-	{
-		e.FieldStart("fishing_max_xp")
-		e.Int(s.FishingMaxXp)
-	}
-	{
-		e.FieldStart("weaponcrafting_level")
-		e.Int(s.WeaponcraftingLevel)
-	}
-	{
-		e.FieldStart("weaponcrafting_xp")
-		e.Int(s.WeaponcraftingXp)
-	}
-	{
-		e.FieldStart("weaponcrafting_max_xp")
-		e.Int(s.WeaponcraftingMaxXp)
-	}
-	{
-		e.FieldStart("gearcrafting_level")
-		e.Int(s.GearcraftingLevel)
-	}
-	{
-		e.FieldStart("gearcrafting_xp")
-		e.Int(s.GearcraftingXp)
-	}
-	{
-		e.FieldStart("gearcrafting_max_xp")
-		e.Int(s.GearcraftingMaxXp)
-	}
-	{
-		e.FieldStart("jewelrycrafting_level")
-		e.Int(s.JewelrycraftingLevel)
-	}
-	{
-		e.FieldStart("jewelrycrafting_xp")
-		e.Int(s.JewelrycraftingXp)
-	}
-	{
-		e.FieldStart("jewelrycrafting_max_xp")
-		e.Int(s.JewelrycraftingMaxXp)
-	}
-	{
-		e.FieldStart("cooking_level")
-		e.Int(s.CookingLevel)
-	}
-	{
-		e.FieldStart("cooking_xp")
-		e.Int(s.CookingXp)
-	}
-	{
-		e.FieldStart("cooking_max_xp")
-		e.Int(s.CookingMaxXp)
-	}
-	{
-		e.FieldStart("alchemy_level")
-		e.Int(s.AlchemyLevel)
-	}
-	{
-		e.FieldStart("alchemy_xp")
-		e.Int(s.AlchemyXp)
-	}
-	{
-		e.FieldStart("alchemy_max_xp")
-		e.Int(s.AlchemyMaxXp)
-	}
-	{
-		e.FieldStart("hp")
-		e.Int(s.Hp)
-	}
-	{
-		e.FieldStart("max_hp")
-		e.Int(s.MaxHp)
-	}
-	{
-		e.FieldStart("haste")
-		e.Int(s.Haste)
-	}
-	{
-		e.FieldStart("critical_strike")
-		e.Int(s.CriticalStrike)
-	}
-	{
-		e.FieldStart("stamina")
-		e.Int(s.Stamina)
-	}
-	{
-		e.FieldStart("attack_fire")
-		e.Int(s.AttackFire)
-	}
-	{
-		e.FieldStart("attack_earth")
-		e.Int(s.AttackEarth)
-	}
-	{
-		e.FieldStart("attack_water")
-		e.Int(s.AttackWater)
-	}
-	{
-		e.FieldStart("attack_air")
-		e.Int(s.AttackAir)
-	}
-	{
-		e.FieldStart("dmg_fire")
-		e.Int(s.DmgFire)
-	}
-	{
-		e.FieldStart("dmg_earth")
-		e.Int(s.DmgEarth)
-	}
-	{
-		e.FieldStart("dmg_water")
-		e.Int(s.DmgWater)
-	}
-	{
-		e.FieldStart("dmg_air")
-		e.Int(s.DmgAir)
-	}
-	{
-		e.FieldStart("res_fire")
-		e.Int(s.ResFire)
-	}
-	{
-		e.FieldStart("res_earth")
-		e.Int(s.ResEarth)
-	}
-	{
-		e.FieldStart("res_water")
-		e.Int(s.ResWater)
-	}
-	{
-		e.FieldStart("res_air")
-		e.Int(s.ResAir)
-	}
-	{
-		e.FieldStart("x")
-		e.Int(s.X)
-	}
-	{
-		e.FieldStart("y")
-		e.Int(s.Y)
-	}
-	{
-		e.FieldStart("cooldown")
-		e.Int(s.Cooldown)
-	}
-	{
-		if s.CooldownExpiration.Set {
-			e.FieldStart("cooldown_expiration")
-			s.CooldownExpiration.Encode(e, json.EncodeDateTime)
-		}
-	}
-	{
-		e.FieldStart("weapon_slot")
-		e.Str(s.WeaponSlot)
-	}
-	{
-		e.FieldStart("shield_slot")
-		e.Str(s.ShieldSlot)
-	}
-	{
-		e.FieldStart("helmet_slot")
-		e.Str(s.HelmetSlot)
-	}
-	{
-		e.FieldStart("body_armor_slot")
-		e.Str(s.BodyArmorSlot)
-	}
-	{
-		e.FieldStart("leg_armor_slot")
-		e.Str(s.LegArmorSlot)
-	}
-	{
-		e.FieldStart("boots_slot")
-		e.Str(s.BootsSlot)
-	}
-	{
-		e.FieldStart("ring1_slot")
-		e.Str(s.Ring1Slot)
-	}
-	{
-		e.FieldStart("ring2_slot")
-		e.Str(s.Ring2Slot)
-	}
-	{
-		e.FieldStart("amulet_slot")
-		e.Str(s.AmuletSlot)
-	}
-	{
-		e.FieldStart("artifact1_slot")
-		e.Str(s.Artifact1Slot)
-	}
-	{
-		e.FieldStart("artifact2_slot")
-		e.Str(s.Artifact2Slot)
-	}
-	{
-		e.FieldStart("artifact3_slot")
-		e.Str(s.Artifact3Slot)
-	}
-	{
-		e.FieldStart("utility1_slot")
-		e.Str(s.Utility1Slot)
-	}
-	{
-		e.FieldStart("utility1_slot_quantity")
-		e.Int(s.Utility1SlotQuantity)
-	}
-	{
-		e.FieldStart("utility2_slot")
-		e.Str(s.Utility2Slot)
-	}
-	{
-		e.FieldStart("utility2_slot_quantity")
-		e.Int(s.Utility2SlotQuantity)
-	}
-	{
-		e.FieldStart("task")
-		e.Str(s.Task)
-	}
-	{
-		e.FieldStart("task_type")
-		e.Str(s.TaskType)
-	}
-	{
-		e.FieldStart("task_progress")
-		e.Int(s.TaskProgress)
-	}
-	{
-		e.FieldStart("task_total")
-		e.Int(s.TaskTotal)
-	}
-	{
-		e.FieldStart("inventory_max_items")
-		e.Int(s.InventoryMaxItems)
-	}
-	{
-		if s.Inventory != nil {
-			e.FieldStart("inventory")
-			e.ArrStart()
-			for _, elem := range s.Inventory {
-				elem.Encode(e)
-			}
-			e.ArrEnd()
-		}
-	}
-}
-
-var jsonFieldsNameOfTasksRewardDataSchemaCharacter = [75]string{
-	0:  "name",
-	1:  "account",
-	2:  "skin",
-	3:  "level",
-	4:  "xp",
-	5:  "max_xp",
-	6:  "gold",
-	7:  "speed",
-	8:  "mining_level",
-	9:  "mining_xp",
-	10: "mining_max_xp",
-	11: "woodcutting_level",
-	12: "woodcutting_xp",
-	13: "woodcutting_max_xp",
-	14: "fishing_level",
-	15: "fishing_xp",
-	16: "fishing_max_xp",
-	17: "weaponcrafting_level",
-	18: "weaponcrafting_xp",
-	19: "weaponcrafting_max_xp",
-	20: "gearcrafting_level",
-	21: "gearcrafting_xp",
-	22: "gearcrafting_max_xp",
-	23: "jewelrycrafting_level",
-	24: "jewelrycrafting_xp",
-	25: "jewelrycrafting_max_xp",
-	26: "cooking_level",
-	27: "cooking_xp",
-	28: "cooking_max_xp",
-	29: "alchemy_level",
-	30: "alchemy_xp",
-	31: "alchemy_max_xp",
-	32: "hp",
-	33: "max_hp",
-	34: "haste",
-	35: "critical_strike",
-	36: "stamina",
-	37: "attack_fire",
-	38: "attack_earth",
-	39: "attack_water",
-	40: "attack_air",
-	41: "dmg_fire",
-	42: "dmg_earth",
-	43: "dmg_water",
-	44: "dmg_air",
-	45: "res_fire",
-	46: "res_earth",
-	47: "res_water",
-	48: "res_air",
-	49: "x",
-	50: "y",
-	51: "cooldown",
-	52: "cooldown_expiration",
-	53: "weapon_slot",
-	54: "shield_slot",
-	55: "helmet_slot",
-	56: "body_armor_slot",
-	57: "leg_armor_slot",
-	58: "boots_slot",
-	59: "ring1_slot",
-	60: "ring2_slot",
-	61: "amulet_slot",
-	62: "artifact1_slot",
-	63: "artifact2_slot",
-	64: "artifact3_slot",
-	65: "utility1_slot",
-	66: "utility1_slot_quantity",
-	67: "utility2_slot",
-	68: "utility2_slot_quantity",
-	69: "task",
-	70: "task_type",
-	71: "task_progress",
-	72: "task_total",
-	73: "inventory_max_items",
-	74: "inventory",
-}
-
-// Decode decodes TasksRewardDataSchemaCharacter from json.
-func (s *TasksRewardDataSchemaCharacter) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode TasksRewardDataSchemaCharacter to nil")
-	}
-	var requiredBitSet [10]uint8
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "name":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				v, err := d.Str()
-				s.Name = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"name\"")
-			}
-		case "account":
-			requiredBitSet[0] |= 1 << 1
-			if err := func() error {
-				v, err := d.Str()
-				s.Account = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"account\"")
-			}
-		case "skin":
-			requiredBitSet[0] |= 1 << 2
-			if err := func() error {
-				if err := s.Skin.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"skin\"")
-			}
-		case "level":
-			requiredBitSet[0] |= 1 << 3
-			if err := func() error {
-				v, err := d.Int()
-				s.Level = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"level\"")
-			}
-		case "xp":
-			requiredBitSet[0] |= 1 << 4
-			if err := func() error {
-				v, err := d.Int()
-				s.Xp = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"xp\"")
-			}
-		case "max_xp":
-			requiredBitSet[0] |= 1 << 5
-			if err := func() error {
-				v, err := d.Int()
-				s.MaxXp = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"max_xp\"")
-			}
-		case "gold":
-			requiredBitSet[0] |= 1 << 6
-			if err := func() error {
-				v, err := d.Int()
-				s.Gold = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"gold\"")
-			}
-		case "speed":
-			requiredBitSet[0] |= 1 << 7
-			if err := func() error {
-				v, err := d.Int()
-				s.Speed = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"speed\"")
-			}
-		case "mining_level":
-			requiredBitSet[1] |= 1 << 0
-			if err := func() error {
-				v, err := d.Int()
-				s.MiningLevel = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"mining_level\"")
-			}
-		case "mining_xp":
-			requiredBitSet[1] |= 1 << 1
-			if err := func() error {
-				v, err := d.Int()
-				s.MiningXp = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"mining_xp\"")
-			}
-		case "mining_max_xp":
-			requiredBitSet[1] |= 1 << 2
-			if err := func() error {
-				v, err := d.Int()
-				s.MiningMaxXp = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"mining_max_xp\"")
-			}
-		case "woodcutting_level":
-			requiredBitSet[1] |= 1 << 3
-			if err := func() error {
-				v, err := d.Int()
-				s.WoodcuttingLevel = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"woodcutting_level\"")
-			}
-		case "woodcutting_xp":
-			requiredBitSet[1] |= 1 << 4
-			if err := func() error {
-				v, err := d.Int()
-				s.WoodcuttingXp = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"woodcutting_xp\"")
-			}
-		case "woodcutting_max_xp":
-			requiredBitSet[1] |= 1 << 5
-			if err := func() error {
-				v, err := d.Int()
-				s.WoodcuttingMaxXp = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"woodcutting_max_xp\"")
-			}
-		case "fishing_level":
-			requiredBitSet[1] |= 1 << 6
-			if err := func() error {
-				v, err := d.Int()
-				s.FishingLevel = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"fishing_level\"")
-			}
-		case "fishing_xp":
-			requiredBitSet[1] |= 1 << 7
-			if err := func() error {
-				v, err := d.Int()
-				s.FishingXp = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"fishing_xp\"")
-			}
-		case "fishing_max_xp":
-			requiredBitSet[2] |= 1 << 0
-			if err := func() error {
-				v, err := d.Int()
-				s.FishingMaxXp = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"fishing_max_xp\"")
-			}
-		case "weaponcrafting_level":
-			requiredBitSet[2] |= 1 << 1
-			if err := func() error {
-				v, err := d.Int()
-				s.WeaponcraftingLevel = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"weaponcrafting_level\"")
-			}
-		case "weaponcrafting_xp":
-			requiredBitSet[2] |= 1 << 2
-			if err := func() error {
-				v, err := d.Int()
-				s.WeaponcraftingXp = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"weaponcrafting_xp\"")
-			}
-		case "weaponcrafting_max_xp":
-			requiredBitSet[2] |= 1 << 3
-			if err := func() error {
-				v, err := d.Int()
-				s.WeaponcraftingMaxXp = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"weaponcrafting_max_xp\"")
-			}
-		case "gearcrafting_level":
-			requiredBitSet[2] |= 1 << 4
-			if err := func() error {
-				v, err := d.Int()
-				s.GearcraftingLevel = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"gearcrafting_level\"")
-			}
-		case "gearcrafting_xp":
-			requiredBitSet[2] |= 1 << 5
-			if err := func() error {
-				v, err := d.Int()
-				s.GearcraftingXp = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"gearcrafting_xp\"")
-			}
-		case "gearcrafting_max_xp":
-			requiredBitSet[2] |= 1 << 6
-			if err := func() error {
-				v, err := d.Int()
-				s.GearcraftingMaxXp = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"gearcrafting_max_xp\"")
-			}
-		case "jewelrycrafting_level":
-			requiredBitSet[2] |= 1 << 7
-			if err := func() error {
-				v, err := d.Int()
-				s.JewelrycraftingLevel = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"jewelrycrafting_level\"")
-			}
-		case "jewelrycrafting_xp":
-			requiredBitSet[3] |= 1 << 0
-			if err := func() error {
-				v, err := d.Int()
-				s.JewelrycraftingXp = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"jewelrycrafting_xp\"")
-			}
-		case "jewelrycrafting_max_xp":
-			requiredBitSet[3] |= 1 << 1
-			if err := func() error {
-				v, err := d.Int()
-				s.JewelrycraftingMaxXp = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"jewelrycrafting_max_xp\"")
-			}
-		case "cooking_level":
-			requiredBitSet[3] |= 1 << 2
-			if err := func() error {
-				v, err := d.Int()
-				s.CookingLevel = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"cooking_level\"")
-			}
-		case "cooking_xp":
-			requiredBitSet[3] |= 1 << 3
-			if err := func() error {
-				v, err := d.Int()
-				s.CookingXp = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"cooking_xp\"")
-			}
-		case "cooking_max_xp":
-			requiredBitSet[3] |= 1 << 4
-			if err := func() error {
-				v, err := d.Int()
-				s.CookingMaxXp = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"cooking_max_xp\"")
-			}
-		case "alchemy_level":
-			requiredBitSet[3] |= 1 << 5
-			if err := func() error {
-				v, err := d.Int()
-				s.AlchemyLevel = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"alchemy_level\"")
-			}
-		case "alchemy_xp":
-			requiredBitSet[3] |= 1 << 6
-			if err := func() error {
-				v, err := d.Int()
-				s.AlchemyXp = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"alchemy_xp\"")
-			}
-		case "alchemy_max_xp":
-			requiredBitSet[3] |= 1 << 7
-			if err := func() error {
-				v, err := d.Int()
-				s.AlchemyMaxXp = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"alchemy_max_xp\"")
-			}
-		case "hp":
-			requiredBitSet[4] |= 1 << 0
-			if err := func() error {
-				v, err := d.Int()
-				s.Hp = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"hp\"")
-			}
-		case "max_hp":
-			requiredBitSet[4] |= 1 << 1
-			if err := func() error {
-				v, err := d.Int()
-				s.MaxHp = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"max_hp\"")
-			}
-		case "haste":
-			requiredBitSet[4] |= 1 << 2
-			if err := func() error {
-				v, err := d.Int()
-				s.Haste = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"haste\"")
-			}
-		case "critical_strike":
-			requiredBitSet[4] |= 1 << 3
-			if err := func() error {
-				v, err := d.Int()
-				s.CriticalStrike = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"critical_strike\"")
-			}
-		case "stamina":
-			requiredBitSet[4] |= 1 << 4
-			if err := func() error {
-				v, err := d.Int()
-				s.Stamina = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"stamina\"")
-			}
-		case "attack_fire":
-			requiredBitSet[4] |= 1 << 5
-			if err := func() error {
-				v, err := d.Int()
-				s.AttackFire = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"attack_fire\"")
-			}
-		case "attack_earth":
-			requiredBitSet[4] |= 1 << 6
-			if err := func() error {
-				v, err := d.Int()
-				s.AttackEarth = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"attack_earth\"")
-			}
-		case "attack_water":
-			requiredBitSet[4] |= 1 << 7
-			if err := func() error {
-				v, err := d.Int()
-				s.AttackWater = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"attack_water\"")
-			}
-		case "attack_air":
-			requiredBitSet[5] |= 1 << 0
-			if err := func() error {
-				v, err := d.Int()
-				s.AttackAir = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"attack_air\"")
-			}
-		case "dmg_fire":
-			requiredBitSet[5] |= 1 << 1
-			if err := func() error {
-				v, err := d.Int()
-				s.DmgFire = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"dmg_fire\"")
-			}
-		case "dmg_earth":
-			requiredBitSet[5] |= 1 << 2
-			if err := func() error {
-				v, err := d.Int()
-				s.DmgEarth = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"dmg_earth\"")
-			}
-		case "dmg_water":
-			requiredBitSet[5] |= 1 << 3
-			if err := func() error {
-				v, err := d.Int()
-				s.DmgWater = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"dmg_water\"")
-			}
-		case "dmg_air":
-			requiredBitSet[5] |= 1 << 4
-			if err := func() error {
-				v, err := d.Int()
-				s.DmgAir = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"dmg_air\"")
-			}
-		case "res_fire":
-			requiredBitSet[5] |= 1 << 5
-			if err := func() error {
-				v, err := d.Int()
-				s.ResFire = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"res_fire\"")
-			}
-		case "res_earth":
-			requiredBitSet[5] |= 1 << 6
-			if err := func() error {
-				v, err := d.Int()
-				s.ResEarth = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"res_earth\"")
-			}
-		case "res_water":
-			requiredBitSet[5] |= 1 << 7
-			if err := func() error {
-				v, err := d.Int()
-				s.ResWater = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"res_water\"")
-			}
-		case "res_air":
-			requiredBitSet[6] |= 1 << 0
-			if err := func() error {
-				v, err := d.Int()
-				s.ResAir = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"res_air\"")
-			}
-		case "x":
-			requiredBitSet[6] |= 1 << 1
-			if err := func() error {
-				v, err := d.Int()
-				s.X = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"x\"")
-			}
-		case "y":
-			requiredBitSet[6] |= 1 << 2
-			if err := func() error {
-				v, err := d.Int()
-				s.Y = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"y\"")
-			}
-		case "cooldown":
-			requiredBitSet[6] |= 1 << 3
-			if err := func() error {
-				v, err := d.Int()
-				s.Cooldown = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"cooldown\"")
-			}
-		case "cooldown_expiration":
-			if err := func() error {
-				s.CooldownExpiration.Reset()
-				if err := s.CooldownExpiration.Decode(d, json.DecodeDateTime); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"cooldown_expiration\"")
-			}
-		case "weapon_slot":
-			requiredBitSet[6] |= 1 << 5
-			if err := func() error {
-				v, err := d.Str()
-				s.WeaponSlot = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"weapon_slot\"")
-			}
-		case "shield_slot":
-			requiredBitSet[6] |= 1 << 6
-			if err := func() error {
-				v, err := d.Str()
-				s.ShieldSlot = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"shield_slot\"")
-			}
-		case "helmet_slot":
-			requiredBitSet[6] |= 1 << 7
-			if err := func() error {
-				v, err := d.Str()
-				s.HelmetSlot = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"helmet_slot\"")
-			}
-		case "body_armor_slot":
-			requiredBitSet[7] |= 1 << 0
-			if err := func() error {
-				v, err := d.Str()
-				s.BodyArmorSlot = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"body_armor_slot\"")
-			}
-		case "leg_armor_slot":
-			requiredBitSet[7] |= 1 << 1
-			if err := func() error {
-				v, err := d.Str()
-				s.LegArmorSlot = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"leg_armor_slot\"")
-			}
-		case "boots_slot":
-			requiredBitSet[7] |= 1 << 2
-			if err := func() error {
-				v, err := d.Str()
-				s.BootsSlot = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"boots_slot\"")
-			}
-		case "ring1_slot":
-			requiredBitSet[7] |= 1 << 3
-			if err := func() error {
-				v, err := d.Str()
-				s.Ring1Slot = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"ring1_slot\"")
-			}
-		case "ring2_slot":
-			requiredBitSet[7] |= 1 << 4
-			if err := func() error {
-				v, err := d.Str()
-				s.Ring2Slot = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"ring2_slot\"")
-			}
-		case "amulet_slot":
-			requiredBitSet[7] |= 1 << 5
-			if err := func() error {
-				v, err := d.Str()
-				s.AmuletSlot = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"amulet_slot\"")
-			}
-		case "artifact1_slot":
-			requiredBitSet[7] |= 1 << 6
-			if err := func() error {
-				v, err := d.Str()
-				s.Artifact1Slot = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"artifact1_slot\"")
-			}
-		case "artifact2_slot":
-			requiredBitSet[7] |= 1 << 7
-			if err := func() error {
-				v, err := d.Str()
-				s.Artifact2Slot = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"artifact2_slot\"")
-			}
-		case "artifact3_slot":
-			requiredBitSet[8] |= 1 << 0
-			if err := func() error {
-				v, err := d.Str()
-				s.Artifact3Slot = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"artifact3_slot\"")
-			}
-		case "utility1_slot":
-			requiredBitSet[8] |= 1 << 1
-			if err := func() error {
-				v, err := d.Str()
-				s.Utility1Slot = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"utility1_slot\"")
-			}
-		case "utility1_slot_quantity":
-			requiredBitSet[8] |= 1 << 2
-			if err := func() error {
-				v, err := d.Int()
-				s.Utility1SlotQuantity = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"utility1_slot_quantity\"")
-			}
-		case "utility2_slot":
-			requiredBitSet[8] |= 1 << 3
-			if err := func() error {
-				v, err := d.Str()
-				s.Utility2Slot = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"utility2_slot\"")
-			}
-		case "utility2_slot_quantity":
-			requiredBitSet[8] |= 1 << 4
-			if err := func() error {
-				v, err := d.Int()
-				s.Utility2SlotQuantity = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"utility2_slot_quantity\"")
-			}
-		case "task":
-			requiredBitSet[8] |= 1 << 5
-			if err := func() error {
-				v, err := d.Str()
-				s.Task = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"task\"")
-			}
-		case "task_type":
-			requiredBitSet[8] |= 1 << 6
-			if err := func() error {
-				v, err := d.Str()
-				s.TaskType = string(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"task_type\"")
-			}
-		case "task_progress":
-			requiredBitSet[8] |= 1 << 7
-			if err := func() error {
-				v, err := d.Int()
-				s.TaskProgress = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"task_progress\"")
-			}
-		case "task_total":
-			requiredBitSet[9] |= 1 << 0
-			if err := func() error {
-				v, err := d.Int()
-				s.TaskTotal = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"task_total\"")
-			}
-		case "inventory_max_items":
-			requiredBitSet[9] |= 1 << 1
-			if err := func() error {
-				v, err := d.Int()
-				s.InventoryMaxItems = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"inventory_max_items\"")
-			}
-		case "inventory":
-			if err := func() error {
-				s.Inventory = make([]InventorySlot, 0)
-				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem InventorySlot
-					if err := elem.Decode(d); err != nil {
-						return err
-					}
-					s.Inventory = append(s.Inventory, elem)
-					return nil
-				}); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"inventory\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode TasksRewardDataSchemaCharacter")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [10]uint8{
-		0b11111111,
-		0b11111111,
-		0b11111111,
-		0b11111111,
-		0b11111111,
-		0b11111111,
-		0b11101111,
-		0b11111111,
-		0b11111111,
-		0b00000011,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfTasksRewardDataSchemaCharacter) {
-					name = jsonFieldsNameOfTasksRewardDataSchemaCharacter[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *TasksRewardDataSchemaCharacter) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *TasksRewardDataSchemaCharacter) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode encodes TasksRewardDataSchemaCharacterSkin as json.
-func (s TasksRewardDataSchemaCharacterSkin) Encode(e *jx.Encoder) {
-	e.Str(string(s))
-}
-
-// Decode decodes TasksRewardDataSchemaCharacterSkin from json.
-func (s *TasksRewardDataSchemaCharacterSkin) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode TasksRewardDataSchemaCharacterSkin to nil")
-	}
-	v, err := d.StrBytes()
-	if err != nil {
-		return err
-	}
-	// Try to use constant string.
-	switch TasksRewardDataSchemaCharacterSkin(v) {
-	case TasksRewardDataSchemaCharacterSkinMen1:
-		*s = TasksRewardDataSchemaCharacterSkinMen1
-	case TasksRewardDataSchemaCharacterSkinMen2:
-		*s = TasksRewardDataSchemaCharacterSkinMen2
-	case TasksRewardDataSchemaCharacterSkinMen3:
-		*s = TasksRewardDataSchemaCharacterSkinMen3
-	case TasksRewardDataSchemaCharacterSkinWomen1:
-		*s = TasksRewardDataSchemaCharacterSkinWomen1
-	case TasksRewardDataSchemaCharacterSkinWomen2:
-		*s = TasksRewardDataSchemaCharacterSkinWomen2
-	case TasksRewardDataSchemaCharacterSkinWomen3:
-		*s = TasksRewardDataSchemaCharacterSkinWomen3
-	default:
-		*s = TasksRewardDataSchemaCharacterSkin(v)
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s TasksRewardDataSchemaCharacterSkin) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *TasksRewardDataSchemaCharacterSkin) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *TasksRewardDataSchemaCooldown) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *TasksRewardDataSchemaCooldown) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("total_seconds")
-		e.Int(s.TotalSeconds)
-	}
-	{
-		e.FieldStart("remaining_seconds")
-		e.Int(s.RemainingSeconds)
-	}
-	{
-		e.FieldStart("started_at")
-		json.EncodeDateTime(e, s.StartedAt)
-	}
-	{
-		e.FieldStart("expiration")
-		json.EncodeDateTime(e, s.Expiration)
-	}
-	{
-		e.FieldStart("reason")
-		s.Reason.Encode(e)
-	}
-}
-
-var jsonFieldsNameOfTasksRewardDataSchemaCooldown = [5]string{
-	0: "total_seconds",
-	1: "remaining_seconds",
-	2: "started_at",
-	3: "expiration",
-	4: "reason",
-}
-
-// Decode decodes TasksRewardDataSchemaCooldown from json.
-func (s *TasksRewardDataSchemaCooldown) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode TasksRewardDataSchemaCooldown to nil")
-	}
-	var requiredBitSet [1]uint8
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "total_seconds":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				v, err := d.Int()
-				s.TotalSeconds = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"total_seconds\"")
-			}
-		case "remaining_seconds":
-			requiredBitSet[0] |= 1 << 1
-			if err := func() error {
-				v, err := d.Int()
-				s.RemainingSeconds = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"remaining_seconds\"")
-			}
-		case "started_at":
-			requiredBitSet[0] |= 1 << 2
-			if err := func() error {
-				v, err := json.DecodeDateTime(d)
-				s.StartedAt = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"started_at\"")
-			}
-		case "expiration":
-			requiredBitSet[0] |= 1 << 3
-			if err := func() error {
-				v, err := json.DecodeDateTime(d)
-				s.Expiration = v
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"expiration\"")
-			}
-		case "reason":
-			requiredBitSet[0] |= 1 << 4
-			if err := func() error {
-				if err := s.Reason.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"reason\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode TasksRewardDataSchemaCooldown")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b00011111,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfTasksRewardDataSchemaCooldown) {
-					name = jsonFieldsNameOfTasksRewardDataSchemaCooldown[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *TasksRewardDataSchemaCooldown) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *TasksRewardDataSchemaCooldown) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode encodes TasksRewardDataSchemaCooldownReason as json.
-func (s TasksRewardDataSchemaCooldownReason) Encode(e *jx.Encoder) {
-	e.Str(string(s))
-}
-
-// Decode decodes TasksRewardDataSchemaCooldownReason from json.
-func (s *TasksRewardDataSchemaCooldownReason) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode TasksRewardDataSchemaCooldownReason to nil")
-	}
-	v, err := d.StrBytes()
-	if err != nil {
-		return err
-	}
-	// Try to use constant string.
-	switch TasksRewardDataSchemaCooldownReason(v) {
-	case TasksRewardDataSchemaCooldownReasonMovement:
-		*s = TasksRewardDataSchemaCooldownReasonMovement
-	case TasksRewardDataSchemaCooldownReasonFight:
-		*s = TasksRewardDataSchemaCooldownReasonFight
-	case TasksRewardDataSchemaCooldownReasonCrafting:
-		*s = TasksRewardDataSchemaCooldownReasonCrafting
-	case TasksRewardDataSchemaCooldownReasonGathering:
-		*s = TasksRewardDataSchemaCooldownReasonGathering
-	case TasksRewardDataSchemaCooldownReasonBuyGe:
-		*s = TasksRewardDataSchemaCooldownReasonBuyGe
-	case TasksRewardDataSchemaCooldownReasonSellGe:
-		*s = TasksRewardDataSchemaCooldownReasonSellGe
-	case TasksRewardDataSchemaCooldownReasonCancelGe:
-		*s = TasksRewardDataSchemaCooldownReasonCancelGe
-	case TasksRewardDataSchemaCooldownReasonDeleteItem:
-		*s = TasksRewardDataSchemaCooldownReasonDeleteItem
-	case TasksRewardDataSchemaCooldownReasonDeposit:
-		*s = TasksRewardDataSchemaCooldownReasonDeposit
-	case TasksRewardDataSchemaCooldownReasonWithdraw:
-		*s = TasksRewardDataSchemaCooldownReasonWithdraw
-	case TasksRewardDataSchemaCooldownReasonDepositGold:
-		*s = TasksRewardDataSchemaCooldownReasonDepositGold
-	case TasksRewardDataSchemaCooldownReasonWithdrawGold:
-		*s = TasksRewardDataSchemaCooldownReasonWithdrawGold
-	case TasksRewardDataSchemaCooldownReasonEquip:
-		*s = TasksRewardDataSchemaCooldownReasonEquip
-	case TasksRewardDataSchemaCooldownReasonUnequip:
-		*s = TasksRewardDataSchemaCooldownReasonUnequip
-	case TasksRewardDataSchemaCooldownReasonTask:
-		*s = TasksRewardDataSchemaCooldownReasonTask
-	case TasksRewardDataSchemaCooldownReasonRecycling:
-		*s = TasksRewardDataSchemaCooldownReasonRecycling
-	case TasksRewardDataSchemaCooldownReasonRest:
-		*s = TasksRewardDataSchemaCooldownReasonRest
-	case TasksRewardDataSchemaCooldownReasonUse:
-		*s = TasksRewardDataSchemaCooldownReasonUse
-	case TasksRewardDataSchemaCooldownReasonBuyBankExpansion:
-		*s = TasksRewardDataSchemaCooldownReasonBuyBankExpansion
-	default:
-		*s = TasksRewardDataSchemaCooldownReason(v)
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s TasksRewardDataSchemaCooldownReason) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *TasksRewardDataSchemaCooldownReason) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *TasksRewardDataSchemaRewards) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *TasksRewardDataSchemaRewards) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("items")
-		e.ArrStart()
-		for _, elem := range s.Items {
-			elem.Encode(e)
-		}
-		e.ArrEnd()
-	}
-	{
-		e.FieldStart("gold")
-		e.Int(s.Gold)
-	}
-}
-
-var jsonFieldsNameOfTasksRewardDataSchemaRewards = [2]string{
-	0: "items",
-	1: "gold",
-}
-
-// Decode decodes TasksRewardDataSchemaRewards from json.
-func (s *TasksRewardDataSchemaRewards) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode TasksRewardDataSchemaRewards to nil")
-	}
-	var requiredBitSet [1]uint8
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "items":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				s.Items = make([]SimpleItemSchema, 0)
-				if err := d.Arr(func(d *jx.Decoder) error {
-					var elem SimpleItemSchema
-					if err := elem.Decode(d); err != nil {
-						return err
-					}
-					s.Items = append(s.Items, elem)
-					return nil
-				}); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"items\"")
-			}
-		case "gold":
-			requiredBitSet[0] |= 1 << 1
-			if err := func() error {
-				v, err := d.Int()
-				s.Gold = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"gold\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode TasksRewardDataSchemaRewards")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b00000011,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfTasksRewardDataSchemaRewards) {
-					name = jsonFieldsNameOfTasksRewardDataSchemaRewards[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *TasksRewardDataSchemaRewards) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *TasksRewardDataSchemaRewards) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *TasksRewardResponseSchema) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *TasksRewardResponseSchema) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("data")
-		s.Data.Encode(e)
-	}
-}
-
-var jsonFieldsNameOfTasksRewardResponseSchema = [1]string{
-	0: "data",
-}
-
-// Decode decodes TasksRewardResponseSchema from json.
-func (s *TasksRewardResponseSchema) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode TasksRewardResponseSchema to nil")
-	}
-	var requiredBitSet [1]uint8
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "data":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				if err := s.Data.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"data\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode TasksRewardResponseSchema")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b00000001,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfTasksRewardResponseSchema) {
-					name = jsonFieldsNameOfTasksRewardResponseSchema[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *TasksRewardResponseSchema) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *TasksRewardResponseSchema) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -52650,6 +53412,8 @@ func (s *UseItemSchemaCooldownReason) Decode(d *jx.Decoder) error {
 		*s = UseItemSchemaCooldownReasonUnequip
 	case UseItemSchemaCooldownReasonTask:
 		*s = UseItemSchemaCooldownReasonTask
+	case UseItemSchemaCooldownReasonChristmasExchange:
+		*s = UseItemSchemaCooldownReasonChristmasExchange
 	case UseItemSchemaCooldownReasonRecycling:
 		*s = UseItemSchemaCooldownReasonRecycling
 	case UseItemSchemaCooldownReasonRest:

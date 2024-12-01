@@ -20,6 +20,9 @@ type simpleGather struct {
 	deposit         []string
 	depositGold     bool
 	allowSwithTools bool
+	events          []string
+
+	currentSpot string
 }
 
 func SimpleGather(character *generic.Character, game *game.Game) *simpleGather {
@@ -55,8 +58,13 @@ func (s *simpleGather) AllowSwitchTools() *simpleGather {
 	return s
 }
 
+func (s *simpleGather) AllowEvents(events ...string) *simpleGather {
+	s.events = append(s.events, events...)
+	return s
+}
+
 func (s *simpleGather) Name() string {
-	return "gather " + s.spot
+	return fmt.Sprintf("gather %s and do events %v if possible", s.spot, s.events)
 }
 
 func (s *simpleGather) Do(ctx context.Context) error {
@@ -70,14 +78,27 @@ func (s *simpleGather) Do(ctx context.Context) error {
 		}
 	}
 
-	spot, err := s.game.Find(s.spot, s.character.Location())
-	if err != nil {
-		return fmt.Errorf("get map: %w", err)
+	var spot game.Point
+	for _, name := range s.events {
+		if event, err := s.game.GetEvent(name); err != nil {
+			spot = event
+			break
+		}
 	}
 
-	s.switchTools(ctx)
+	if spot.Name == "" {
+		var err error
+		spot, err = s.game.Find(s.spot, s.character.Location())
+		if err != nil {
+			return fmt.Errorf("get map: %w", err)
+		}
+	}
 
-	err = s.character.Move(ctx, spot)
+	if err := s.switchTools(ctx, spot); err != nil {
+		return fmt.Errorf("swith tools: %w", err)
+	}
+
+	err := s.character.Move(ctx, spot)
 	if err != nil {
 		return fmt.Errorf("move: %w", err)
 	}
@@ -90,18 +111,27 @@ func (s *simpleGather) Do(ctx context.Context) error {
 	return nil
 }
 
-func (s *simpleGather) switchTools(ctx context.Context) error {
+func (s *simpleGather) switchTools(ctx context.Context, spot game.Point) error {
 	if !s.allowSwithTools {
 		return nil
 	}
 
+	if s.currentSpot == spot.Name {
+		// already weared best tool
+		return nil
+	}
+
+	s.game.LockBank()
+	defer s.game.UnlockBank()
+
 	start := time.Now()
-	gear := macro.GetBestGearForResource(s.character, s.game, s.spot)
-	s.character.Log(fmt.Sprintf("choose best tool for resource %s: %v", s.spot, time.Since(start)), slog.Any("items", gear))
+	gear := macro.GetBestGearForResource(s.character, s.game, spot.Name)
+	s.character.Log(fmt.Sprintf("choose best tool for resource %s: %v", spot.Name, time.Since(start)), slog.Any("items", gear))
 
 	if err := macro.Wear(ctx, s.character, s.game, gear); err != nil {
 		return fmt.Errorf("wear: %w", err)
 	}
 
+	s.currentSpot = spot.Name
 	return nil
 }

@@ -1,7 +1,5 @@
 github.com/Sinketsu/yc-logging-slog v0.0.5-dev h1:OY2+60RQRoXBVS3sLD1bOcUBWJfdJDVd3edrVXFJ/CI=
 github.com/Sinketsu/yc-logging-slog v0.0.5-dev/go.mod h1:JZev7VVaUswlgbPy8NwI37rK9gvvkS9ZYZFCKHTL+9g=
-github.com/Sinketsu/yc-monitoring-go v0.0.4-dev h1:i9nIIlR2SNZUzDgxleI2nvBtLBUcSziPhV6KBivkG1M=
-github.com/Sinketsu/yc-monitoring-go v0.0.4-dev/go.mod h1:+axwPhdWbLulYwojwcCE1XwERhvIe4qKAqK3adOg+eQ=
 github.com/Sinketsu/yc-monitoring-go v0.0.5-dev h1:7oW6H32UeOLYnAto8CFeliD6YqGeCpfxNVwAByuryko=
 github.com/Sinketsu/yc-monitoring-go v0.0.5-dev/go.mod h1:+axwPhdWbLulYwojwcCE1XwERhvIe4qKAqK3adOg+eQ=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
@@ -33,6 +31,8 @@ github.com/hashicorp/errwrap v1.0.0 h1:hLrqtEDnRye3+sgx6z4qVLNuviH3MR5aQ0ykNJa/U
 github.com/hashicorp/errwrap v1.0.0/go.mod h1:YH+1FKiLXxHSkmPseP+kNlulaMuP3n2brvKWEqk/Jc4=
 github.com/hashicorp/go-multierror v1.1.1 h1:H5DkEtf6CXdFp0N0Em5UCwQpXMWke8IA0+lD48awMYo=
 github.com/hashicorp/go-multierror v1.1.1/go.mod h1:iw975J/qwKPdAO1clOe2L8331t/9/fmwbPZ6JB6eMoM=
+github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
+github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
 github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
 github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
 github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
@@ -44,6 +44,8 @@ github.com/mattn/go-isatty v0.0.20 h1:xfD0iDuEKnDkl03q4limB+vH+GxLEtL/jb4xVJSWWE
 github.com/mattn/go-isatty v0.0.20/go.mod h1:W+V8PltTTMOvKvAeJH7IuucS94S2C6jfK/D7dTCTo3Y=
 github.com/mitchellh/go-testing-interface v1.14.1 h1:jrgshOhYAUVNMAJiKbEu7EqAwgJJ2JqpQmpLJOu07cU=
 github.com/mitchellh/go-testing-interface v1.14.1/go.mod h1:gfgS7OtZj6MA4U1UrDRp04twqAjfvlZyCfX3sDjEym8=
+github.com/mxschmitt/golang-combinations v1.2.0 h1:V5E7MncIK8Yr1SL/SpdqMuSquFsfoIs5auI7Y3n8z14=
+github.com/mxschmitt/golang-combinations v1.2.0/go.mod h1:RCm5eR03B+JrBOMRDLsKZWShluXdrHu+qwhPEJ0miBM=
 github.com/ogen-go/ogen v1.6.0 h1:5pwTvLdJHVz7MhTHvrcoaQePROXyJnuY5ECcC+GZDrA=
 github.com/ogen-go/ogen v1.6.0/go.mod h1:Y+ZYfR1bKmEQBSdxblRtMRsf8Fk/ExskKc4dZNW+hZ0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=

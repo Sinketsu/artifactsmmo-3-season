@@ -111,9 +111,65 @@ func encodeActionBuyBankExpansionMyNameActionBankBuyExpansionPostResponse(respon
 	}
 }
 
+func encodeActionChristmasExchangeMyNameActionChristmasExchangePostResponse(response ActionChristmasExchangeMyNameActionChristmasExchangePostRes, w http.ResponseWriter, span trace.Span) error {
+	switch response := response.(type) {
+	case *RewardDataResponseSchema:
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.WriteHeader(200)
+		span.SetStatus(codes.Ok, http.StatusText(200))
+
+		e := new(jx.Encoder)
+		response.Encode(e)
+		if _, err := e.WriteTo(w); err != nil {
+			return errors.Wrap(err, "write")
+		}
+
+		return nil
+
+	case *ActionChristmasExchangeMyNameActionChristmasExchangePostCode478:
+		w.WriteHeader(478)
+		span.SetStatus(codes.Error, http.StatusText(478))
+
+		return nil
+
+	case *ActionChristmasExchangeMyNameActionChristmasExchangePostCode486:
+		w.WriteHeader(486)
+		span.SetStatus(codes.Error, http.StatusText(486))
+
+		return nil
+
+	case *ActionChristmasExchangeMyNameActionChristmasExchangePostCode497:
+		w.WriteHeader(497)
+		span.SetStatus(codes.Error, http.StatusText(497))
+
+		return nil
+
+	case *ActionChristmasExchangeMyNameActionChristmasExchangePostCode498:
+		w.WriteHeader(498)
+		span.SetStatus(codes.Error, http.StatusText(498))
+
+		return nil
+
+	case *ActionChristmasExchangeMyNameActionChristmasExchangePostCode499:
+		w.WriteHeader(499)
+		span.SetStatus(codes.Error, http.StatusText(499))
+
+		return nil
+
+	case *ActionChristmasExchangeMyNameActionChristmasExchangePostCode598:
+		w.WriteHeader(598)
+		span.SetStatus(codes.Error, http.StatusText(598))
+
+		return nil
+
+	default:
+		return errors.Errorf("unexpected response type: %T", response)
+	}
+}
+
 func encodeActionCompleteTaskMyNameActionTaskCompletePostResponse(response ActionCompleteTaskMyNameActionTaskCompletePostRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *TasksRewardDataResponseSchema:
+	case *RewardDataResponseSchema:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
@@ -1031,7 +1087,7 @@ func encodeActionTaskCancelMyNameActionTaskCancelPostResponse(response ActionTas
 
 func encodeActionTaskExchangeMyNameActionTaskExchangePostResponse(response ActionTaskExchangeMyNameActionTaskExchangePostRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *TasksRewardDataResponseSchema:
+	case *RewardDataResponseSchema:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
@@ -1677,6 +1733,20 @@ func encodeGetAllActiveEventsEventsActiveGetResponse(response *DataPageActiveEve
 	return nil
 }
 
+func encodeGetAllBadgesBadgesGetResponse(response *DataPageBadgeSchema, w http.ResponseWriter, span trace.Span) error {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(200)
+	span.SetStatus(codes.Ok, http.StatusText(200))
+
+	e := new(jx.Encoder)
+	response.Encode(e)
+	if _, err := e.WriteTo(w); err != nil {
+		return errors.Wrap(err, "write")
+	}
+
+	return nil
+}
+
 func encodeGetAllCharactersLogsMyLogsGetResponse(response GetAllCharactersLogsMyLogsGetRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
 	case *DataPageLogSchema:
@@ -1805,6 +1875,32 @@ func encodeGetAllTasksTasksListGetResponse(response *DataPageTaskFullSchema, w h
 	}
 
 	return nil
+}
+
+func encodeGetBadgeBadgesCodeGetResponse(response GetBadgeBadgesCodeGetRes, w http.ResponseWriter, span trace.Span) error {
+	switch response := response.(type) {
+	case *BadgeResponseSchema:
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.WriteHeader(200)
+		span.SetStatus(codes.Ok, http.StatusText(200))
+
+		e := new(jx.Encoder)
+		response.Encode(e)
+		if _, err := e.WriteTo(w); err != nil {
+			return errors.Wrap(err, "write")
+		}
+
+		return nil
+
+	case *GetBadgeBadgesCodeGetNotFound:
+		w.WriteHeader(404)
+		span.SetStatus(codes.Error, http.StatusText(404))
+
+		return nil
+
+	default:
+		return errors.Errorf("unexpected response type: %T", response)
+	}
 }
 
 func encodeGetBankDetailsMyBankGetResponse(response *BankResponseSchema, w http.ResponseWriter, span trace.Span) error {
@@ -2129,7 +2225,7 @@ func encodeGetTaskTasksListCodeGetResponse(response GetTaskTasksListCodeGetRes, 
 
 func encodeGetTasksRewardTasksRewardsCodeGetResponse(response GetTasksRewardTasksRewardsCodeGetRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *TasksRewardResponseSchema:
+	case *RewardResponseSchema:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))

@@ -144,6 +144,74 @@ func decodeActionBuyBankExpansionMyNameActionBankBuyExpansionPostResponse(resp *
 	return res, validate.UnexpectedStatusCode(resp.StatusCode)
 }
 
+func decodeActionChristmasExchangeMyNameActionChristmasExchangePostResponse(resp *http.Response) (res ActionChristmasExchangeMyNameActionChristmasExchangePostRes, _ error) {
+	switch resp.StatusCode {
+	case 200:
+		// Code 200.
+		ct, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+		if err != nil {
+			return res, errors.Wrap(err, "parse media type")
+		}
+		switch {
+		case ct == "application/json":
+			buf, err := io.ReadAll(resp.Body)
+			if err != nil {
+				return res, err
+			}
+			d := jx.DecodeBytes(buf)
+
+			var response RewardDataResponseSchema
+			if err := func() error {
+				if err := response.Decode(d); err != nil {
+					return err
+				}
+				if err := d.Skip(); err != io.EOF {
+					return errors.New("unexpected trailing data")
+				}
+				return nil
+			}(); err != nil {
+				err = &ogenerrors.DecodeBodyError{
+					ContentType: ct,
+					Body:        buf,
+					Err:         err,
+				}
+				return res, err
+			}
+			// Validate response.
+			if err := func() error {
+				if err := response.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return res, errors.Wrap(err, "validate")
+			}
+			return &response, nil
+		default:
+			return res, validate.InvalidContentType(ct)
+		}
+	case 478:
+		// Code 478.
+		return &ActionChristmasExchangeMyNameActionChristmasExchangePostCode478{}, nil
+	case 486:
+		// Code 486.
+		return &ActionChristmasExchangeMyNameActionChristmasExchangePostCode486{}, nil
+	case 497:
+		// Code 497.
+		return &ActionChristmasExchangeMyNameActionChristmasExchangePostCode497{}, nil
+	case 498:
+		// Code 498.
+		return &ActionChristmasExchangeMyNameActionChristmasExchangePostCode498{}, nil
+	case 499:
+		// Code 499.
+		return &ActionChristmasExchangeMyNameActionChristmasExchangePostCode499{}, nil
+	case 598:
+		// Code 598.
+		return &ActionChristmasExchangeMyNameActionChristmasExchangePostCode598{}, nil
+	}
+	return res, validate.UnexpectedStatusCode(resp.StatusCode)
+}
+
 func decodeActionCompleteTaskMyNameActionTaskCompletePostResponse(resp *http.Response) (res ActionCompleteTaskMyNameActionTaskCompletePostRes, _ error) {
 	switch resp.StatusCode {
 	case 200:
@@ -160,7 +228,7 @@ func decodeActionCompleteTaskMyNameActionTaskCompletePostResponse(resp *http.Res
 			}
 			d := jx.DecodeBytes(buf)
 
-			var response TasksRewardDataResponseSchema
+			var response RewardDataResponseSchema
 			if err := func() error {
 				if err := response.Decode(d); err != nil {
 					return err
@@ -1219,7 +1287,7 @@ func decodeActionTaskExchangeMyNameActionTaskExchangePostResponse(resp *http.Res
 			}
 			d := jx.DecodeBytes(buf)
 
-			var response TasksRewardDataResponseSchema
+			var response RewardDataResponseSchema
 			if err := func() error {
 				if err := response.Decode(d); err != nil {
 					return err
@@ -2232,6 +2300,56 @@ func decodeGetAllActiveEventsEventsActiveGetResponse(resp *http.Response) (res *
 	return res, validate.UnexpectedStatusCode(resp.StatusCode)
 }
 
+func decodeGetAllBadgesBadgesGetResponse(resp *http.Response) (res *DataPageBadgeSchema, _ error) {
+	switch resp.StatusCode {
+	case 200:
+		// Code 200.
+		ct, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+		if err != nil {
+			return res, errors.Wrap(err, "parse media type")
+		}
+		switch {
+		case ct == "application/json":
+			buf, err := io.ReadAll(resp.Body)
+			if err != nil {
+				return res, err
+			}
+			d := jx.DecodeBytes(buf)
+
+			var response DataPageBadgeSchema
+			if err := func() error {
+				if err := response.Decode(d); err != nil {
+					return err
+				}
+				if err := d.Skip(); err != io.EOF {
+					return errors.New("unexpected trailing data")
+				}
+				return nil
+			}(); err != nil {
+				err = &ogenerrors.DecodeBodyError{
+					ContentType: ct,
+					Body:        buf,
+					Err:         err,
+				}
+				return res, err
+			}
+			// Validate response.
+			if err := func() error {
+				if err := response.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return res, errors.Wrap(err, "validate")
+			}
+			return &response, nil
+		default:
+			return res, validate.InvalidContentType(ct)
+		}
+	}
+	return res, validate.UnexpectedStatusCode(resp.StatusCode)
+}
+
 func decodeGetAllCharactersLogsMyLogsGetResponse(resp *http.Response) (res GetAllCharactersLogsMyLogsGetRes, _ error) {
 	switch resp.StatusCode {
 	case 200:
@@ -2634,6 +2752,59 @@ func decodeGetAllTasksTasksListGetResponse(resp *http.Response) (res *DataPageTa
 		default:
 			return res, validate.InvalidContentType(ct)
 		}
+	}
+	return res, validate.UnexpectedStatusCode(resp.StatusCode)
+}
+
+func decodeGetBadgeBadgesCodeGetResponse(resp *http.Response) (res GetBadgeBadgesCodeGetRes, _ error) {
+	switch resp.StatusCode {
+	case 200:
+		// Code 200.
+		ct, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+		if err != nil {
+			return res, errors.Wrap(err, "parse media type")
+		}
+		switch {
+		case ct == "application/json":
+			buf, err := io.ReadAll(resp.Body)
+			if err != nil {
+				return res, err
+			}
+			d := jx.DecodeBytes(buf)
+
+			var response BadgeResponseSchema
+			if err := func() error {
+				if err := response.Decode(d); err != nil {
+					return err
+				}
+				if err := d.Skip(); err != io.EOF {
+					return errors.New("unexpected trailing data")
+				}
+				return nil
+			}(); err != nil {
+				err = &ogenerrors.DecodeBodyError{
+					ContentType: ct,
+					Body:        buf,
+					Err:         err,
+				}
+				return res, err
+			}
+			// Validate response.
+			if err := func() error {
+				if err := response.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return res, errors.Wrap(err, "validate")
+			}
+			return &response, nil
+		default:
+			return res, validate.InvalidContentType(ct)
+		}
+	case 404:
+		// Code 404.
+		return &GetBadgeBadgesCodeGetNotFound{}, nil
 	}
 	return res, validate.UnexpectedStatusCode(resp.StatusCode)
 }
@@ -3469,7 +3640,7 @@ func decodeGetTasksRewardTasksRewardsCodeGetResponse(resp *http.Response) (res G
 			}
 			d := jx.DecodeBytes(buf)
 
-			var response TasksRewardResponseSchema
+			var response RewardResponseSchema
 			if err := func() error {
 				if err := response.Decode(d); err != nil {
 					return err

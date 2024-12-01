@@ -1,6 +1,8 @@
 package live
 
-import "github.com/Sinketsu/artifactsmmo-3-season/internal/strategy"
+import (
+	"github.com/Sinketsu/artifactsmmo-3-season/internal/strategy"
+)
 
 const (
 	Emilia string = "Emilia"
@@ -8,8 +10,11 @@ const (
 
 func (c *liveCharacter) emiliaStrategy() Strategy {
 	fight := strategy.SimpleFight(c.character, c.game).
-		Deposit("raw_wolf_meat", "wolf_bone", "wolf_hair", "blue_slimeball", "apple", "raw_chicken", "egg", "feather").
-		DepositGold()
+		Deposit("skeleton_bone", "skeleton_skull", "pig_skin", "ogre_eye", "ogre_skin", "wooden_club", "cyclops_eye").
+		Deposit("red_cloth", "gingerbread", "gift").
+		DepositGold().
+		AllowSwitchGear().
+		UseFood("cooked_bass", "cooked_salmon", "gingerbread")
 
-	return fight.With("blue_slime")
+	return fight.With("gingerbread")
 }

@@ -16,8 +16,9 @@ type bankService struct {
 	client *api.Client
 	logger *slog.Logger
 
-	items map[string]int
-	mu    sync.Mutex // protects items
+	items    map[string]int
+	mu       sync.Mutex // protects items
+	switchMu sync.Mutex
 }
 
 func newBankService(client *api.Client) *bankService {
@@ -94,4 +95,12 @@ func (s *bankService) Items() map[string]int {
 	defer s.mu.Unlock()
 
 	return maps.Clone(s.items)
+}
+
+func (s *bankService) lock() {
+	s.switchMu.Lock()
+}
+
+func (s *bankService) unlock() {
+	s.switchMu.Unlock()
 }

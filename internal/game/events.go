@@ -46,6 +46,7 @@ func (s *eventService) sync() {
 
 	s.mu.Lock()
 	s.events = resp.Data
+	s.logger.Debug(fmt.Sprintf("current events: %v", s.events))
 	s.mu.Unlock()
 }
 

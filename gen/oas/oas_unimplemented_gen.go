@@ -31,6 +31,15 @@ func (UnimplementedHandler) ActionBuyBankExpansionMyNameActionBankBuyExpansionPo
 	return r, ht.ErrNotImplemented
 }
 
+// ActionChristmasExchangeMyNameActionChristmasExchangePost implements action_christmas_exchange_my__name__action_christmas_exchange_post operation.
+//
+// Exchange 1 gift for a random reward.
+//
+// POST /my/{name}/action/christmas/exchange
+func (UnimplementedHandler) ActionChristmasExchangeMyNameActionChristmasExchangePost(ctx context.Context, params ActionChristmasExchangeMyNameActionChristmasExchangePostParams) (r ActionChristmasExchangeMyNameActionChristmasExchangePostRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // ActionCompleteTaskMyNameActionTaskCompletePost implements action_complete_task_my__name__action_task_complete_post operation.
 //
 // Complete a task.
@@ -331,6 +340,15 @@ func (UnimplementedHandler) GetAllActiveEventsEventsActiveGet(ctx context.Contex
 	return r, ht.ErrNotImplemented
 }
 
+// GetAllBadgesBadgesGet implements get_all_badges_badges_get operation.
+//
+// List of all badges.
+//
+// GET /badges
+func (UnimplementedHandler) GetAllBadgesBadgesGet(ctx context.Context, params GetAllBadgesBadgesGetParams) (r *DataPageBadgeSchema, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // GetAllCharactersLogsMyLogsGet implements get_all_characters_logs_my_logs_get operation.
 //
 // History of the last 100 actions of all your characters.
@@ -401,6 +419,15 @@ func (UnimplementedHandler) GetAllTasksRewardsTasksRewardsGet(ctx context.Contex
 //
 // GET /tasks/list
 func (UnimplementedHandler) GetAllTasksTasksListGet(ctx context.Context, params GetAllTasksTasksListGetParams) (r *DataPageTaskFullSchema, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// GetBadgeBadgesCodeGet implements get_badge_badges__code__get operation.
+//
+// Retrieve the details of a badge.
+//
+// GET /badges/{code}
+func (UnimplementedHandler) GetBadgeBadgesCodeGet(ctx context.Context, params GetBadgeBadgesCodeGetParams) (r GetBadgeBadgesCodeGetRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 

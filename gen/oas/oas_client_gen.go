@@ -36,6 +36,12 @@ type Invoker interface {
 	//
 	// POST /my/{name}/action/bank/buy_expansion
 	ActionBuyBankExpansionMyNameActionBankBuyExpansionPost(ctx context.Context, params ActionBuyBankExpansionMyNameActionBankBuyExpansionPostParams) (ActionBuyBankExpansionMyNameActionBankBuyExpansionPostRes, error)
+	// ActionChristmasExchangeMyNameActionChristmasExchangePost invokes action_christmas_exchange_my__name__action_christmas_exchange_post operation.
+	//
+	// Exchange 1 gift for a random reward.
+	//
+	// POST /my/{name}/action/christmas/exchange
+	ActionChristmasExchangeMyNameActionChristmasExchangePost(ctx context.Context, params ActionChristmasExchangeMyNameActionChristmasExchangePostParams) (ActionChristmasExchangeMyNameActionChristmasExchangePostRes, error)
 	// ActionCompleteTaskMyNameActionTaskCompletePost invokes action_complete_task_my__name__action_task_complete_post operation.
 	//
 	// Complete a task.
@@ -237,6 +243,12 @@ type Invoker interface {
 	//
 	// GET /events/active
 	GetAllActiveEventsEventsActiveGet(ctx context.Context, params GetAllActiveEventsEventsActiveGetParams) (*DataPageActiveEventSchema, error)
+	// GetAllBadgesBadgesGet invokes get_all_badges_badges_get operation.
+	//
+	// List of all badges.
+	//
+	// GET /badges
+	GetAllBadgesBadgesGet(ctx context.Context, params GetAllBadgesBadgesGetParams) (*DataPageBadgeSchema, error)
 	// GetAllCharactersLogsMyLogsGet invokes get_all_characters_logs_my_logs_get operation.
 	//
 	// History of the last 100 actions of all your characters.
@@ -286,6 +298,12 @@ type Invoker interface {
 	//
 	// GET /tasks/list
 	GetAllTasksTasksListGet(ctx context.Context, params GetAllTasksTasksListGetParams) (*DataPageTaskFullSchema, error)
+	// GetBadgeBadgesCodeGet invokes get_badge_badges__code__get operation.
+	//
+	// Retrieve the details of a badge.
+	//
+	// GET /badges/{code}
+	GetBadgeBadgesCodeGet(ctx context.Context, params GetBadgeBadgesCodeGetParams) (GetBadgeBadgesCodeGetRes, error)
 	// GetBankDetailsMyBankGet invokes get_bank_details_my_bank_get operation.
 	//
 	// Fetch bank details.
@@ -681,6 +699,130 @@ func (c *Client) sendActionBuyBankExpansionMyNameActionBankBuyExpansionPost(ctx 
 
 	stage = "DecodeResponse"
 	result, err := decodeActionBuyBankExpansionMyNameActionBankBuyExpansionPostResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// ActionChristmasExchangeMyNameActionChristmasExchangePost invokes action_christmas_exchange_my__name__action_christmas_exchange_post operation.
+//
+// Exchange 1 gift for a random reward.
+//
+// POST /my/{name}/action/christmas/exchange
+func (c *Client) ActionChristmasExchangeMyNameActionChristmasExchangePost(ctx context.Context, params ActionChristmasExchangeMyNameActionChristmasExchangePostParams) (ActionChristmasExchangeMyNameActionChristmasExchangePostRes, error) {
+	res, err := c.sendActionChristmasExchangeMyNameActionChristmasExchangePost(ctx, params)
+	return res, err
+}
+
+func (c *Client) sendActionChristmasExchangeMyNameActionChristmasExchangePost(ctx context.Context, params ActionChristmasExchangeMyNameActionChristmasExchangePostParams) (res ActionChristmasExchangeMyNameActionChristmasExchangePostRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("action_christmas_exchange_my__name__action_christmas_exchange_post"),
+		semconv.HTTPRequestMethodKey.String("POST"),
+		semconv.HTTPRouteKey.String("/my/{name}/action/christmas/exchange"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, "ActionChristmasExchangeMyNameActionChristmasExchangePost",
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [3]string
+	pathParts[0] = "/my/"
+	{
+		// Encode "name" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "name",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.Name))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/action/christmas/exchange"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+			stage = "Security:JWTBearer"
+			switch err := c.securityJWTBearer(ctx, "ActionChristmasExchangeMyNameActionChristmasExchangePost", r); {
+			case err == nil: // if NO error
+				satisfied[0] |= 1 << 0
+			case errors.Is(err, ogenerrors.ErrSkipClientSecurity):
+				// Skip this security.
+			default:
+				return res, errors.Wrap(err, "security \"JWTBearer\"")
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			return res, ogenerrors.ErrSecurityRequirementIsNotSatisfied
+		}
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeActionChristmasExchangeMyNameActionChristmasExchangePostResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -4656,6 +4798,116 @@ func (c *Client) sendGetAllActiveEventsEventsActiveGet(ctx context.Context, para
 	return result, nil
 }
 
+// GetAllBadgesBadgesGet invokes get_all_badges_badges_get operation.
+//
+// List of all badges.
+//
+// GET /badges
+func (c *Client) GetAllBadgesBadgesGet(ctx context.Context, params GetAllBadgesBadgesGetParams) (*DataPageBadgeSchema, error) {
+	res, err := c.sendGetAllBadgesBadgesGet(ctx, params)
+	return res, err
+}
+
+func (c *Client) sendGetAllBadgesBadgesGet(ctx context.Context, params GetAllBadgesBadgesGetParams) (res *DataPageBadgeSchema, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("get_all_badges_badges_get"),
+		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/badges"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, "GetAllBadgesBadgesGet",
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [1]string
+	pathParts[0] = "/badges"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeQueryParams"
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "page" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "page",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Page.Get(); ok {
+				return e.EncodeValue(conv.IntToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "size" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "size",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.Size.Get(); ok {
+				return e.EncodeValue(conv.IntToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeGetAllBadgesBadgesGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
 // GetAllCharactersLogsMyLogsGet invokes get_all_characters_logs_my_logs_get operation.
 //
 // History of the last 100 actions of all your characters.
@@ -5886,6 +6138,96 @@ func (c *Client) sendGetAllTasksTasksListGet(ctx context.Context, params GetAllT
 
 	stage = "DecodeResponse"
 	result, err := decodeGetAllTasksTasksListGetResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// GetBadgeBadgesCodeGet invokes get_badge_badges__code__get operation.
+//
+// Retrieve the details of a badge.
+//
+// GET /badges/{code}
+func (c *Client) GetBadgeBadgesCodeGet(ctx context.Context, params GetBadgeBadgesCodeGetParams) (GetBadgeBadgesCodeGetRes, error) {
+	res, err := c.sendGetBadgeBadgesCodeGet(ctx, params)
+	return res, err
+}
+
+func (c *Client) sendGetBadgeBadgesCodeGet(ctx context.Context, params GetBadgeBadgesCodeGetParams) (res GetBadgeBadgesCodeGetRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("get_badge_badges__code__get"),
+		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/badges/{code}"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, "GetBadgeBadgesCodeGet",
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [2]string
+	pathParts[0] = "/badges/"
+	{
+		// Encode "code" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "code",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.Code))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeGetBadgeBadgesCodeGetResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

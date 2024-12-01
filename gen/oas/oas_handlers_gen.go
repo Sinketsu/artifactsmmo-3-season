@@ -332,6 +332,162 @@ func (s *Server) handleActionBuyBankExpansionMyNameActionBankBuyExpansionPostReq
 	}
 }
 
+// handleActionChristmasExchangeMyNameActionChristmasExchangePostRequest handles action_christmas_exchange_my__name__action_christmas_exchange_post operation.
+//
+// Exchange 1 gift for a random reward.
+//
+// POST /my/{name}/action/christmas/exchange
+func (s *Server) handleActionChristmasExchangeMyNameActionChristmasExchangePostRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("action_christmas_exchange_my__name__action_christmas_exchange_post"),
+		semconv.HTTPRequestMethodKey.String("POST"),
+		semconv.HTTPRouteKey.String("/my/{name}/action/christmas/exchange"),
+	}
+
+	// Start a span for this request.
+	ctx, span := s.cfg.Tracer.Start(r.Context(), "ActionChristmasExchangeMyNameActionChristmasExchangePost",
+		trace.WithAttributes(otelAttrs...),
+		serverSpanKind,
+	)
+	defer span.End()
+
+	// Add Labeler to context.
+	labeler := &Labeler{attrs: otelAttrs}
+	ctx = contextWithLabeler(ctx, labeler)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		elapsedDuration := time.Since(startTime)
+		attrOpt := metric.WithAttributeSet(labeler.AttributeSet())
+
+		// Increment request counter.
+		s.requests.Add(ctx, 1, attrOpt)
+
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		s.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), attrOpt)
+	}()
+
+	var (
+		recordError = func(stage string, err error) {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			s.errors.Add(ctx, 1, metric.WithAttributeSet(labeler.AttributeSet()))
+		}
+		err          error
+		opErrContext = ogenerrors.OperationContext{
+			Name: "ActionChristmasExchangeMyNameActionChristmasExchangePost",
+			ID:   "action_christmas_exchange_my__name__action_christmas_exchange_post",
+		}
+	)
+	{
+		type bitset = [1]uint8
+		var satisfied bitset
+		{
+			sctx, ok, err := s.securityJWTBearer(ctx, "ActionChristmasExchangeMyNameActionChristmasExchangePost", r)
+			if err != nil {
+				err = &ogenerrors.SecurityError{
+					OperationContext: opErrContext,
+					Security:         "JWTBearer",
+					Err:              err,
+				}
+				defer recordError("Security:JWTBearer", err)
+				s.cfg.ErrorHandler(ctx, w, r, err)
+				return
+			}
+			if ok {
+				satisfied[0] |= 1 << 0
+				ctx = sctx
+			}
+		}
+
+		if ok := func() bool {
+		nextRequirement:
+			for _, requirement := range []bitset{
+				{0b00000001},
+			} {
+				for i, mask := range requirement {
+					if satisfied[i]&mask != mask {
+						continue nextRequirement
+					}
+				}
+				return true
+			}
+			return false
+		}(); !ok {
+			err = &ogenerrors.SecurityError{
+				OperationContext: opErrContext,
+				Err:              ogenerrors.ErrSecurityRequirementIsNotSatisfied,
+			}
+			defer recordError("Security", err)
+			s.cfg.ErrorHandler(ctx, w, r, err)
+			return
+		}
+	}
+	params, err := decodeActionChristmasExchangeMyNameActionChristmasExchangePostParams(args, argsEscaped, r)
+	if err != nil {
+		err = &ogenerrors.DecodeParamsError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		defer recordError("DecodeParams", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	var response ActionChristmasExchangeMyNameActionChristmasExchangePostRes
+	if m := s.cfg.Middleware; m != nil {
+		mreq := middleware.Request{
+			Context:          ctx,
+			OperationName:    "ActionChristmasExchangeMyNameActionChristmasExchangePost",
+			OperationSummary: "Action Christmas Exchange",
+			OperationID:      "action_christmas_exchange_my__name__action_christmas_exchange_post",
+			Body:             nil,
+			Params: middleware.Parameters{
+				{
+					Name: "name",
+					In:   "path",
+				}: params.Name,
+			},
+			Raw: r,
+		}
+
+		type (
+			Request  = struct{}
+			Params   = ActionChristmasExchangeMyNameActionChristmasExchangePostParams
+			Response = ActionChristmasExchangeMyNameActionChristmasExchangePostRes
+		)
+		response, err = middleware.HookMiddleware[
+			Request,
+			Params,
+			Response,
+		](
+			m,
+			mreq,
+			unpackActionChristmasExchangeMyNameActionChristmasExchangePostParams,
+			func(ctx context.Context, request Request, params Params) (response Response, err error) {
+				response, err = s.h.ActionChristmasExchangeMyNameActionChristmasExchangePost(ctx, params)
+				return response, err
+			},
+		)
+	} else {
+		response, err = s.h.ActionChristmasExchangeMyNameActionChristmasExchangePost(ctx, params)
+	}
+	if err != nil {
+		defer recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	if err := encodeActionChristmasExchangeMyNameActionChristmasExchangePostResponse(response, w, span); err != nil {
+		defer recordError("EncodeResponse", err)
+		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
+			s.cfg.ErrorHandler(ctx, w, r, err)
+		}
+		return
+	}
+}
+
 // handleActionCompleteTaskMyNameActionTaskCompletePostRequest handles action_complete_task_my__name__action_task_complete_post operation.
 //
 // Complete a task.
@@ -5406,6 +5562,122 @@ func (s *Server) handleGetAllActiveEventsEventsActiveGetRequest(args [0]string, 
 	}
 }
 
+// handleGetAllBadgesBadgesGetRequest handles get_all_badges_badges_get operation.
+//
+// List of all badges.
+//
+// GET /badges
+func (s *Server) handleGetAllBadgesBadgesGetRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("get_all_badges_badges_get"),
+		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/badges"),
+	}
+
+	// Start a span for this request.
+	ctx, span := s.cfg.Tracer.Start(r.Context(), "GetAllBadgesBadgesGet",
+		trace.WithAttributes(otelAttrs...),
+		serverSpanKind,
+	)
+	defer span.End()
+
+	// Add Labeler to context.
+	labeler := &Labeler{attrs: otelAttrs}
+	ctx = contextWithLabeler(ctx, labeler)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		elapsedDuration := time.Since(startTime)
+		attrOpt := metric.WithAttributeSet(labeler.AttributeSet())
+
+		// Increment request counter.
+		s.requests.Add(ctx, 1, attrOpt)
+
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		s.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), attrOpt)
+	}()
+
+	var (
+		recordError = func(stage string, err error) {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			s.errors.Add(ctx, 1, metric.WithAttributeSet(labeler.AttributeSet()))
+		}
+		err          error
+		opErrContext = ogenerrors.OperationContext{
+			Name: "GetAllBadgesBadgesGet",
+			ID:   "get_all_badges_badges_get",
+		}
+	)
+	params, err := decodeGetAllBadgesBadgesGetParams(args, argsEscaped, r)
+	if err != nil {
+		err = &ogenerrors.DecodeParamsError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		defer recordError("DecodeParams", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	var response *DataPageBadgeSchema
+	if m := s.cfg.Middleware; m != nil {
+		mreq := middleware.Request{
+			Context:          ctx,
+			OperationName:    "GetAllBadgesBadgesGet",
+			OperationSummary: "Get All Badges",
+			OperationID:      "get_all_badges_badges_get",
+			Body:             nil,
+			Params: middleware.Parameters{
+				{
+					Name: "page",
+					In:   "query",
+				}: params.Page,
+				{
+					Name: "size",
+					In:   "query",
+				}: params.Size,
+			},
+			Raw: r,
+		}
+
+		type (
+			Request  = struct{}
+			Params   = GetAllBadgesBadgesGetParams
+			Response = *DataPageBadgeSchema
+		)
+		response, err = middleware.HookMiddleware[
+			Request,
+			Params,
+			Response,
+		](
+			m,
+			mreq,
+			unpackGetAllBadgesBadgesGetParams,
+			func(ctx context.Context, request Request, params Params) (response Response, err error) {
+				response, err = s.h.GetAllBadgesBadgesGet(ctx, params)
+				return response, err
+			},
+		)
+	} else {
+		response, err = s.h.GetAllBadgesBadgesGet(ctx, params)
+	}
+	if err != nil {
+		defer recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	if err := encodeGetAllBadgesBadgesGetResponse(response, w, span); err != nil {
+		defer recordError("EncodeResponse", err)
+		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
+			s.cfg.ErrorHandler(ctx, w, r, err)
+		}
+		return
+	}
+}
+
 // handleGetAllCharactersLogsMyLogsGetRequest handles get_all_characters_logs_my_logs_get operation.
 //
 // History of the last 100 actions of all your characters.
@@ -6447,6 +6719,118 @@ func (s *Server) handleGetAllTasksTasksListGetRequest(args [0]string, argsEscape
 	}
 
 	if err := encodeGetAllTasksTasksListGetResponse(response, w, span); err != nil {
+		defer recordError("EncodeResponse", err)
+		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
+			s.cfg.ErrorHandler(ctx, w, r, err)
+		}
+		return
+	}
+}
+
+// handleGetBadgeBadgesCodeGetRequest handles get_badge_badges__code__get operation.
+//
+// Retrieve the details of a badge.
+//
+// GET /badges/{code}
+func (s *Server) handleGetBadgeBadgesCodeGetRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("get_badge_badges__code__get"),
+		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/badges/{code}"),
+	}
+
+	// Start a span for this request.
+	ctx, span := s.cfg.Tracer.Start(r.Context(), "GetBadgeBadgesCodeGet",
+		trace.WithAttributes(otelAttrs...),
+		serverSpanKind,
+	)
+	defer span.End()
+
+	// Add Labeler to context.
+	labeler := &Labeler{attrs: otelAttrs}
+	ctx = contextWithLabeler(ctx, labeler)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		elapsedDuration := time.Since(startTime)
+		attrOpt := metric.WithAttributeSet(labeler.AttributeSet())
+
+		// Increment request counter.
+		s.requests.Add(ctx, 1, attrOpt)
+
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		s.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), attrOpt)
+	}()
+
+	var (
+		recordError = func(stage string, err error) {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			s.errors.Add(ctx, 1, metric.WithAttributeSet(labeler.AttributeSet()))
+		}
+		err          error
+		opErrContext = ogenerrors.OperationContext{
+			Name: "GetBadgeBadgesCodeGet",
+			ID:   "get_badge_badges__code__get",
+		}
+	)
+	params, err := decodeGetBadgeBadgesCodeGetParams(args, argsEscaped, r)
+	if err != nil {
+		err = &ogenerrors.DecodeParamsError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		defer recordError("DecodeParams", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	var response GetBadgeBadgesCodeGetRes
+	if m := s.cfg.Middleware; m != nil {
+		mreq := middleware.Request{
+			Context:          ctx,
+			OperationName:    "GetBadgeBadgesCodeGet",
+			OperationSummary: "Get Badge",
+			OperationID:      "get_badge_badges__code__get",
+			Body:             nil,
+			Params: middleware.Parameters{
+				{
+					Name: "code",
+					In:   "path",
+				}: params.Code,
+			},
+			Raw: r,
+		}
+
+		type (
+			Request  = struct{}
+			Params   = GetBadgeBadgesCodeGetParams
+			Response = GetBadgeBadgesCodeGetRes
+		)
+		response, err = middleware.HookMiddleware[
+			Request,
+			Params,
+			Response,
+		](
+			m,
+			mreq,
+			unpackGetBadgeBadgesCodeGetParams,
+			func(ctx context.Context, request Request, params Params) (response Response, err error) {
+				response, err = s.h.GetBadgeBadgesCodeGet(ctx, params)
+				return response, err
+			},
+		)
+	} else {
+		response, err = s.h.GetBadgeBadgesCodeGet(ctx, params)
+	}
+	if err != nil {
+		defer recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	if err := encodeGetBadgeBadgesCodeGetResponse(response, w, span); err != nil {
 		defer recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)

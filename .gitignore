@@ -7,7 +7,7 @@ go.work
 go.work.sum
 
 # env file
-.env
+*.env
 
 deploy.sh
 gen/openapi.json

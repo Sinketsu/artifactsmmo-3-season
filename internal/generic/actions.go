@@ -236,6 +236,42 @@ func (c *Character) DepositGold(ctx context.Context, quantity int) error {
 	return fmt.Errorf("unknown error: %v", resp)
 }
 
+func (c *Character) WithdrawGold(ctx context.Context, quantity int) error {
+	apiRequestCount.Inc()
+
+	resp, err := c.cli.ActionWithdrawBankGoldMyNameActionBankWithdrawGoldPost(ctx, &oas.DepositWithdrawGoldSchema{
+		Quantity: quantity,
+	}, oas.ActionWithdrawBankGoldMyNameActionBankWithdrawGoldPostParams{
+		Name: c.name,
+	})
+	if err != nil {
+		return err
+	}
+
+	switch v := resp.(type) {
+	case *oas.BankGoldTransactionResponseSchema:
+		c.syncState(unsafe.Pointer(&v.Data.Character))
+		c.logger.Debug(fmt.Sprintf("withdraw gold: %d", quantity))
+
+		time.Sleep(time.Duration(v.Data.Cooldown.RemainingSeconds) * time.Second)
+		return nil
+	case *oas.ActionWithdrawBankGoldMyNameActionBankWithdrawGoldPostCode460:
+		return fmt.Errorf("insufficient gold")
+	case *oas.ActionWithdrawBankGoldMyNameActionBankWithdrawGoldPostCode461:
+		return fmt.Errorf("transaction is already in progress with this item/your gold in your bank")
+	case *oas.ActionWithdrawBankGoldMyNameActionBankWithdrawGoldPostCode486:
+		return fmt.Errorf("action is already in progress by your character")
+	case *oas.ActionWithdrawBankGoldMyNameActionBankWithdrawGoldPostCode498:
+		return fmt.Errorf("character not found")
+	case *oas.ActionWithdrawBankGoldMyNameActionBankWithdrawGoldPostCode499:
+		return fmt.Errorf("cooldown...")
+	case *oas.ActionWithdrawBankGoldMyNameActionBankWithdrawGoldPostCode598:
+		return fmt.Errorf("bank not found on this map")
+	}
+
+	return fmt.Errorf("unknown error: %v", resp)
+}
+
 func (c *Character) Gather(ctx context.Context) (*oas.SkillDataSchemaDetails, error) {
 	apiRequestCount.Inc()
 
@@ -430,7 +466,7 @@ func (c *Character) TaskTrade(ctx context.Context, code string, quantity int) er
 	return fmt.Errorf("unknown error: %v", resp)
 }
 
-func (c *Character) CompleteTask(ctx context.Context) (*oas.TasksRewardDataSchemaRewards, error) {
+func (c *Character) CompleteTask(ctx context.Context) (*oas.RewardDataSchemaRewards, error) {
 	apiRequestCount.Inc()
 
 	resp, err := c.cli.ActionCompleteTaskMyNameActionTaskCompletePost(ctx, oas.ActionCompleteTaskMyNameActionTaskCompletePostParams{
@@ -441,7 +477,7 @@ func (c *Character) CompleteTask(ctx context.Context) (*oas.TasksRewardDataSchem
 	}
 
 	switch v := resp.(type) {
-	case *oas.TasksRewardDataResponseSchema:
+	case *oas.RewardDataResponseSchema:
 		c.syncState(unsafe.Pointer(&v.Data.Character))
 		c.logger.Debug("complete task")
 
@@ -552,4 +588,88 @@ func (c *Character) Unequip(ctx context.Context, slot oas.UnequipSchemaSlot, qua
 	}
 
 	return fmt.Errorf("unknown error: %v", resp)
+}
+
+func (c *Character) Use(ctx context.Context, item string, quantity int) error {
+	apiRequestCount.Inc()
+
+	resp, err := c.cli.ActionUseItemMyNameActionUsePost(ctx, &oas.SimpleItemSchema{
+		Code:     item,
+		Quantity: quantity,
+	}, oas.ActionUseItemMyNameActionUsePostParams{
+		Name: c.name,
+	})
+	if err != nil {
+		return err
+	}
+
+	switch v := resp.(type) {
+	case *oas.UseItemResponseSchema:
+		c.syncState(unsafe.Pointer(&v.Data.Character))
+		c.logger.Debug(fmt.Sprintf("use: %d %s", quantity, item))
+
+		time.Sleep(time.Duration(v.Data.Cooldown.RemainingSeconds) * time.Second)
+		return nil
+	case *oas.ActionUseItemMyNameActionUsePostNotFound:
+		return fmt.Errorf("item not found")
+	case *oas.ActionUseItemMyNameActionUsePostCode476:
+		return fmt.Errorf("item is not a consumable")
+	case *oas.ActionUseItemMyNameActionUsePostCode478:
+		return fmt.Errorf("missing item or insufficient quantity")
+	case *oas.ActionUseItemMyNameActionUsePostCode486:
+		return fmt.Errorf("action is already in progress by your character")
+	case *oas.ActionUseItemMyNameActionUsePostCode496:
+		return fmt.Errorf("character level is insufficient")
+	case *oas.ActionUseItemMyNameActionUsePostCode498:
+		return fmt.Errorf("character not found")
+	case *oas.ActionUseItemMyNameActionUsePostCode499:
+		return fmt.Errorf("cooldown...")
+	}
+
+	return fmt.Errorf("unknown error: %v", resp)
+}
+
+func (c *Character) Buy(ctx context.Context, id string, quantity int) (*oas.GETransactionListSchemaOrder, error) {
+	apiRequestCount.Inc()
+
+	resp, err := c.cli.ActionGeBuyItemMyNameActionGrandexchangeBuyPost(ctx, &oas.GEBuyOrderSchema{
+		ID:       id,
+		Quantity: quantity,
+	}, oas.ActionGeBuyItemMyNameActionGrandexchangeBuyPostParams{
+		Name: c.name,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	switch v := resp.(type) {
+	case *oas.GETransactionResponseSchema:
+		c.syncState(unsafe.Pointer(&v.Data.Character))
+		c.logger.Debug(fmt.Sprintf("buy: %d %s", quantity, v.Data.Order.Code))
+
+		time.Sleep(time.Duration(v.Data.Cooldown.RemainingSeconds) * time.Second)
+		return &v.Data.Order, nil
+	case *oas.ActionGeBuyItemMyNameActionGrandexchangeBuyPostNotFound:
+		return nil, fmt.Errorf("order not found")
+	case *oas.ActionGeBuyItemMyNameActionGrandexchangeBuyPostCode434:
+		return nil, fmt.Errorf("offer does not contain as many items")
+	case *oas.ActionGeBuyItemMyNameActionGrandexchangeBuyPostCode435:
+		return nil, fmt.Errorf("can't buy to yourself")
+	case *oas.ActionGeBuyItemMyNameActionGrandexchangeBuyPostCode436:
+		return nil, fmt.Errorf("transaction is already in progress on this order by a another character")
+	case *oas.ActionGeBuyItemMyNameActionGrandexchangeBuyPostCode486:
+		return nil, fmt.Errorf("action is already in progress by your character")
+	case *oas.ActionGeBuyItemMyNameActionGrandexchangeBuyPostCode492:
+		return nil, fmt.Errorf("insufficient gold")
+	case *oas.ActionGeBuyItemMyNameActionGrandexchangeBuyPostCode497:
+		return nil, fmt.Errorf("inventory is full")
+	case *oas.ActionGeBuyItemMyNameActionGrandexchangeBuyPostCode498:
+		return nil, fmt.Errorf("character not found")
+	case *oas.ActionGeBuyItemMyNameActionGrandexchangeBuyPostCode499:
+		return nil, fmt.Errorf("cooldown...")
+	case *oas.ActionGeBuyItemMyNameActionGrandexchangeBuyPostCode598:
+		return nil, fmt.Errorf("GE not found on this map")
+	}
+
+	return nil, fmt.Errorf("unknown error: %v", resp)
 }

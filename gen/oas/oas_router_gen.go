@@ -215,6 +215,56 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				}
 
 				elem = origElem
+			case 'b': // Prefix: "badges"
+				origElem := elem
+				if l := len("badges"); len(elem) >= l && elem[0:l] == "badges" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					switch r.Method {
+					case "GET":
+						s.handleGetAllBadgesBadgesGetRequest([0]string{}, elemIsEscaped, w, r)
+					default:
+						s.notAllowed(w, r, "GET")
+					}
+
+					return
+				}
+				switch elem[0] {
+				case '/': // Prefix: "/"
+					origElem := elem
+					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					// Param: "code"
+					// Leaf parameter
+					args[0] = elem
+					elem = ""
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch r.Method {
+						case "GET":
+							s.handleGetBadgeBadgesCodeGetRequest([1]string{
+								args[0],
+							}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "GET")
+						}
+
+						return
+					}
+
+					elem = origElem
+				}
+
+				elem = origElem
 			case 'c': // Prefix: "characters/"
 				origElem := elem
 				if l := len("characters/"); len(elem) >= l && elem[0:l] == "characters/" {
@@ -1039,26 +1089,64 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							}
 
 							elem = origElem
-						case 'c': // Prefix: "crafting"
+						case 'c': // Prefix: "c"
 							origElem := elem
-							if l := len("crafting"); len(elem) >= l && elem[0:l] == "crafting" {
+							if l := len("c"); len(elem) >= l && elem[0:l] == "c" {
 								elem = elem[l:]
 							} else {
 								break
 							}
 
 							if len(elem) == 0 {
-								// Leaf node.
-								switch r.Method {
-								case "POST":
-									s.handleActionCraftingMyNameActionCraftingPostRequest([1]string{
-										args[0],
-									}, elemIsEscaped, w, r)
-								default:
-									s.notAllowed(w, r, "POST")
+								break
+							}
+							switch elem[0] {
+							case 'h': // Prefix: "hristmas/exchange"
+								origElem := elem
+								if l := len("hristmas/exchange"); len(elem) >= l && elem[0:l] == "hristmas/exchange" {
+									elem = elem[l:]
+								} else {
+									break
 								}
 
-								return
+								if len(elem) == 0 {
+									// Leaf node.
+									switch r.Method {
+									case "POST":
+										s.handleActionChristmasExchangeMyNameActionChristmasExchangePostRequest([1]string{
+											args[0],
+										}, elemIsEscaped, w, r)
+									default:
+										s.notAllowed(w, r, "POST")
+									}
+
+									return
+								}
+
+								elem = origElem
+							case 'r': // Prefix: "rafting"
+								origElem := elem
+								if l := len("rafting"); len(elem) >= l && elem[0:l] == "rafting" {
+									elem = elem[l:]
+								} else {
+									break
+								}
+
+								if len(elem) == 0 {
+									// Leaf node.
+									switch r.Method {
+									case "POST":
+										s.handleActionCraftingMyNameActionCraftingPostRequest([1]string{
+											args[0],
+										}, elemIsEscaped, w, r)
+									default:
+										s.notAllowed(w, r, "POST")
+									}
+
+									return
+								}
+
+								elem = origElem
 							}
 
 							elem = origElem
@@ -2020,6 +2108,62 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 				}
 
 				elem = origElem
+			case 'b': // Prefix: "badges"
+				origElem := elem
+				if l := len("badges"); len(elem) >= l && elem[0:l] == "badges" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					switch method {
+					case "GET":
+						r.name = "GetAllBadgesBadgesGet"
+						r.summary = "Get All Badges"
+						r.operationID = "get_all_badges_badges_get"
+						r.pathPattern = "/badges"
+						r.args = args
+						r.count = 0
+						return r, true
+					default:
+						return
+					}
+				}
+				switch elem[0] {
+				case '/': // Prefix: "/"
+					origElem := elem
+					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					// Param: "code"
+					// Leaf parameter
+					args[0] = elem
+					elem = ""
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch method {
+						case "GET":
+							r.name = "GetBadgeBadgesCodeGet"
+							r.summary = "Get Badge"
+							r.operationID = "get_badge_badges__code__get"
+							r.pathPattern = "/badges/{code}"
+							r.args = args
+							r.count = 1
+							return r, true
+						default:
+							return
+						}
+					}
+
+					elem = origElem
+				}
+
+				elem = origElem
 			case 'c': // Prefix: "characters/"
 				origElem := elem
 				if l := len("characters/"); len(elem) >= l && elem[0:l] == "characters/" {
@@ -2937,28 +3081,68 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 							}
 
 							elem = origElem
-						case 'c': // Prefix: "crafting"
+						case 'c': // Prefix: "c"
 							origElem := elem
-							if l := len("crafting"); len(elem) >= l && elem[0:l] == "crafting" {
+							if l := len("c"); len(elem) >= l && elem[0:l] == "c" {
 								elem = elem[l:]
 							} else {
 								break
 							}
 
 							if len(elem) == 0 {
-								// Leaf node.
-								switch method {
-								case "POST":
-									r.name = "ActionCraftingMyNameActionCraftingPost"
-									r.summary = "Action Crafting"
-									r.operationID = "action_crafting_my__name__action_crafting_post"
-									r.pathPattern = "/my/{name}/action/crafting"
-									r.args = args
-									r.count = 1
-									return r, true
-								default:
-									return
+								break
+							}
+							switch elem[0] {
+							case 'h': // Prefix: "hristmas/exchange"
+								origElem := elem
+								if l := len("hristmas/exchange"); len(elem) >= l && elem[0:l] == "hristmas/exchange" {
+									elem = elem[l:]
+								} else {
+									break
 								}
+
+								if len(elem) == 0 {
+									// Leaf node.
+									switch method {
+									case "POST":
+										r.name = "ActionChristmasExchangeMyNameActionChristmasExchangePost"
+										r.summary = "Action Christmas Exchange"
+										r.operationID = "action_christmas_exchange_my__name__action_christmas_exchange_post"
+										r.pathPattern = "/my/{name}/action/christmas/exchange"
+										r.args = args
+										r.count = 1
+										return r, true
+									default:
+										return
+									}
+								}
+
+								elem = origElem
+							case 'r': // Prefix: "rafting"
+								origElem := elem
+								if l := len("rafting"); len(elem) >= l && elem[0:l] == "rafting" {
+									elem = elem[l:]
+								} else {
+									break
+								}
+
+								if len(elem) == 0 {
+									// Leaf node.
+									switch method {
+									case "POST":
+										r.name = "ActionCraftingMyNameActionCraftingPost"
+										r.summary = "Action Crafting"
+										r.operationID = "action_crafting_my__name__action_crafting_post"
+										r.pathPattern = "/my/{name}/action/crafting"
+										r.args = args
+										r.count = 1
+										return r, true
+									default:
+										return
+									}
+								}
+
+								elem = origElem
 							}
 
 							elem = origElem

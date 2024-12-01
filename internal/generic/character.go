@@ -121,6 +121,10 @@ func (c *Character) HealthPercent() float64 {
 	return float64(c.state.Hp) / float64(c.state.MaxHp) * 100
 }
 
+func (c *Character) Health() (int, int) {
+	return c.state.Hp, c.state.MaxHp
+}
+
 func (c *Character) Level() int {
 	return c.state.Level
 }
@@ -154,6 +158,13 @@ func (c *Character) Equiped() map[oas.EquipSchemaSlot]string {
 		oas.EquipSchemaSlotArtifact3: c.state.Artifact3Slot,
 		oas.EquipSchemaSlotUtility1:  c.state.Utility1Slot,
 		oas.EquipSchemaSlotUtility2:  c.state.Utility2Slot,
+	}
+}
+
+func (c *Character) Utilities() map[oas.EquipSchemaSlot]int {
+	return map[oas.EquipSchemaSlot]int{
+		oas.EquipSchemaSlotUtility1: c.state.Utility1SlotQuantity,
+		oas.EquipSchemaSlotUtility2: c.state.Utility2SlotQuantity,
 	}
 }
 

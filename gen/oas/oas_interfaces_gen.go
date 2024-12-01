@@ -9,6 +9,10 @@ type ActionBuyBankExpansionMyNameActionBankBuyExpansionPostRes interface {
 	actionBuyBankExpansionMyNameActionBankBuyExpansionPostRes()
 }
 
+type ActionChristmasExchangeMyNameActionChristmasExchangePostRes interface {
+	actionChristmasExchangeMyNameActionChristmasExchangePostRes()
+}
+
 type ActionCompleteTaskMyNameActionTaskCompletePostRes interface {
 	actionCompleteTaskMyNameActionTaskCompletePostRes()
 }
@@ -127,6 +131,10 @@ type GetAchievementAchievementsCodeGetRes interface {
 
 type GetAllCharactersLogsMyLogsGetRes interface {
 	getAllCharactersLogsMyLogsGetRes()
+}
+
+type GetBadgeBadgesCodeGetRes interface {
+	getBadgeBadgesCodeGetRes()
 }
 
 type GetCharacterCharactersNameGetRes interface {

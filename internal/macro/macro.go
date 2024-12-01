@@ -243,3 +243,37 @@ func CompleteTask(ctx context.Context, character *generic.Character, game *game.
 		return
 	}
 }
+
+func Buy(ctx context.Context, character *generic.Character, game *game.Game, id string, quantity int, totalPrice int) {
+	if character.Gold() < totalPrice {
+		if err := character.Move(ctx, game.BankLocation(character.Location())); err != nil {
+			slog.Error("fail to move", slog.Any("error", err))
+			return
+		}
+
+		if err := character.WithdrawGold(ctx, totalPrice-character.Gold()); err != nil {
+			slog.Error("fail to withdraw gold", slog.Any("error", err))
+			return
+		}
+	}
+
+	if err := character.Move(ctx, game.GrandExchangeLocation(character.Location())); err != nil {
+		slog.Error("fail to move", slog.Any("error", err))
+		return
+	}
+
+	order, err := character.Buy(ctx, id, quantity)
+	if err != nil {
+		slog.Error("fail to buy", slog.Any("error", err))
+		return
+	}
+
+	if err := character.Move(ctx, game.BankLocation(character.Location())); err != nil {
+		slog.Error("fail to move", slog.Any("error", err))
+		return
+	}
+
+	if err := character.Deposit(ctx, order.Code, order.Quantity); err != nil {
+		slog.Error("fail to deposit", slog.Any("error", err))
+	}
+}

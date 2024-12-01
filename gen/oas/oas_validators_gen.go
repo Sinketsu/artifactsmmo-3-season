@@ -73,42 +73,10 @@ func (s *AccountDetails) Validate() error {
 			Error: err,
 		})
 	}
-	if err := func() error {
-		if value, ok := s.Badges.Get(); ok {
-			if err := func() error {
-				if err := value.Validate(); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return err
-			}
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "badges",
-			Error: err,
-		})
-	}
 	if len(failures) > 0 {
 		return &validate.Error{Fields: failures}
 	}
 	return nil
-}
-
-func (s AccountDetailsBadges) Validate() error {
-	switch s.Type {
-	case AnyArrayAccountDetailsBadges:
-		if s.AnyArray == nil {
-			return errors.New("nil is invalid value")
-		}
-		return nil
-	case NullAccountDetailsBadges:
-		return nil // no validation needed
-	default:
-		return errors.Errorf("invalid type %q", s.Type)
-	}
 }
 
 func (s *AccountDetailsSchema) Validate() error {
@@ -301,16 +269,23 @@ func (s *AddAccountSchema) Validate() error {
 		})
 	}
 	if err := func() error {
-		if err := (validate.String{
-			MinLength:    0,
-			MinLengthSet: false,
-			MaxLength:    0,
-			MaxLengthSet: false,
-			Email:        true,
-			Hostname:     false,
-			Regex:        nil,
-		}).Validate(string(s.Email)); err != nil {
-			return errors.Wrap(err, "string")
+		if value, ok := s.Email.Get(); ok {
+			if err := func() error {
+				if err := (validate.String{
+					MinLength:    0,
+					MinLengthSet: false,
+					MaxLength:    0,
+					MaxLengthSet: false,
+					Email:        true,
+					Hostname:     false,
+					Regex:        nil,
+				}).Validate(string(value)); err != nil {
+					return errors.Wrap(err, "string")
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
 		}
 		return nil
 	}(); err != nil {
@@ -384,6 +359,52 @@ func (s AddCharacterSchemaSkin) Validate() error {
 	default:
 		return errors.Errorf("invalid value: %v", s)
 	}
+}
+
+func (s *BadgeResponseSchema) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Data.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "data",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s *BadgeSchema) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if s.Conditions == nil {
+			return errors.New("nil is invalid value")
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "conditions",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
 }
 
 func (s *BankExtensionTransactionResponseSchema) Validate() error {
@@ -590,6 +611,8 @@ func (s BankExtensionTransactionSchemaCooldownReason) Validate() error {
 	case "unequip":
 		return nil
 	case "task":
+		return nil
+	case "christmas_exchange":
 		return nil
 	case "recycling":
 		return nil
@@ -873,6 +896,8 @@ func (s BankGoldTransactionSchemaCooldownReason) Validate() error {
 		return nil
 	case "task":
 		return nil
+	case "christmas_exchange":
+		return nil
 	case "recycling":
 		return nil
 	case "rest":
@@ -1118,6 +1143,8 @@ func (s BankItemTransactionSchemaCooldownReason) Validate() error {
 	case "unequip":
 		return nil
 	case "task":
+		return nil
+	case "christmas_exchange":
 		return nil
 	case "recycling":
 		return nil
@@ -1543,6 +1570,8 @@ func (s CharacterFightDataSchemaCooldownReason) Validate() error {
 		return nil
 	case "task":
 		return nil
+	case "christmas_exchange":
+		return nil
 	case "recycling":
 		return nil
 	case "rest":
@@ -1806,6 +1835,8 @@ func (s CharacterMovementDataSchemaCooldownReason) Validate() error {
 		return nil
 	case "task":
 		return nil
+	case "christmas_exchange":
+		return nil
 	case "recycling":
 		return nil
 	case "rest":
@@ -2035,6 +2066,8 @@ func (s CharacterRestDataSchemaCooldownReason) Validate() error {
 	case "unequip":
 		return nil
 	case "task":
+		return nil
+	case "christmas_exchange":
 		return nil
 	case "recycling":
 		return nil
@@ -2997,6 +3030,189 @@ func (s DataPageActiveEventSchemaTotal) Validate() error {
 		}
 		return nil
 	case NullDataPageActiveEventSchemaTotal:
+		return nil // no validation needed
+	default:
+		return errors.Errorf("invalid type %q", s.Type)
+	}
+}
+
+func (s *DataPageBadgeSchema) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if s.Data == nil {
+			return errors.New("nil is invalid value")
+		}
+		var failures []validate.FieldError
+		for i, elem := range s.Data {
+			if err := func() error {
+				if err := elem.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				failures = append(failures, validate.FieldError{
+					Name:  fmt.Sprintf("[%d]", i),
+					Error: err,
+				})
+			}
+		}
+		if len(failures) > 0 {
+			return &validate.Error{Fields: failures}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "data",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := s.Total.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "total",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := s.Page.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "page",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := s.Size.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "size",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if value, ok := s.Pages.Get(); ok {
+			if err := func() error {
+				if err := value.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "pages",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s DataPageBadgeSchemaPage) Validate() error {
+	switch s.Type {
+	case IntDataPageBadgeSchemaPage:
+		if err := (validate.Int{
+			MinSet:        true,
+			Min:           1,
+			MaxSet:        false,
+			Max:           0,
+			MinExclusive:  false,
+			MaxExclusive:  false,
+			MultipleOfSet: false,
+			MultipleOf:    0,
+		}).Validate(int64(s.Int)); err != nil {
+			return errors.Wrap(err, "int")
+		}
+		return nil
+	case NullDataPageBadgeSchemaPage:
+		return nil // no validation needed
+	default:
+		return errors.Errorf("invalid type %q", s.Type)
+	}
+}
+
+func (s DataPageBadgeSchemaPages) Validate() error {
+	switch s.Type {
+	case IntDataPageBadgeSchemaPages:
+		if err := (validate.Int{
+			MinSet:        true,
+			Min:           0,
+			MaxSet:        false,
+			Max:           0,
+			MinExclusive:  false,
+			MaxExclusive:  false,
+			MultipleOfSet: false,
+			MultipleOf:    0,
+		}).Validate(int64(s.Int)); err != nil {
+			return errors.Wrap(err, "int")
+		}
+		return nil
+	case NullDataPageBadgeSchemaPages:
+		return nil // no validation needed
+	default:
+		return errors.Errorf("invalid type %q", s.Type)
+	}
+}
+
+func (s DataPageBadgeSchemaSize) Validate() error {
+	switch s.Type {
+	case IntDataPageBadgeSchemaSize:
+		if err := (validate.Int{
+			MinSet:        true,
+			Min:           1,
+			MaxSet:        false,
+			Max:           0,
+			MinExclusive:  false,
+			MaxExclusive:  false,
+			MultipleOfSet: false,
+			MultipleOf:    0,
+		}).Validate(int64(s.Int)); err != nil {
+			return errors.Wrap(err, "int")
+		}
+		return nil
+	case NullDataPageBadgeSchemaSize:
+		return nil // no validation needed
+	default:
+		return errors.Errorf("invalid type %q", s.Type)
+	}
+}
+
+func (s DataPageBadgeSchemaTotal) Validate() error {
+	switch s.Type {
+	case IntDataPageBadgeSchemaTotal:
+		if err := (validate.Int{
+			MinSet:        true,
+			Min:           0,
+			MaxSet:        false,
+			Max:           0,
+			MinExclusive:  false,
+			MaxExclusive:  false,
+			MultipleOfSet: false,
+			MultipleOf:    0,
+		}).Validate(int64(s.Int)); err != nil {
+			return errors.Wrap(err, "int")
+		}
+		return nil
+	case NullDataPageBadgeSchemaTotal:
 		return nil // no validation needed
 	default:
 		return errors.Errorf("invalid type %q", s.Type)
@@ -5401,6 +5617,8 @@ func (s DeleteItemSchemaCooldownReason) Validate() error {
 		return nil
 	case "task":
 		return nil
+	case "christmas_exchange":
+		return nil
 	case "recycling":
 		return nil
 	case "rest":
@@ -5780,6 +5998,8 @@ func (s EquipRequestSchemaCooldownReason) Validate() error {
 	case "unequip":
 		return nil
 	case "task":
+		return nil
+	case "christmas_exchange":
 		return nil
 	case "recycling":
 		return nil
@@ -6426,6 +6646,8 @@ func (s GEOrderTransactionSchemaCooldownReason) Validate() error {
 		return nil
 	case "task":
 		return nil
+	case "christmas_exchange":
+		return nil
 	case "recycling":
 		return nil
 	case "rest":
@@ -6720,6 +6942,8 @@ func (s GETransactionListSchemaCooldownReason) Validate() error {
 	case "unequip":
 		return nil
 	case "task":
+		return nil
+	case "christmas_exchange":
 		return nil
 	case "recycling":
 		return nil
@@ -7156,6 +7380,8 @@ func (s LogSchemaType) Validate() error {
 		return nil
 	case "task_trade":
 		return nil
+	case "christmas_exchange":
+		return nil
 	case "recycling":
 		return nil
 	case "rest":
@@ -7270,42 +7496,10 @@ func (s *MyAccountDetails) Validate() error {
 			Error: err,
 		})
 	}
-	if err := func() error {
-		if value, ok := s.Badges.Get(); ok {
-			if err := func() error {
-				if err := value.Validate(); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return err
-			}
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "badges",
-			Error: err,
-		})
-	}
 	if len(failures) > 0 {
 		return &validate.Error{Fields: failures}
 	}
 	return nil
-}
-
-func (s MyAccountDetailsBadges) Validate() error {
-	switch s.Type {
-	case AnyArrayMyAccountDetailsBadges:
-		if s.AnyArray == nil {
-			return errors.New("nil is invalid value")
-		}
-		return nil
-	case NullMyAccountDetailsBadges:
-		return nil // no validation needed
-	default:
-		return errors.Errorf("invalid type %q", s.Type)
-	}
 }
 
 func (s *MyAccountDetailsSchema) Validate() error {
@@ -7568,6 +7762,8 @@ func (s RecyclingDataSchemaCooldownReason) Validate() error {
 		return nil
 	case "task":
 		return nil
+	case "christmas_exchange":
+		return nil
 	case "recycling":
 		return nil
 	case "rest":
@@ -7772,6 +7968,289 @@ func (s ResourceSchemaSkill) Validate() error {
 	default:
 		return errors.Errorf("invalid value: %v", s)
 	}
+}
+
+func (s *RewardDataResponseSchema) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Data.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "data",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s *RewardDataSchema) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Cooldown.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "cooldown",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := s.Rewards.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "rewards",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := s.Character.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "character",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s *RewardDataSchemaCharacter) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Skin.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "skin",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := (validate.Int{
+			MinSet:        true,
+			Min:           0,
+			MaxSet:        false,
+			Max:           0,
+			MinExclusive:  false,
+			MaxExclusive:  false,
+			MultipleOfSet: false,
+			MultipleOf:    0,
+		}).Validate(int64(s.Utility1SlotQuantity)); err != nil {
+			return errors.Wrap(err, "int")
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "utility1_slot_quantity",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := (validate.Int{
+			MinSet:        true,
+			Min:           0,
+			MaxSet:        false,
+			Max:           0,
+			MinExclusive:  false,
+			MaxExclusive:  false,
+			MultipleOfSet: false,
+			MultipleOf:    0,
+		}).Validate(int64(s.Utility2SlotQuantity)); err != nil {
+			return errors.Wrap(err, "int")
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "utility2_slot_quantity",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s RewardDataSchemaCharacterSkin) Validate() error {
+	switch s {
+	case "men1":
+		return nil
+	case "men2":
+		return nil
+	case "men3":
+		return nil
+	case "women1":
+		return nil
+	case "women2":
+		return nil
+	case "women3":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s *RewardDataSchemaCooldown) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Reason.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "reason",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s RewardDataSchemaCooldownReason) Validate() error {
+	switch s {
+	case "movement":
+		return nil
+	case "fight":
+		return nil
+	case "crafting":
+		return nil
+	case "gathering":
+		return nil
+	case "buy_ge":
+		return nil
+	case "sell_ge":
+		return nil
+	case "cancel_ge":
+		return nil
+	case "delete_item":
+		return nil
+	case "deposit":
+		return nil
+	case "withdraw":
+		return nil
+	case "deposit_gold":
+		return nil
+	case "withdraw_gold":
+		return nil
+	case "equip":
+		return nil
+	case "unequip":
+		return nil
+	case "task":
+		return nil
+	case "christmas_exchange":
+		return nil
+	case "recycling":
+		return nil
+	case "rest":
+		return nil
+	case "use":
+		return nil
+	case "buy_bank_expansion":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s *RewardDataSchemaRewards) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if s.Items == nil {
+			return errors.New("nil is invalid value")
+		}
+		var failures []validate.FieldError
+		for i, elem := range s.Items {
+			if err := func() error {
+				if err := elem.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				failures = append(failures, validate.FieldError{
+					Name:  fmt.Sprintf("[%d]", i),
+					Error: err,
+				})
+			}
+		}
+		if len(failures) > 0 {
+			return &validate.Error{Fields: failures}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "items",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s *RewardResponseSchema) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Data.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "data",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
 }
 
 func (s *SimpleItemSchema) Validate() error {
@@ -8006,6 +8485,8 @@ func (s SkillDataSchemaCooldownReason) Validate() error {
 	case "unequip":
 		return nil
 	case "task":
+		return nil
+	case "christmas_exchange":
 		return nil
 	case "recycling":
 		return nil
@@ -8306,6 +8787,8 @@ func (s TaskCancelledSchemaCooldownReason) Validate() error {
 		return nil
 	case "task":
 		return nil
+	case "christmas_exchange":
+		return nil
 	case "recycling":
 		return nil
 	case "rest":
@@ -8500,6 +8983,8 @@ func (s TaskDataSchemaCooldownReason) Validate() error {
 	case "unequip":
 		return nil
 	case "task":
+		return nil
+	case "christmas_exchange":
 		return nil
 	case "recycling":
 		return nil
@@ -8901,6 +9386,8 @@ func (s TaskTradeDataSchemaCooldownReason) Validate() error {
 		return nil
 	case "task":
 		return nil
+	case "christmas_exchange":
+		return nil
 	case "recycling":
 		return nil
 	case "rest":
@@ -8915,287 +9402,6 @@ func (s TaskTradeDataSchemaCooldownReason) Validate() error {
 }
 
 func (s *TaskTradeResponseSchema) Validate() error {
-	if s == nil {
-		return validate.ErrNilPointer
-	}
-
-	var failures []validate.FieldError
-	if err := func() error {
-		if err := s.Data.Validate(); err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "data",
-			Error: err,
-		})
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-	return nil
-}
-
-func (s *TasksRewardDataResponseSchema) Validate() error {
-	if s == nil {
-		return validate.ErrNilPointer
-	}
-
-	var failures []validate.FieldError
-	if err := func() error {
-		if err := s.Data.Validate(); err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "data",
-			Error: err,
-		})
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-	return nil
-}
-
-func (s *TasksRewardDataSchema) Validate() error {
-	if s == nil {
-		return validate.ErrNilPointer
-	}
-
-	var failures []validate.FieldError
-	if err := func() error {
-		if err := s.Cooldown.Validate(); err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "cooldown",
-			Error: err,
-		})
-	}
-	if err := func() error {
-		if err := s.Rewards.Validate(); err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "rewards",
-			Error: err,
-		})
-	}
-	if err := func() error {
-		if err := s.Character.Validate(); err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "character",
-			Error: err,
-		})
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-	return nil
-}
-
-func (s *TasksRewardDataSchemaCharacter) Validate() error {
-	if s == nil {
-		return validate.ErrNilPointer
-	}
-
-	var failures []validate.FieldError
-	if err := func() error {
-		if err := s.Skin.Validate(); err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "skin",
-			Error: err,
-		})
-	}
-	if err := func() error {
-		if err := (validate.Int{
-			MinSet:        true,
-			Min:           0,
-			MaxSet:        false,
-			Max:           0,
-			MinExclusive:  false,
-			MaxExclusive:  false,
-			MultipleOfSet: false,
-			MultipleOf:    0,
-		}).Validate(int64(s.Utility1SlotQuantity)); err != nil {
-			return errors.Wrap(err, "int")
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "utility1_slot_quantity",
-			Error: err,
-		})
-	}
-	if err := func() error {
-		if err := (validate.Int{
-			MinSet:        true,
-			Min:           0,
-			MaxSet:        false,
-			Max:           0,
-			MinExclusive:  false,
-			MaxExclusive:  false,
-			MultipleOfSet: false,
-			MultipleOf:    0,
-		}).Validate(int64(s.Utility2SlotQuantity)); err != nil {
-			return errors.Wrap(err, "int")
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "utility2_slot_quantity",
-			Error: err,
-		})
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-	return nil
-}
-
-func (s TasksRewardDataSchemaCharacterSkin) Validate() error {
-	switch s {
-	case "men1":
-		return nil
-	case "men2":
-		return nil
-	case "men3":
-		return nil
-	case "women1":
-		return nil
-	case "women2":
-		return nil
-	case "women3":
-		return nil
-	default:
-		return errors.Errorf("invalid value: %v", s)
-	}
-}
-
-func (s *TasksRewardDataSchemaCooldown) Validate() error {
-	if s == nil {
-		return validate.ErrNilPointer
-	}
-
-	var failures []validate.FieldError
-	if err := func() error {
-		if err := s.Reason.Validate(); err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "reason",
-			Error: err,
-		})
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-	return nil
-}
-
-func (s TasksRewardDataSchemaCooldownReason) Validate() error {
-	switch s {
-	case "movement":
-		return nil
-	case "fight":
-		return nil
-	case "crafting":
-		return nil
-	case "gathering":
-		return nil
-	case "buy_ge":
-		return nil
-	case "sell_ge":
-		return nil
-	case "cancel_ge":
-		return nil
-	case "delete_item":
-		return nil
-	case "deposit":
-		return nil
-	case "withdraw":
-		return nil
-	case "deposit_gold":
-		return nil
-	case "withdraw_gold":
-		return nil
-	case "equip":
-		return nil
-	case "unequip":
-		return nil
-	case "task":
-		return nil
-	case "recycling":
-		return nil
-	case "rest":
-		return nil
-	case "use":
-		return nil
-	case "buy_bank_expansion":
-		return nil
-	default:
-		return errors.Errorf("invalid value: %v", s)
-	}
-}
-
-func (s *TasksRewardDataSchemaRewards) Validate() error {
-	if s == nil {
-		return validate.ErrNilPointer
-	}
-
-	var failures []validate.FieldError
-	if err := func() error {
-		if s.Items == nil {
-			return errors.New("nil is invalid value")
-		}
-		var failures []validate.FieldError
-		for i, elem := range s.Items {
-			if err := func() error {
-				if err := elem.Validate(); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				failures = append(failures, validate.FieldError{
-					Name:  fmt.Sprintf("[%d]", i),
-					Error: err,
-				})
-			}
-		}
-		if len(failures) > 0 {
-			return &validate.Error{Fields: failures}
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "items",
-			Error: err,
-		})
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-	return nil
-}
-
-func (s *TasksRewardResponseSchema) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
 	}
@@ -9507,6 +9713,8 @@ func (s UseItemSchemaCooldownReason) Validate() error {
 	case "unequip":
 		return nil
 	case "task":
+		return nil
+	case "christmas_exchange":
 		return nil
 	case "recycling":
 		return nil

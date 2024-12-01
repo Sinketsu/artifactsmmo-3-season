@@ -378,7 +378,7 @@ type AccountDetails struct {
 	// Member status.
 	Status AccountDetailsStatus `json:"status"`
 	// Account badges.
-	Badges OptAccountDetailsBadges `json:"badges"`
+	Badges []jx.Raw `json:"badges"`
 	// Achievement points.
 	AchievementsPoints int `json:"achievements_points"`
 	// Banned.
@@ -403,7 +403,7 @@ func (s *AccountDetails) GetStatus() AccountDetailsStatus {
 }
 
 // GetBadges returns the value of Badges.
-func (s *AccountDetails) GetBadges() OptAccountDetailsBadges {
+func (s *AccountDetails) GetBadges() []jx.Raw {
 	return s.Badges
 }
 
@@ -438,7 +438,7 @@ func (s *AccountDetails) SetStatus(val AccountDetailsStatus) {
 }
 
 // SetBadges sets the value of Badges.
-func (s *AccountDetails) SetBadges(val OptAccountDetailsBadges) {
+func (s *AccountDetails) SetBadges(val []jx.Raw) {
 	s.Badges = val
 }
 
@@ -455,71 +455,6 @@ func (s *AccountDetails) SetBanned(val bool) {
 // SetBanReason sets the value of BanReason.
 func (s *AccountDetails) SetBanReason(val OptString) {
 	s.BanReason = val
-}
-
-// Account badges.
-// AccountDetailsBadges represents sum type.
-type AccountDetailsBadges struct {
-	Type     AccountDetailsBadgesType // switch on this field
-	AnyArray []jx.Raw
-	Null     struct{}
-}
-
-// AccountDetailsBadgesType is oneOf type of AccountDetailsBadges.
-type AccountDetailsBadgesType string
-
-// Possible values for AccountDetailsBadgesType.
-const (
-	AnyArrayAccountDetailsBadges AccountDetailsBadgesType = "[]jx.Raw"
-	NullAccountDetailsBadges     AccountDetailsBadgesType = "struct{}"
-)
-
-// IsAnyArray reports whether AccountDetailsBadges is []jx.Raw.
-func (s AccountDetailsBadges) IsAnyArray() bool { return s.Type == AnyArrayAccountDetailsBadges }
-
-// IsNull reports whether AccountDetailsBadges is struct{}.
-func (s AccountDetailsBadges) IsNull() bool { return s.Type == NullAccountDetailsBadges }
-
-// SetAnyArray sets AccountDetailsBadges to []jx.Raw.
-func (s *AccountDetailsBadges) SetAnyArray(v []jx.Raw) {
-	s.Type = AnyArrayAccountDetailsBadges
-	s.AnyArray = v
-}
-
-// GetAnyArray returns []jx.Raw and true boolean if AccountDetailsBadges is []jx.Raw.
-func (s AccountDetailsBadges) GetAnyArray() (v []jx.Raw, ok bool) {
-	if !s.IsAnyArray() {
-		return v, false
-	}
-	return s.AnyArray, true
-}
-
-// NewAnyArrayAccountDetailsBadges returns new AccountDetailsBadges from []jx.Raw.
-func NewAnyArrayAccountDetailsBadges(v []jx.Raw) AccountDetailsBadges {
-	var s AccountDetailsBadges
-	s.SetAnyArray(v)
-	return s
-}
-
-// SetNull sets AccountDetailsBadges to struct{}.
-func (s *AccountDetailsBadges) SetNull(v struct{}) {
-	s.Type = NullAccountDetailsBadges
-	s.Null = v
-}
-
-// GetNull returns struct{} and true boolean if AccountDetailsBadges is struct{}.
-func (s AccountDetailsBadges) GetNull() (v struct{}, ok bool) {
-	if !s.IsNull() {
-		return v, false
-	}
-	return s.Null, true
-}
-
-// NewNullAccountDetailsBadges returns new AccountDetailsBadges from struct{}.
-func NewNullAccountDetailsBadges(v struct{}) AccountDetailsBadges {
-	var s AccountDetailsBadges
-	s.SetNull(v)
-	return s
 }
 
 // Ref: #/components/schemas/AccountDetailsSchema
@@ -1039,6 +974,42 @@ func (*ActionBuyBankExpansionMyNameActionBankBuyExpansionPostCode499) actionBuyB
 type ActionBuyBankExpansionMyNameActionBankBuyExpansionPostCode598 struct{}
 
 func (*ActionBuyBankExpansionMyNameActionBankBuyExpansionPostCode598) actionBuyBankExpansionMyNameActionBankBuyExpansionPostRes() {
+}
+
+// ActionChristmasExchangeMyNameActionChristmasExchangePostCode478 is response for ActionChristmasExchangeMyNameActionChristmasExchangePost operation.
+type ActionChristmasExchangeMyNameActionChristmasExchangePostCode478 struct{}
+
+func (*ActionChristmasExchangeMyNameActionChristmasExchangePostCode478) actionChristmasExchangeMyNameActionChristmasExchangePostRes() {
+}
+
+// ActionChristmasExchangeMyNameActionChristmasExchangePostCode486 is response for ActionChristmasExchangeMyNameActionChristmasExchangePost operation.
+type ActionChristmasExchangeMyNameActionChristmasExchangePostCode486 struct{}
+
+func (*ActionChristmasExchangeMyNameActionChristmasExchangePostCode486) actionChristmasExchangeMyNameActionChristmasExchangePostRes() {
+}
+
+// ActionChristmasExchangeMyNameActionChristmasExchangePostCode497 is response for ActionChristmasExchangeMyNameActionChristmasExchangePost operation.
+type ActionChristmasExchangeMyNameActionChristmasExchangePostCode497 struct{}
+
+func (*ActionChristmasExchangeMyNameActionChristmasExchangePostCode497) actionChristmasExchangeMyNameActionChristmasExchangePostRes() {
+}
+
+// ActionChristmasExchangeMyNameActionChristmasExchangePostCode498 is response for ActionChristmasExchangeMyNameActionChristmasExchangePost operation.
+type ActionChristmasExchangeMyNameActionChristmasExchangePostCode498 struct{}
+
+func (*ActionChristmasExchangeMyNameActionChristmasExchangePostCode498) actionChristmasExchangeMyNameActionChristmasExchangePostRes() {
+}
+
+// ActionChristmasExchangeMyNameActionChristmasExchangePostCode499 is response for ActionChristmasExchangeMyNameActionChristmasExchangePost operation.
+type ActionChristmasExchangeMyNameActionChristmasExchangePostCode499 struct{}
+
+func (*ActionChristmasExchangeMyNameActionChristmasExchangePostCode499) actionChristmasExchangeMyNameActionChristmasExchangePostRes() {
+}
+
+// ActionChristmasExchangeMyNameActionChristmasExchangePostCode598 is response for ActionChristmasExchangeMyNameActionChristmasExchangePost operation.
+type ActionChristmasExchangeMyNameActionChristmasExchangePostCode598 struct{}
+
+func (*ActionChristmasExchangeMyNameActionChristmasExchangePostCode598) actionChristmasExchangeMyNameActionChristmasExchangePostRes() {
 }
 
 // ActionCompleteTaskMyNameActionTaskCompletePostCode486 is response for ActionCompleteTaskMyNameActionTaskCompletePost operation.
@@ -2092,9 +2063,8 @@ type AddAccountSchema struct {
 	// Your desired username.
 	Username string `json:"username"`
 	// Your password.
-	Password string `json:"password"`
-	// Your email.
-	Email string `json:"email"`
+	Password string    `json:"password"`
+	Email    OptString `json:"email"`
 }
 
 // GetUsername returns the value of Username.
@@ -2108,7 +2078,7 @@ func (s *AddAccountSchema) GetPassword() string {
 }
 
 // GetEmail returns the value of Email.
-func (s *AddAccountSchema) GetEmail() string {
+func (s *AddAccountSchema) GetEmail() OptString {
 	return s.Email
 }
 
@@ -2123,7 +2093,7 @@ func (s *AddAccountSchema) SetPassword(val string) {
 }
 
 // SetEmail sets the value of Email.
-func (s *AddAccountSchema) SetEmail(val string) {
+func (s *AddAccountSchema) SetEmail(val OptString) {
 	s.Email = val
 }
 
@@ -2250,6 +2220,235 @@ func (s *AnnouncementSchema) SetMessage(val string) {
 // SetCreatedAt sets the value of CreatedAt.
 func (s *AnnouncementSchema) SetCreatedAt(val OptDateTime) {
 	s.CreatedAt = val
+}
+
+// Ref: #/components/schemas/BadgeConditionSchema
+type BadgeConditionSchema struct {
+	// Code of the condition.
+	Code string `json:"code"`
+	// Quantity of the condition (if any).
+	Quantity BadgeConditionSchemaQuantity `json:"quantity"`
+}
+
+// GetCode returns the value of Code.
+func (s *BadgeConditionSchema) GetCode() string {
+	return s.Code
+}
+
+// GetQuantity returns the value of Quantity.
+func (s *BadgeConditionSchema) GetQuantity() BadgeConditionSchemaQuantity {
+	return s.Quantity
+}
+
+// SetCode sets the value of Code.
+func (s *BadgeConditionSchema) SetCode(val string) {
+	s.Code = val
+}
+
+// SetQuantity sets the value of Quantity.
+func (s *BadgeConditionSchema) SetQuantity(val BadgeConditionSchemaQuantity) {
+	s.Quantity = val
+}
+
+// Quantity of the condition (if any).
+// BadgeConditionSchemaQuantity represents sum type.
+type BadgeConditionSchemaQuantity struct {
+	Type BadgeConditionSchemaQuantityType // switch on this field
+	Int  int
+	Null struct{}
+}
+
+// BadgeConditionSchemaQuantityType is oneOf type of BadgeConditionSchemaQuantity.
+type BadgeConditionSchemaQuantityType string
+
+// Possible values for BadgeConditionSchemaQuantityType.
+const (
+	IntBadgeConditionSchemaQuantity  BadgeConditionSchemaQuantityType = "int"
+	NullBadgeConditionSchemaQuantity BadgeConditionSchemaQuantityType = "struct{}"
+)
+
+// IsInt reports whether BadgeConditionSchemaQuantity is int.
+func (s BadgeConditionSchemaQuantity) IsInt() bool { return s.Type == IntBadgeConditionSchemaQuantity }
+
+// IsNull reports whether BadgeConditionSchemaQuantity is struct{}.
+func (s BadgeConditionSchemaQuantity) IsNull() bool {
+	return s.Type == NullBadgeConditionSchemaQuantity
+}
+
+// SetInt sets BadgeConditionSchemaQuantity to int.
+func (s *BadgeConditionSchemaQuantity) SetInt(v int) {
+	s.Type = IntBadgeConditionSchemaQuantity
+	s.Int = v
+}
+
+// GetInt returns int and true boolean if BadgeConditionSchemaQuantity is int.
+func (s BadgeConditionSchemaQuantity) GetInt() (v int, ok bool) {
+	if !s.IsInt() {
+		return v, false
+	}
+	return s.Int, true
+}
+
+// NewIntBadgeConditionSchemaQuantity returns new BadgeConditionSchemaQuantity from int.
+func NewIntBadgeConditionSchemaQuantity(v int) BadgeConditionSchemaQuantity {
+	var s BadgeConditionSchemaQuantity
+	s.SetInt(v)
+	return s
+}
+
+// SetNull sets BadgeConditionSchemaQuantity to struct{}.
+func (s *BadgeConditionSchemaQuantity) SetNull(v struct{}) {
+	s.Type = NullBadgeConditionSchemaQuantity
+	s.Null = v
+}
+
+// GetNull returns struct{} and true boolean if BadgeConditionSchemaQuantity is struct{}.
+func (s BadgeConditionSchemaQuantity) GetNull() (v struct{}, ok bool) {
+	if !s.IsNull() {
+		return v, false
+	}
+	return s.Null, true
+}
+
+// NewNullBadgeConditionSchemaQuantity returns new BadgeConditionSchemaQuantity from struct{}.
+func NewNullBadgeConditionSchemaQuantity(v struct{}) BadgeConditionSchemaQuantity {
+	var s BadgeConditionSchemaQuantity
+	s.SetNull(v)
+	return s
+}
+
+// Ref: #/components/schemas/BadgeResponseSchema
+type BadgeResponseSchema struct {
+	Data BadgeSchema `json:"data"`
+}
+
+// GetData returns the value of Data.
+func (s *BadgeResponseSchema) GetData() BadgeSchema {
+	return s.Data
+}
+
+// SetData sets the value of Data.
+func (s *BadgeResponseSchema) SetData(val BadgeSchema) {
+	s.Data = val
+}
+
+func (*BadgeResponseSchema) getBadgeBadgesCodeGetRes() {}
+
+// Ref: #/components/schemas/BadgeSchema
+type BadgeSchema struct {
+	// Code of the badge. This is the badge's unique identifier (ID).
+	Code string `json:"code"`
+	// Season of the badge.
+	Season OptBadgeSchemaSeason `json:"season"`
+	// Description of the badge.
+	Description string `json:"description"`
+	// Conditions to get the badge.
+	Conditions []BadgeConditionSchema `json:"conditions"`
+}
+
+// GetCode returns the value of Code.
+func (s *BadgeSchema) GetCode() string {
+	return s.Code
+}
+
+// GetSeason returns the value of Season.
+func (s *BadgeSchema) GetSeason() OptBadgeSchemaSeason {
+	return s.Season
+}
+
+// GetDescription returns the value of Description.
+func (s *BadgeSchema) GetDescription() string {
+	return s.Description
+}
+
+// GetConditions returns the value of Conditions.
+func (s *BadgeSchema) GetConditions() []BadgeConditionSchema {
+	return s.Conditions
+}
+
+// SetCode sets the value of Code.
+func (s *BadgeSchema) SetCode(val string) {
+	s.Code = val
+}
+
+// SetSeason sets the value of Season.
+func (s *BadgeSchema) SetSeason(val OptBadgeSchemaSeason) {
+	s.Season = val
+}
+
+// SetDescription sets the value of Description.
+func (s *BadgeSchema) SetDescription(val string) {
+	s.Description = val
+}
+
+// SetConditions sets the value of Conditions.
+func (s *BadgeSchema) SetConditions(val []BadgeConditionSchema) {
+	s.Conditions = val
+}
+
+// Season of the badge.
+// BadgeSchemaSeason represents sum type.
+type BadgeSchemaSeason struct {
+	Type BadgeSchemaSeasonType // switch on this field
+	Int  int
+	Null struct{}
+}
+
+// BadgeSchemaSeasonType is oneOf type of BadgeSchemaSeason.
+type BadgeSchemaSeasonType string
+
+// Possible values for BadgeSchemaSeasonType.
+const (
+	IntBadgeSchemaSeason  BadgeSchemaSeasonType = "int"
+	NullBadgeSchemaSeason BadgeSchemaSeasonType = "struct{}"
+)
+
+// IsInt reports whether BadgeSchemaSeason is int.
+func (s BadgeSchemaSeason) IsInt() bool { return s.Type == IntBadgeSchemaSeason }
+
+// IsNull reports whether BadgeSchemaSeason is struct{}.
+func (s BadgeSchemaSeason) IsNull() bool { return s.Type == NullBadgeSchemaSeason }
+
+// SetInt sets BadgeSchemaSeason to int.
+func (s *BadgeSchemaSeason) SetInt(v int) {
+	s.Type = IntBadgeSchemaSeason
+	s.Int = v
+}
+
+// GetInt returns int and true boolean if BadgeSchemaSeason is int.
+func (s BadgeSchemaSeason) GetInt() (v int, ok bool) {
+	if !s.IsInt() {
+		return v, false
+	}
+	return s.Int, true
+}
+
+// NewIntBadgeSchemaSeason returns new BadgeSchemaSeason from int.
+func NewIntBadgeSchemaSeason(v int) BadgeSchemaSeason {
+	var s BadgeSchemaSeason
+	s.SetInt(v)
+	return s
+}
+
+// SetNull sets BadgeSchemaSeason to struct{}.
+func (s *BadgeSchemaSeason) SetNull(v struct{}) {
+	s.Type = NullBadgeSchemaSeason
+	s.Null = v
+}
+
+// GetNull returns struct{} and true boolean if BadgeSchemaSeason is struct{}.
+func (s BadgeSchemaSeason) GetNull() (v struct{}, ok bool) {
+	if !s.IsNull() {
+		return v, false
+	}
+	return s.Null, true
+}
+
+// NewNullBadgeSchemaSeason returns new BadgeSchemaSeason from struct{}.
+func NewNullBadgeSchemaSeason(v struct{}) BadgeSchemaSeason {
+	var s BadgeSchemaSeason
+	s.SetNull(v)
+	return s
 }
 
 // Ref: #/components/schemas/BankExtensionTransactionResponseSchema
@@ -3349,25 +3548,26 @@ func (s *BankExtensionTransactionSchemaCooldown) SetReason(val BankExtensionTran
 type BankExtensionTransactionSchemaCooldownReason string
 
 const (
-	BankExtensionTransactionSchemaCooldownReasonMovement         BankExtensionTransactionSchemaCooldownReason = "movement"
-	BankExtensionTransactionSchemaCooldownReasonFight            BankExtensionTransactionSchemaCooldownReason = "fight"
-	BankExtensionTransactionSchemaCooldownReasonCrafting         BankExtensionTransactionSchemaCooldownReason = "crafting"
-	BankExtensionTransactionSchemaCooldownReasonGathering        BankExtensionTransactionSchemaCooldownReason = "gathering"
-	BankExtensionTransactionSchemaCooldownReasonBuyGe            BankExtensionTransactionSchemaCooldownReason = "buy_ge"
-	BankExtensionTransactionSchemaCooldownReasonSellGe           BankExtensionTransactionSchemaCooldownReason = "sell_ge"
-	BankExtensionTransactionSchemaCooldownReasonCancelGe         BankExtensionTransactionSchemaCooldownReason = "cancel_ge"
-	BankExtensionTransactionSchemaCooldownReasonDeleteItem       BankExtensionTransactionSchemaCooldownReason = "delete_item"
-	BankExtensionTransactionSchemaCooldownReasonDeposit          BankExtensionTransactionSchemaCooldownReason = "deposit"
-	BankExtensionTransactionSchemaCooldownReasonWithdraw         BankExtensionTransactionSchemaCooldownReason = "withdraw"
-	BankExtensionTransactionSchemaCooldownReasonDepositGold      BankExtensionTransactionSchemaCooldownReason = "deposit_gold"
-	BankExtensionTransactionSchemaCooldownReasonWithdrawGold     BankExtensionTransactionSchemaCooldownReason = "withdraw_gold"
-	BankExtensionTransactionSchemaCooldownReasonEquip            BankExtensionTransactionSchemaCooldownReason = "equip"
-	BankExtensionTransactionSchemaCooldownReasonUnequip          BankExtensionTransactionSchemaCooldownReason = "unequip"
-	BankExtensionTransactionSchemaCooldownReasonTask             BankExtensionTransactionSchemaCooldownReason = "task"
-	BankExtensionTransactionSchemaCooldownReasonRecycling        BankExtensionTransactionSchemaCooldownReason = "recycling"
-	BankExtensionTransactionSchemaCooldownReasonRest             BankExtensionTransactionSchemaCooldownReason = "rest"
-	BankExtensionTransactionSchemaCooldownReasonUse              BankExtensionTransactionSchemaCooldownReason = "use"
-	BankExtensionTransactionSchemaCooldownReasonBuyBankExpansion BankExtensionTransactionSchemaCooldownReason = "buy_bank_expansion"
+	BankExtensionTransactionSchemaCooldownReasonMovement          BankExtensionTransactionSchemaCooldownReason = "movement"
+	BankExtensionTransactionSchemaCooldownReasonFight             BankExtensionTransactionSchemaCooldownReason = "fight"
+	BankExtensionTransactionSchemaCooldownReasonCrafting          BankExtensionTransactionSchemaCooldownReason = "crafting"
+	BankExtensionTransactionSchemaCooldownReasonGathering         BankExtensionTransactionSchemaCooldownReason = "gathering"
+	BankExtensionTransactionSchemaCooldownReasonBuyGe             BankExtensionTransactionSchemaCooldownReason = "buy_ge"
+	BankExtensionTransactionSchemaCooldownReasonSellGe            BankExtensionTransactionSchemaCooldownReason = "sell_ge"
+	BankExtensionTransactionSchemaCooldownReasonCancelGe          BankExtensionTransactionSchemaCooldownReason = "cancel_ge"
+	BankExtensionTransactionSchemaCooldownReasonDeleteItem        BankExtensionTransactionSchemaCooldownReason = "delete_item"
+	BankExtensionTransactionSchemaCooldownReasonDeposit           BankExtensionTransactionSchemaCooldownReason = "deposit"
+	BankExtensionTransactionSchemaCooldownReasonWithdraw          BankExtensionTransactionSchemaCooldownReason = "withdraw"
+	BankExtensionTransactionSchemaCooldownReasonDepositGold       BankExtensionTransactionSchemaCooldownReason = "deposit_gold"
+	BankExtensionTransactionSchemaCooldownReasonWithdrawGold      BankExtensionTransactionSchemaCooldownReason = "withdraw_gold"
+	BankExtensionTransactionSchemaCooldownReasonEquip             BankExtensionTransactionSchemaCooldownReason = "equip"
+	BankExtensionTransactionSchemaCooldownReasonUnequip           BankExtensionTransactionSchemaCooldownReason = "unequip"
+	BankExtensionTransactionSchemaCooldownReasonTask              BankExtensionTransactionSchemaCooldownReason = "task"
+	BankExtensionTransactionSchemaCooldownReasonChristmasExchange BankExtensionTransactionSchemaCooldownReason = "christmas_exchange"
+	BankExtensionTransactionSchemaCooldownReasonRecycling         BankExtensionTransactionSchemaCooldownReason = "recycling"
+	BankExtensionTransactionSchemaCooldownReasonRest              BankExtensionTransactionSchemaCooldownReason = "rest"
+	BankExtensionTransactionSchemaCooldownReasonUse               BankExtensionTransactionSchemaCooldownReason = "use"
+	BankExtensionTransactionSchemaCooldownReasonBuyBankExpansion  BankExtensionTransactionSchemaCooldownReason = "buy_bank_expansion"
 )
 
 // AllValues returns all BankExtensionTransactionSchemaCooldownReason values.
@@ -3388,6 +3588,7 @@ func (BankExtensionTransactionSchemaCooldownReason) AllValues() []BankExtensionT
 		BankExtensionTransactionSchemaCooldownReasonEquip,
 		BankExtensionTransactionSchemaCooldownReasonUnequip,
 		BankExtensionTransactionSchemaCooldownReasonTask,
+		BankExtensionTransactionSchemaCooldownReasonChristmasExchange,
 		BankExtensionTransactionSchemaCooldownReasonRecycling,
 		BankExtensionTransactionSchemaCooldownReasonRest,
 		BankExtensionTransactionSchemaCooldownReasonUse,
@@ -3427,6 +3628,8 @@ func (s BankExtensionTransactionSchemaCooldownReason) MarshalText() ([]byte, err
 	case BankExtensionTransactionSchemaCooldownReasonUnequip:
 		return []byte(s), nil
 	case BankExtensionTransactionSchemaCooldownReasonTask:
+		return []byte(s), nil
+	case BankExtensionTransactionSchemaCooldownReasonChristmasExchange:
 		return []byte(s), nil
 	case BankExtensionTransactionSchemaCooldownReasonRecycling:
 		return []byte(s), nil
@@ -3488,6 +3691,9 @@ func (s *BankExtensionTransactionSchemaCooldownReason) UnmarshalText(data []byte
 		return nil
 	case BankExtensionTransactionSchemaCooldownReasonTask:
 		*s = BankExtensionTransactionSchemaCooldownReasonTask
+		return nil
+	case BankExtensionTransactionSchemaCooldownReasonChristmasExchange:
+		*s = BankExtensionTransactionSchemaCooldownReasonChristmasExchange
 		return nil
 	case BankExtensionTransactionSchemaCooldownReasonRecycling:
 		*s = BankExtensionTransactionSchemaCooldownReasonRecycling
@@ -4634,25 +4840,26 @@ func (s *BankGoldTransactionSchemaCooldown) SetReason(val BankGoldTransactionSch
 type BankGoldTransactionSchemaCooldownReason string
 
 const (
-	BankGoldTransactionSchemaCooldownReasonMovement         BankGoldTransactionSchemaCooldownReason = "movement"
-	BankGoldTransactionSchemaCooldownReasonFight            BankGoldTransactionSchemaCooldownReason = "fight"
-	BankGoldTransactionSchemaCooldownReasonCrafting         BankGoldTransactionSchemaCooldownReason = "crafting"
-	BankGoldTransactionSchemaCooldownReasonGathering        BankGoldTransactionSchemaCooldownReason = "gathering"
-	BankGoldTransactionSchemaCooldownReasonBuyGe            BankGoldTransactionSchemaCooldownReason = "buy_ge"
-	BankGoldTransactionSchemaCooldownReasonSellGe           BankGoldTransactionSchemaCooldownReason = "sell_ge"
-	BankGoldTransactionSchemaCooldownReasonCancelGe         BankGoldTransactionSchemaCooldownReason = "cancel_ge"
-	BankGoldTransactionSchemaCooldownReasonDeleteItem       BankGoldTransactionSchemaCooldownReason = "delete_item"
-	BankGoldTransactionSchemaCooldownReasonDeposit          BankGoldTransactionSchemaCooldownReason = "deposit"
-	BankGoldTransactionSchemaCooldownReasonWithdraw         BankGoldTransactionSchemaCooldownReason = "withdraw"
-	BankGoldTransactionSchemaCooldownReasonDepositGold      BankGoldTransactionSchemaCooldownReason = "deposit_gold"
-	BankGoldTransactionSchemaCooldownReasonWithdrawGold     BankGoldTransactionSchemaCooldownReason = "withdraw_gold"
-	BankGoldTransactionSchemaCooldownReasonEquip            BankGoldTransactionSchemaCooldownReason = "equip"
-	BankGoldTransactionSchemaCooldownReasonUnequip          BankGoldTransactionSchemaCooldownReason = "unequip"
-	BankGoldTransactionSchemaCooldownReasonTask             BankGoldTransactionSchemaCooldownReason = "task"
-	BankGoldTransactionSchemaCooldownReasonRecycling        BankGoldTransactionSchemaCooldownReason = "recycling"
-	BankGoldTransactionSchemaCooldownReasonRest             BankGoldTransactionSchemaCooldownReason = "rest"
-	BankGoldTransactionSchemaCooldownReasonUse              BankGoldTransactionSchemaCooldownReason = "use"
-	BankGoldTransactionSchemaCooldownReasonBuyBankExpansion BankGoldTransactionSchemaCooldownReason = "buy_bank_expansion"
+	BankGoldTransactionSchemaCooldownReasonMovement          BankGoldTransactionSchemaCooldownReason = "movement"
+	BankGoldTransactionSchemaCooldownReasonFight             BankGoldTransactionSchemaCooldownReason = "fight"
+	BankGoldTransactionSchemaCooldownReasonCrafting          BankGoldTransactionSchemaCooldownReason = "crafting"
+	BankGoldTransactionSchemaCooldownReasonGathering         BankGoldTransactionSchemaCooldownReason = "gathering"
+	BankGoldTransactionSchemaCooldownReasonBuyGe             BankGoldTransactionSchemaCooldownReason = "buy_ge"
+	BankGoldTransactionSchemaCooldownReasonSellGe            BankGoldTransactionSchemaCooldownReason = "sell_ge"
+	BankGoldTransactionSchemaCooldownReasonCancelGe          BankGoldTransactionSchemaCooldownReason = "cancel_ge"
+	BankGoldTransactionSchemaCooldownReasonDeleteItem        BankGoldTransactionSchemaCooldownReason = "delete_item"
+	BankGoldTransactionSchemaCooldownReasonDeposit           BankGoldTransactionSchemaCooldownReason = "deposit"
+	BankGoldTransactionSchemaCooldownReasonWithdraw          BankGoldTransactionSchemaCooldownReason = "withdraw"
+	BankGoldTransactionSchemaCooldownReasonDepositGold       BankGoldTransactionSchemaCooldownReason = "deposit_gold"
+	BankGoldTransactionSchemaCooldownReasonWithdrawGold      BankGoldTransactionSchemaCooldownReason = "withdraw_gold"
+	BankGoldTransactionSchemaCooldownReasonEquip             BankGoldTransactionSchemaCooldownReason = "equip"
+	BankGoldTransactionSchemaCooldownReasonUnequip           BankGoldTransactionSchemaCooldownReason = "unequip"
+	BankGoldTransactionSchemaCooldownReasonTask              BankGoldTransactionSchemaCooldownReason = "task"
+	BankGoldTransactionSchemaCooldownReasonChristmasExchange BankGoldTransactionSchemaCooldownReason = "christmas_exchange"
+	BankGoldTransactionSchemaCooldownReasonRecycling         BankGoldTransactionSchemaCooldownReason = "recycling"
+	BankGoldTransactionSchemaCooldownReasonRest              BankGoldTransactionSchemaCooldownReason = "rest"
+	BankGoldTransactionSchemaCooldownReasonUse               BankGoldTransactionSchemaCooldownReason = "use"
+	BankGoldTransactionSchemaCooldownReasonBuyBankExpansion  BankGoldTransactionSchemaCooldownReason = "buy_bank_expansion"
 )
 
 // AllValues returns all BankGoldTransactionSchemaCooldownReason values.
@@ -4673,6 +4880,7 @@ func (BankGoldTransactionSchemaCooldownReason) AllValues() []BankGoldTransaction
 		BankGoldTransactionSchemaCooldownReasonEquip,
 		BankGoldTransactionSchemaCooldownReasonUnequip,
 		BankGoldTransactionSchemaCooldownReasonTask,
+		BankGoldTransactionSchemaCooldownReasonChristmasExchange,
 		BankGoldTransactionSchemaCooldownReasonRecycling,
 		BankGoldTransactionSchemaCooldownReasonRest,
 		BankGoldTransactionSchemaCooldownReasonUse,
@@ -4712,6 +4920,8 @@ func (s BankGoldTransactionSchemaCooldownReason) MarshalText() ([]byte, error) {
 	case BankGoldTransactionSchemaCooldownReasonUnequip:
 		return []byte(s), nil
 	case BankGoldTransactionSchemaCooldownReasonTask:
+		return []byte(s), nil
+	case BankGoldTransactionSchemaCooldownReasonChristmasExchange:
 		return []byte(s), nil
 	case BankGoldTransactionSchemaCooldownReasonRecycling:
 		return []byte(s), nil
@@ -4773,6 +4983,9 @@ func (s *BankGoldTransactionSchemaCooldownReason) UnmarshalText(data []byte) err
 		return nil
 	case BankGoldTransactionSchemaCooldownReasonTask:
 		*s = BankGoldTransactionSchemaCooldownReasonTask
+		return nil
+	case BankGoldTransactionSchemaCooldownReasonChristmasExchange:
+		*s = BankGoldTransactionSchemaCooldownReasonChristmasExchange
 		return nil
 	case BankGoldTransactionSchemaCooldownReasonRecycling:
 		*s = BankGoldTransactionSchemaCooldownReasonRecycling
@@ -5900,25 +6113,26 @@ func (s *BankItemTransactionSchemaCooldown) SetReason(val BankItemTransactionSch
 type BankItemTransactionSchemaCooldownReason string
 
 const (
-	BankItemTransactionSchemaCooldownReasonMovement         BankItemTransactionSchemaCooldownReason = "movement"
-	BankItemTransactionSchemaCooldownReasonFight            BankItemTransactionSchemaCooldownReason = "fight"
-	BankItemTransactionSchemaCooldownReasonCrafting         BankItemTransactionSchemaCooldownReason = "crafting"
-	BankItemTransactionSchemaCooldownReasonGathering        BankItemTransactionSchemaCooldownReason = "gathering"
-	BankItemTransactionSchemaCooldownReasonBuyGe            BankItemTransactionSchemaCooldownReason = "buy_ge"
-	BankItemTransactionSchemaCooldownReasonSellGe           BankItemTransactionSchemaCooldownReason = "sell_ge"
-	BankItemTransactionSchemaCooldownReasonCancelGe         BankItemTransactionSchemaCooldownReason = "cancel_ge"
-	BankItemTransactionSchemaCooldownReasonDeleteItem       BankItemTransactionSchemaCooldownReason = "delete_item"
-	BankItemTransactionSchemaCooldownReasonDeposit          BankItemTransactionSchemaCooldownReason = "deposit"
-	BankItemTransactionSchemaCooldownReasonWithdraw         BankItemTransactionSchemaCooldownReason = "withdraw"
-	BankItemTransactionSchemaCooldownReasonDepositGold      BankItemTransactionSchemaCooldownReason = "deposit_gold"
-	BankItemTransactionSchemaCooldownReasonWithdrawGold     BankItemTransactionSchemaCooldownReason = "withdraw_gold"
-	BankItemTransactionSchemaCooldownReasonEquip            BankItemTransactionSchemaCooldownReason = "equip"
-	BankItemTransactionSchemaCooldownReasonUnequip          BankItemTransactionSchemaCooldownReason = "unequip"
-	BankItemTransactionSchemaCooldownReasonTask             BankItemTransactionSchemaCooldownReason = "task"
-	BankItemTransactionSchemaCooldownReasonRecycling        BankItemTransactionSchemaCooldownReason = "recycling"
-	BankItemTransactionSchemaCooldownReasonRest             BankItemTransactionSchemaCooldownReason = "rest"
-	BankItemTransactionSchemaCooldownReasonUse              BankItemTransactionSchemaCooldownReason = "use"
-	BankItemTransactionSchemaCooldownReasonBuyBankExpansion BankItemTransactionSchemaCooldownReason = "buy_bank_expansion"
+	BankItemTransactionSchemaCooldownReasonMovement          BankItemTransactionSchemaCooldownReason = "movement"
+	BankItemTransactionSchemaCooldownReasonFight             BankItemTransactionSchemaCooldownReason = "fight"
+	BankItemTransactionSchemaCooldownReasonCrafting          BankItemTransactionSchemaCooldownReason = "crafting"
+	BankItemTransactionSchemaCooldownReasonGathering         BankItemTransactionSchemaCooldownReason = "gathering"
+	BankItemTransactionSchemaCooldownReasonBuyGe             BankItemTransactionSchemaCooldownReason = "buy_ge"
+	BankItemTransactionSchemaCooldownReasonSellGe            BankItemTransactionSchemaCooldownReason = "sell_ge"
+	BankItemTransactionSchemaCooldownReasonCancelGe          BankItemTransactionSchemaCooldownReason = "cancel_ge"
+	BankItemTransactionSchemaCooldownReasonDeleteItem        BankItemTransactionSchemaCooldownReason = "delete_item"
+	BankItemTransactionSchemaCooldownReasonDeposit           BankItemTransactionSchemaCooldownReason = "deposit"
+	BankItemTransactionSchemaCooldownReasonWithdraw          BankItemTransactionSchemaCooldownReason = "withdraw"
+	BankItemTransactionSchemaCooldownReasonDepositGold       BankItemTransactionSchemaCooldownReason = "deposit_gold"
+	BankItemTransactionSchemaCooldownReasonWithdrawGold      BankItemTransactionSchemaCooldownReason = "withdraw_gold"
+	BankItemTransactionSchemaCooldownReasonEquip             BankItemTransactionSchemaCooldownReason = "equip"
+	BankItemTransactionSchemaCooldownReasonUnequip           BankItemTransactionSchemaCooldownReason = "unequip"
+	BankItemTransactionSchemaCooldownReasonTask              BankItemTransactionSchemaCooldownReason = "task"
+	BankItemTransactionSchemaCooldownReasonChristmasExchange BankItemTransactionSchemaCooldownReason = "christmas_exchange"
+	BankItemTransactionSchemaCooldownReasonRecycling         BankItemTransactionSchemaCooldownReason = "recycling"
+	BankItemTransactionSchemaCooldownReasonRest              BankItemTransactionSchemaCooldownReason = "rest"
+	BankItemTransactionSchemaCooldownReasonUse               BankItemTransactionSchemaCooldownReason = "use"
+	BankItemTransactionSchemaCooldownReasonBuyBankExpansion  BankItemTransactionSchemaCooldownReason = "buy_bank_expansion"
 )
 
 // AllValues returns all BankItemTransactionSchemaCooldownReason values.
@@ -5939,6 +6153,7 @@ func (BankItemTransactionSchemaCooldownReason) AllValues() []BankItemTransaction
 		BankItemTransactionSchemaCooldownReasonEquip,
 		BankItemTransactionSchemaCooldownReasonUnequip,
 		BankItemTransactionSchemaCooldownReasonTask,
+		BankItemTransactionSchemaCooldownReasonChristmasExchange,
 		BankItemTransactionSchemaCooldownReasonRecycling,
 		BankItemTransactionSchemaCooldownReasonRest,
 		BankItemTransactionSchemaCooldownReasonUse,
@@ -5978,6 +6193,8 @@ func (s BankItemTransactionSchemaCooldownReason) MarshalText() ([]byte, error) {
 	case BankItemTransactionSchemaCooldownReasonUnequip:
 		return []byte(s), nil
 	case BankItemTransactionSchemaCooldownReasonTask:
+		return []byte(s), nil
+	case BankItemTransactionSchemaCooldownReasonChristmasExchange:
 		return []byte(s), nil
 	case BankItemTransactionSchemaCooldownReasonRecycling:
 		return []byte(s), nil
@@ -6039,6 +6256,9 @@ func (s *BankItemTransactionSchemaCooldownReason) UnmarshalText(data []byte) err
 		return nil
 	case BankItemTransactionSchemaCooldownReasonTask:
 		*s = BankItemTransactionSchemaCooldownReasonTask
+		return nil
+	case BankItemTransactionSchemaCooldownReasonChristmasExchange:
+		*s = BankItemTransactionSchemaCooldownReasonChristmasExchange
 		return nil
 	case BankItemTransactionSchemaCooldownReasonRecycling:
 		*s = BankItemTransactionSchemaCooldownReasonRecycling
@@ -7416,25 +7636,26 @@ func (s *CharacterFightDataSchemaCooldown) SetReason(val CharacterFightDataSchem
 type CharacterFightDataSchemaCooldownReason string
 
 const (
-	CharacterFightDataSchemaCooldownReasonMovement         CharacterFightDataSchemaCooldownReason = "movement"
-	CharacterFightDataSchemaCooldownReasonFight            CharacterFightDataSchemaCooldownReason = "fight"
-	CharacterFightDataSchemaCooldownReasonCrafting         CharacterFightDataSchemaCooldownReason = "crafting"
-	CharacterFightDataSchemaCooldownReasonGathering        CharacterFightDataSchemaCooldownReason = "gathering"
-	CharacterFightDataSchemaCooldownReasonBuyGe            CharacterFightDataSchemaCooldownReason = "buy_ge"
-	CharacterFightDataSchemaCooldownReasonSellGe           CharacterFightDataSchemaCooldownReason = "sell_ge"
-	CharacterFightDataSchemaCooldownReasonCancelGe         CharacterFightDataSchemaCooldownReason = "cancel_ge"
-	CharacterFightDataSchemaCooldownReasonDeleteItem       CharacterFightDataSchemaCooldownReason = "delete_item"
-	CharacterFightDataSchemaCooldownReasonDeposit          CharacterFightDataSchemaCooldownReason = "deposit"
-	CharacterFightDataSchemaCooldownReasonWithdraw         CharacterFightDataSchemaCooldownReason = "withdraw"
-	CharacterFightDataSchemaCooldownReasonDepositGold      CharacterFightDataSchemaCooldownReason = "deposit_gold"
-	CharacterFightDataSchemaCooldownReasonWithdrawGold     CharacterFightDataSchemaCooldownReason = "withdraw_gold"
-	CharacterFightDataSchemaCooldownReasonEquip            CharacterFightDataSchemaCooldownReason = "equip"
-	CharacterFightDataSchemaCooldownReasonUnequip          CharacterFightDataSchemaCooldownReason = "unequip"
-	CharacterFightDataSchemaCooldownReasonTask             CharacterFightDataSchemaCooldownReason = "task"
-	CharacterFightDataSchemaCooldownReasonRecycling        CharacterFightDataSchemaCooldownReason = "recycling"
-	CharacterFightDataSchemaCooldownReasonRest             CharacterFightDataSchemaCooldownReason = "rest"
-	CharacterFightDataSchemaCooldownReasonUse              CharacterFightDataSchemaCooldownReason = "use"
-	CharacterFightDataSchemaCooldownReasonBuyBankExpansion CharacterFightDataSchemaCooldownReason = "buy_bank_expansion"
+	CharacterFightDataSchemaCooldownReasonMovement          CharacterFightDataSchemaCooldownReason = "movement"
+	CharacterFightDataSchemaCooldownReasonFight             CharacterFightDataSchemaCooldownReason = "fight"
+	CharacterFightDataSchemaCooldownReasonCrafting          CharacterFightDataSchemaCooldownReason = "crafting"
+	CharacterFightDataSchemaCooldownReasonGathering         CharacterFightDataSchemaCooldownReason = "gathering"
+	CharacterFightDataSchemaCooldownReasonBuyGe             CharacterFightDataSchemaCooldownReason = "buy_ge"
+	CharacterFightDataSchemaCooldownReasonSellGe            CharacterFightDataSchemaCooldownReason = "sell_ge"
+	CharacterFightDataSchemaCooldownReasonCancelGe          CharacterFightDataSchemaCooldownReason = "cancel_ge"
+	CharacterFightDataSchemaCooldownReasonDeleteItem        CharacterFightDataSchemaCooldownReason = "delete_item"
+	CharacterFightDataSchemaCooldownReasonDeposit           CharacterFightDataSchemaCooldownReason = "deposit"
+	CharacterFightDataSchemaCooldownReasonWithdraw          CharacterFightDataSchemaCooldownReason = "withdraw"
+	CharacterFightDataSchemaCooldownReasonDepositGold       CharacterFightDataSchemaCooldownReason = "deposit_gold"
+	CharacterFightDataSchemaCooldownReasonWithdrawGold      CharacterFightDataSchemaCooldownReason = "withdraw_gold"
+	CharacterFightDataSchemaCooldownReasonEquip             CharacterFightDataSchemaCooldownReason = "equip"
+	CharacterFightDataSchemaCooldownReasonUnequip           CharacterFightDataSchemaCooldownReason = "unequip"
+	CharacterFightDataSchemaCooldownReasonTask              CharacterFightDataSchemaCooldownReason = "task"
+	CharacterFightDataSchemaCooldownReasonChristmasExchange CharacterFightDataSchemaCooldownReason = "christmas_exchange"
+	CharacterFightDataSchemaCooldownReasonRecycling         CharacterFightDataSchemaCooldownReason = "recycling"
+	CharacterFightDataSchemaCooldownReasonRest              CharacterFightDataSchemaCooldownReason = "rest"
+	CharacterFightDataSchemaCooldownReasonUse               CharacterFightDataSchemaCooldownReason = "use"
+	CharacterFightDataSchemaCooldownReasonBuyBankExpansion  CharacterFightDataSchemaCooldownReason = "buy_bank_expansion"
 )
 
 // AllValues returns all CharacterFightDataSchemaCooldownReason values.
@@ -7455,6 +7676,7 @@ func (CharacterFightDataSchemaCooldownReason) AllValues() []CharacterFightDataSc
 		CharacterFightDataSchemaCooldownReasonEquip,
 		CharacterFightDataSchemaCooldownReasonUnequip,
 		CharacterFightDataSchemaCooldownReasonTask,
+		CharacterFightDataSchemaCooldownReasonChristmasExchange,
 		CharacterFightDataSchemaCooldownReasonRecycling,
 		CharacterFightDataSchemaCooldownReasonRest,
 		CharacterFightDataSchemaCooldownReasonUse,
@@ -7494,6 +7716,8 @@ func (s CharacterFightDataSchemaCooldownReason) MarshalText() ([]byte, error) {
 	case CharacterFightDataSchemaCooldownReasonUnequip:
 		return []byte(s), nil
 	case CharacterFightDataSchemaCooldownReasonTask:
+		return []byte(s), nil
+	case CharacterFightDataSchemaCooldownReasonChristmasExchange:
 		return []byte(s), nil
 	case CharacterFightDataSchemaCooldownReasonRecycling:
 		return []byte(s), nil
@@ -7555,6 +7779,9 @@ func (s *CharacterFightDataSchemaCooldownReason) UnmarshalText(data []byte) erro
 		return nil
 	case CharacterFightDataSchemaCooldownReasonTask:
 		*s = CharacterFightDataSchemaCooldownReasonTask
+		return nil
+	case CharacterFightDataSchemaCooldownReasonChristmasExchange:
+		*s = CharacterFightDataSchemaCooldownReasonChristmasExchange
 		return nil
 	case CharacterFightDataSchemaCooldownReasonRecycling:
 		*s = CharacterFightDataSchemaCooldownReasonRecycling
@@ -9215,25 +9442,26 @@ func (s *CharacterMovementDataSchemaCooldown) SetReason(val CharacterMovementDat
 type CharacterMovementDataSchemaCooldownReason string
 
 const (
-	CharacterMovementDataSchemaCooldownReasonMovement         CharacterMovementDataSchemaCooldownReason = "movement"
-	CharacterMovementDataSchemaCooldownReasonFight            CharacterMovementDataSchemaCooldownReason = "fight"
-	CharacterMovementDataSchemaCooldownReasonCrafting         CharacterMovementDataSchemaCooldownReason = "crafting"
-	CharacterMovementDataSchemaCooldownReasonGathering        CharacterMovementDataSchemaCooldownReason = "gathering"
-	CharacterMovementDataSchemaCooldownReasonBuyGe            CharacterMovementDataSchemaCooldownReason = "buy_ge"
-	CharacterMovementDataSchemaCooldownReasonSellGe           CharacterMovementDataSchemaCooldownReason = "sell_ge"
-	CharacterMovementDataSchemaCooldownReasonCancelGe         CharacterMovementDataSchemaCooldownReason = "cancel_ge"
-	CharacterMovementDataSchemaCooldownReasonDeleteItem       CharacterMovementDataSchemaCooldownReason = "delete_item"
-	CharacterMovementDataSchemaCooldownReasonDeposit          CharacterMovementDataSchemaCooldownReason = "deposit"
-	CharacterMovementDataSchemaCooldownReasonWithdraw         CharacterMovementDataSchemaCooldownReason = "withdraw"
-	CharacterMovementDataSchemaCooldownReasonDepositGold      CharacterMovementDataSchemaCooldownReason = "deposit_gold"
-	CharacterMovementDataSchemaCooldownReasonWithdrawGold     CharacterMovementDataSchemaCooldownReason = "withdraw_gold"
-	CharacterMovementDataSchemaCooldownReasonEquip            CharacterMovementDataSchemaCooldownReason = "equip"
-	CharacterMovementDataSchemaCooldownReasonUnequip          CharacterMovementDataSchemaCooldownReason = "unequip"
-	CharacterMovementDataSchemaCooldownReasonTask             CharacterMovementDataSchemaCooldownReason = "task"
-	CharacterMovementDataSchemaCooldownReasonRecycling        CharacterMovementDataSchemaCooldownReason = "recycling"
-	CharacterMovementDataSchemaCooldownReasonRest             CharacterMovementDataSchemaCooldownReason = "rest"
-	CharacterMovementDataSchemaCooldownReasonUse              CharacterMovementDataSchemaCooldownReason = "use"
-	CharacterMovementDataSchemaCooldownReasonBuyBankExpansion CharacterMovementDataSchemaCooldownReason = "buy_bank_expansion"
+	CharacterMovementDataSchemaCooldownReasonMovement          CharacterMovementDataSchemaCooldownReason = "movement"
+	CharacterMovementDataSchemaCooldownReasonFight             CharacterMovementDataSchemaCooldownReason = "fight"
+	CharacterMovementDataSchemaCooldownReasonCrafting          CharacterMovementDataSchemaCooldownReason = "crafting"
+	CharacterMovementDataSchemaCooldownReasonGathering         CharacterMovementDataSchemaCooldownReason = "gathering"
+	CharacterMovementDataSchemaCooldownReasonBuyGe             CharacterMovementDataSchemaCooldownReason = "buy_ge"
+	CharacterMovementDataSchemaCooldownReasonSellGe            CharacterMovementDataSchemaCooldownReason = "sell_ge"
+	CharacterMovementDataSchemaCooldownReasonCancelGe          CharacterMovementDataSchemaCooldownReason = "cancel_ge"
+	CharacterMovementDataSchemaCooldownReasonDeleteItem        CharacterMovementDataSchemaCooldownReason = "delete_item"
+	CharacterMovementDataSchemaCooldownReasonDeposit           CharacterMovementDataSchemaCooldownReason = "deposit"
+	CharacterMovementDataSchemaCooldownReasonWithdraw          CharacterMovementDataSchemaCooldownReason = "withdraw"
+	CharacterMovementDataSchemaCooldownReasonDepositGold       CharacterMovementDataSchemaCooldownReason = "deposit_gold"
+	CharacterMovementDataSchemaCooldownReasonWithdrawGold      CharacterMovementDataSchemaCooldownReason = "withdraw_gold"
+	CharacterMovementDataSchemaCooldownReasonEquip             CharacterMovementDataSchemaCooldownReason = "equip"
+	CharacterMovementDataSchemaCooldownReasonUnequip           CharacterMovementDataSchemaCooldownReason = "unequip"
+	CharacterMovementDataSchemaCooldownReasonTask              CharacterMovementDataSchemaCooldownReason = "task"
+	CharacterMovementDataSchemaCooldownReasonChristmasExchange CharacterMovementDataSchemaCooldownReason = "christmas_exchange"
+	CharacterMovementDataSchemaCooldownReasonRecycling         CharacterMovementDataSchemaCooldownReason = "recycling"
+	CharacterMovementDataSchemaCooldownReasonRest              CharacterMovementDataSchemaCooldownReason = "rest"
+	CharacterMovementDataSchemaCooldownReasonUse               CharacterMovementDataSchemaCooldownReason = "use"
+	CharacterMovementDataSchemaCooldownReasonBuyBankExpansion  CharacterMovementDataSchemaCooldownReason = "buy_bank_expansion"
 )
 
 // AllValues returns all CharacterMovementDataSchemaCooldownReason values.
@@ -9254,6 +9482,7 @@ func (CharacterMovementDataSchemaCooldownReason) AllValues() []CharacterMovement
 		CharacterMovementDataSchemaCooldownReasonEquip,
 		CharacterMovementDataSchemaCooldownReasonUnequip,
 		CharacterMovementDataSchemaCooldownReasonTask,
+		CharacterMovementDataSchemaCooldownReasonChristmasExchange,
 		CharacterMovementDataSchemaCooldownReasonRecycling,
 		CharacterMovementDataSchemaCooldownReasonRest,
 		CharacterMovementDataSchemaCooldownReasonUse,
@@ -9293,6 +9522,8 @@ func (s CharacterMovementDataSchemaCooldownReason) MarshalText() ([]byte, error)
 	case CharacterMovementDataSchemaCooldownReasonUnequip:
 		return []byte(s), nil
 	case CharacterMovementDataSchemaCooldownReasonTask:
+		return []byte(s), nil
+	case CharacterMovementDataSchemaCooldownReasonChristmasExchange:
 		return []byte(s), nil
 	case CharacterMovementDataSchemaCooldownReasonRecycling:
 		return []byte(s), nil
@@ -9354,6 +9585,9 @@ func (s *CharacterMovementDataSchemaCooldownReason) UnmarshalText(data []byte) e
 		return nil
 	case CharacterMovementDataSchemaCooldownReasonTask:
 		*s = CharacterMovementDataSchemaCooldownReasonTask
+		return nil
+	case CharacterMovementDataSchemaCooldownReasonChristmasExchange:
+		*s = CharacterMovementDataSchemaCooldownReasonChristmasExchange
 		return nil
 	case CharacterMovementDataSchemaCooldownReasonRecycling:
 		*s = CharacterMovementDataSchemaCooldownReasonRecycling
@@ -10619,25 +10853,26 @@ func (s *CharacterRestDataSchemaCooldown) SetReason(val CharacterRestDataSchemaC
 type CharacterRestDataSchemaCooldownReason string
 
 const (
-	CharacterRestDataSchemaCooldownReasonMovement         CharacterRestDataSchemaCooldownReason = "movement"
-	CharacterRestDataSchemaCooldownReasonFight            CharacterRestDataSchemaCooldownReason = "fight"
-	CharacterRestDataSchemaCooldownReasonCrafting         CharacterRestDataSchemaCooldownReason = "crafting"
-	CharacterRestDataSchemaCooldownReasonGathering        CharacterRestDataSchemaCooldownReason = "gathering"
-	CharacterRestDataSchemaCooldownReasonBuyGe            CharacterRestDataSchemaCooldownReason = "buy_ge"
-	CharacterRestDataSchemaCooldownReasonSellGe           CharacterRestDataSchemaCooldownReason = "sell_ge"
-	CharacterRestDataSchemaCooldownReasonCancelGe         CharacterRestDataSchemaCooldownReason = "cancel_ge"
-	CharacterRestDataSchemaCooldownReasonDeleteItem       CharacterRestDataSchemaCooldownReason = "delete_item"
-	CharacterRestDataSchemaCooldownReasonDeposit          CharacterRestDataSchemaCooldownReason = "deposit"
-	CharacterRestDataSchemaCooldownReasonWithdraw         CharacterRestDataSchemaCooldownReason = "withdraw"
-	CharacterRestDataSchemaCooldownReasonDepositGold      CharacterRestDataSchemaCooldownReason = "deposit_gold"
-	CharacterRestDataSchemaCooldownReasonWithdrawGold     CharacterRestDataSchemaCooldownReason = "withdraw_gold"
-	CharacterRestDataSchemaCooldownReasonEquip            CharacterRestDataSchemaCooldownReason = "equip"
-	CharacterRestDataSchemaCooldownReasonUnequip          CharacterRestDataSchemaCooldownReason = "unequip"
-	CharacterRestDataSchemaCooldownReasonTask             CharacterRestDataSchemaCooldownReason = "task"
-	CharacterRestDataSchemaCooldownReasonRecycling        CharacterRestDataSchemaCooldownReason = "recycling"
-	CharacterRestDataSchemaCooldownReasonRest             CharacterRestDataSchemaCooldownReason = "rest"
-	CharacterRestDataSchemaCooldownReasonUse              CharacterRestDataSchemaCooldownReason = "use"
-	CharacterRestDataSchemaCooldownReasonBuyBankExpansion CharacterRestDataSchemaCooldownReason = "buy_bank_expansion"
+	CharacterRestDataSchemaCooldownReasonMovement          CharacterRestDataSchemaCooldownReason = "movement"
+	CharacterRestDataSchemaCooldownReasonFight             CharacterRestDataSchemaCooldownReason = "fight"
+	CharacterRestDataSchemaCooldownReasonCrafting          CharacterRestDataSchemaCooldownReason = "crafting"
+	CharacterRestDataSchemaCooldownReasonGathering         CharacterRestDataSchemaCooldownReason = "gathering"
+	CharacterRestDataSchemaCooldownReasonBuyGe             CharacterRestDataSchemaCooldownReason = "buy_ge"
+	CharacterRestDataSchemaCooldownReasonSellGe            CharacterRestDataSchemaCooldownReason = "sell_ge"
+	CharacterRestDataSchemaCooldownReasonCancelGe          CharacterRestDataSchemaCooldownReason = "cancel_ge"
+	CharacterRestDataSchemaCooldownReasonDeleteItem        CharacterRestDataSchemaCooldownReason = "delete_item"
+	CharacterRestDataSchemaCooldownReasonDeposit           CharacterRestDataSchemaCooldownReason = "deposit"
+	CharacterRestDataSchemaCooldownReasonWithdraw          CharacterRestDataSchemaCooldownReason = "withdraw"
+	CharacterRestDataSchemaCooldownReasonDepositGold       CharacterRestDataSchemaCooldownReason = "deposit_gold"
+	CharacterRestDataSchemaCooldownReasonWithdrawGold      CharacterRestDataSchemaCooldownReason = "withdraw_gold"
+	CharacterRestDataSchemaCooldownReasonEquip             CharacterRestDataSchemaCooldownReason = "equip"
+	CharacterRestDataSchemaCooldownReasonUnequip           CharacterRestDataSchemaCooldownReason = "unequip"
+	CharacterRestDataSchemaCooldownReasonTask              CharacterRestDataSchemaCooldownReason = "task"
+	CharacterRestDataSchemaCooldownReasonChristmasExchange CharacterRestDataSchemaCooldownReason = "christmas_exchange"
+	CharacterRestDataSchemaCooldownReasonRecycling         CharacterRestDataSchemaCooldownReason = "recycling"
+	CharacterRestDataSchemaCooldownReasonRest              CharacterRestDataSchemaCooldownReason = "rest"
+	CharacterRestDataSchemaCooldownReasonUse               CharacterRestDataSchemaCooldownReason = "use"
+	CharacterRestDataSchemaCooldownReasonBuyBankExpansion  CharacterRestDataSchemaCooldownReason = "buy_bank_expansion"
 )
 
 // AllValues returns all CharacterRestDataSchemaCooldownReason values.
@@ -10658,6 +10893,7 @@ func (CharacterRestDataSchemaCooldownReason) AllValues() []CharacterRestDataSche
 		CharacterRestDataSchemaCooldownReasonEquip,
 		CharacterRestDataSchemaCooldownReasonUnequip,
 		CharacterRestDataSchemaCooldownReasonTask,
+		CharacterRestDataSchemaCooldownReasonChristmasExchange,
 		CharacterRestDataSchemaCooldownReasonRecycling,
 		CharacterRestDataSchemaCooldownReasonRest,
 		CharacterRestDataSchemaCooldownReasonUse,
@@ -10697,6 +10933,8 @@ func (s CharacterRestDataSchemaCooldownReason) MarshalText() ([]byte, error) {
 	case CharacterRestDataSchemaCooldownReasonUnequip:
 		return []byte(s), nil
 	case CharacterRestDataSchemaCooldownReasonTask:
+		return []byte(s), nil
+	case CharacterRestDataSchemaCooldownReasonChristmasExchange:
 		return []byte(s), nil
 	case CharacterRestDataSchemaCooldownReasonRecycling:
 		return []byte(s), nil
@@ -10758,6 +10996,9 @@ func (s *CharacterRestDataSchemaCooldownReason) UnmarshalText(data []byte) error
 		return nil
 	case CharacterRestDataSchemaCooldownReasonTask:
 		*s = CharacterRestDataSchemaCooldownReasonTask
+		return nil
+	case CharacterRestDataSchemaCooldownReasonChristmasExchange:
+		*s = CharacterRestDataSchemaCooldownReasonChristmasExchange
 		return nil
 	case CharacterRestDataSchemaCooldownReasonRecycling:
 		*s = CharacterRestDataSchemaCooldownReasonRecycling
@@ -13265,6 +13506,321 @@ func (s DataPageActiveEventSchemaTotal) GetNull() (v struct{}, ok bool) {
 // NewNullDataPageActiveEventSchemaTotal returns new DataPageActiveEventSchemaTotal from struct{}.
 func NewNullDataPageActiveEventSchemaTotal(v struct{}) DataPageActiveEventSchemaTotal {
 	var s DataPageActiveEventSchemaTotal
+	s.SetNull(v)
+	return s
+}
+
+// Ref: #/components/schemas/DataPage_BadgeSchema_
+type DataPageBadgeSchema struct {
+	Data  []BadgeSchema               `json:"data"`
+	Total DataPageBadgeSchemaTotal    `json:"total"`
+	Page  DataPageBadgeSchemaPage     `json:"page"`
+	Size  DataPageBadgeSchemaSize     `json:"size"`
+	Pages OptDataPageBadgeSchemaPages `json:"pages"`
+}
+
+// GetData returns the value of Data.
+func (s *DataPageBadgeSchema) GetData() []BadgeSchema {
+	return s.Data
+}
+
+// GetTotal returns the value of Total.
+func (s *DataPageBadgeSchema) GetTotal() DataPageBadgeSchemaTotal {
+	return s.Total
+}
+
+// GetPage returns the value of Page.
+func (s *DataPageBadgeSchema) GetPage() DataPageBadgeSchemaPage {
+	return s.Page
+}
+
+// GetSize returns the value of Size.
+func (s *DataPageBadgeSchema) GetSize() DataPageBadgeSchemaSize {
+	return s.Size
+}
+
+// GetPages returns the value of Pages.
+func (s *DataPageBadgeSchema) GetPages() OptDataPageBadgeSchemaPages {
+	return s.Pages
+}
+
+// SetData sets the value of Data.
+func (s *DataPageBadgeSchema) SetData(val []BadgeSchema) {
+	s.Data = val
+}
+
+// SetTotal sets the value of Total.
+func (s *DataPageBadgeSchema) SetTotal(val DataPageBadgeSchemaTotal) {
+	s.Total = val
+}
+
+// SetPage sets the value of Page.
+func (s *DataPageBadgeSchema) SetPage(val DataPageBadgeSchemaPage) {
+	s.Page = val
+}
+
+// SetSize sets the value of Size.
+func (s *DataPageBadgeSchema) SetSize(val DataPageBadgeSchemaSize) {
+	s.Size = val
+}
+
+// SetPages sets the value of Pages.
+func (s *DataPageBadgeSchema) SetPages(val OptDataPageBadgeSchemaPages) {
+	s.Pages = val
+}
+
+// DataPageBadgeSchemaPage represents sum type.
+type DataPageBadgeSchemaPage struct {
+	Type DataPageBadgeSchemaPageType // switch on this field
+	Int  int
+	Null struct{}
+}
+
+// DataPageBadgeSchemaPageType is oneOf type of DataPageBadgeSchemaPage.
+type DataPageBadgeSchemaPageType string
+
+// Possible values for DataPageBadgeSchemaPageType.
+const (
+	IntDataPageBadgeSchemaPage  DataPageBadgeSchemaPageType = "int"
+	NullDataPageBadgeSchemaPage DataPageBadgeSchemaPageType = "struct{}"
+)
+
+// IsInt reports whether DataPageBadgeSchemaPage is int.
+func (s DataPageBadgeSchemaPage) IsInt() bool { return s.Type == IntDataPageBadgeSchemaPage }
+
+// IsNull reports whether DataPageBadgeSchemaPage is struct{}.
+func (s DataPageBadgeSchemaPage) IsNull() bool { return s.Type == NullDataPageBadgeSchemaPage }
+
+// SetInt sets DataPageBadgeSchemaPage to int.
+func (s *DataPageBadgeSchemaPage) SetInt(v int) {
+	s.Type = IntDataPageBadgeSchemaPage
+	s.Int = v
+}
+
+// GetInt returns int and true boolean if DataPageBadgeSchemaPage is int.
+func (s DataPageBadgeSchemaPage) GetInt() (v int, ok bool) {
+	if !s.IsInt() {
+		return v, false
+	}
+	return s.Int, true
+}
+
+// NewIntDataPageBadgeSchemaPage returns new DataPageBadgeSchemaPage from int.
+func NewIntDataPageBadgeSchemaPage(v int) DataPageBadgeSchemaPage {
+	var s DataPageBadgeSchemaPage
+	s.SetInt(v)
+	return s
+}
+
+// SetNull sets DataPageBadgeSchemaPage to struct{}.
+func (s *DataPageBadgeSchemaPage) SetNull(v struct{}) {
+	s.Type = NullDataPageBadgeSchemaPage
+	s.Null = v
+}
+
+// GetNull returns struct{} and true boolean if DataPageBadgeSchemaPage is struct{}.
+func (s DataPageBadgeSchemaPage) GetNull() (v struct{}, ok bool) {
+	if !s.IsNull() {
+		return v, false
+	}
+	return s.Null, true
+}
+
+// NewNullDataPageBadgeSchemaPage returns new DataPageBadgeSchemaPage from struct{}.
+func NewNullDataPageBadgeSchemaPage(v struct{}) DataPageBadgeSchemaPage {
+	var s DataPageBadgeSchemaPage
+	s.SetNull(v)
+	return s
+}
+
+// DataPageBadgeSchemaPages represents sum type.
+type DataPageBadgeSchemaPages struct {
+	Type DataPageBadgeSchemaPagesType // switch on this field
+	Int  int
+	Null struct{}
+}
+
+// DataPageBadgeSchemaPagesType is oneOf type of DataPageBadgeSchemaPages.
+type DataPageBadgeSchemaPagesType string
+
+// Possible values for DataPageBadgeSchemaPagesType.
+const (
+	IntDataPageBadgeSchemaPages  DataPageBadgeSchemaPagesType = "int"
+	NullDataPageBadgeSchemaPages DataPageBadgeSchemaPagesType = "struct{}"
+)
+
+// IsInt reports whether DataPageBadgeSchemaPages is int.
+func (s DataPageBadgeSchemaPages) IsInt() bool { return s.Type == IntDataPageBadgeSchemaPages }
+
+// IsNull reports whether DataPageBadgeSchemaPages is struct{}.
+func (s DataPageBadgeSchemaPages) IsNull() bool { return s.Type == NullDataPageBadgeSchemaPages }
+
+// SetInt sets DataPageBadgeSchemaPages to int.
+func (s *DataPageBadgeSchemaPages) SetInt(v int) {
+	s.Type = IntDataPageBadgeSchemaPages
+	s.Int = v
+}
+
+// GetInt returns int and true boolean if DataPageBadgeSchemaPages is int.
+func (s DataPageBadgeSchemaPages) GetInt() (v int, ok bool) {
+	if !s.IsInt() {
+		return v, false
+	}
+	return s.Int, true
+}
+
+// NewIntDataPageBadgeSchemaPages returns new DataPageBadgeSchemaPages from int.
+func NewIntDataPageBadgeSchemaPages(v int) DataPageBadgeSchemaPages {
+	var s DataPageBadgeSchemaPages
+	s.SetInt(v)
+	return s
+}
+
+// SetNull sets DataPageBadgeSchemaPages to struct{}.
+func (s *DataPageBadgeSchemaPages) SetNull(v struct{}) {
+	s.Type = NullDataPageBadgeSchemaPages
+	s.Null = v
+}
+
+// GetNull returns struct{} and true boolean if DataPageBadgeSchemaPages is struct{}.
+func (s DataPageBadgeSchemaPages) GetNull() (v struct{}, ok bool) {
+	if !s.IsNull() {
+		return v, false
+	}
+	return s.Null, true
+}
+
+// NewNullDataPageBadgeSchemaPages returns new DataPageBadgeSchemaPages from struct{}.
+func NewNullDataPageBadgeSchemaPages(v struct{}) DataPageBadgeSchemaPages {
+	var s DataPageBadgeSchemaPages
+	s.SetNull(v)
+	return s
+}
+
+// DataPageBadgeSchemaSize represents sum type.
+type DataPageBadgeSchemaSize struct {
+	Type DataPageBadgeSchemaSizeType // switch on this field
+	Int  int
+	Null struct{}
+}
+
+// DataPageBadgeSchemaSizeType is oneOf type of DataPageBadgeSchemaSize.
+type DataPageBadgeSchemaSizeType string
+
+// Possible values for DataPageBadgeSchemaSizeType.
+const (
+	IntDataPageBadgeSchemaSize  DataPageBadgeSchemaSizeType = "int"
+	NullDataPageBadgeSchemaSize DataPageBadgeSchemaSizeType = "struct{}"
+)
+
+// IsInt reports whether DataPageBadgeSchemaSize is int.
+func (s DataPageBadgeSchemaSize) IsInt() bool { return s.Type == IntDataPageBadgeSchemaSize }
+
+// IsNull reports whether DataPageBadgeSchemaSize is struct{}.
+func (s DataPageBadgeSchemaSize) IsNull() bool { return s.Type == NullDataPageBadgeSchemaSize }
+
+// SetInt sets DataPageBadgeSchemaSize to int.
+func (s *DataPageBadgeSchemaSize) SetInt(v int) {
+	s.Type = IntDataPageBadgeSchemaSize
+	s.Int = v
+}
+
+// GetInt returns int and true boolean if DataPageBadgeSchemaSize is int.
+func (s DataPageBadgeSchemaSize) GetInt() (v int, ok bool) {
+	if !s.IsInt() {
+		return v, false
+	}
+	return s.Int, true
+}
+
+// NewIntDataPageBadgeSchemaSize returns new DataPageBadgeSchemaSize from int.
+func NewIntDataPageBadgeSchemaSize(v int) DataPageBadgeSchemaSize {
+	var s DataPageBadgeSchemaSize
+	s.SetInt(v)
+	return s
+}
+
+// SetNull sets DataPageBadgeSchemaSize to struct{}.
+func (s *DataPageBadgeSchemaSize) SetNull(v struct{}) {
+	s.Type = NullDataPageBadgeSchemaSize
+	s.Null = v
+}
+
+// GetNull returns struct{} and true boolean if DataPageBadgeSchemaSize is struct{}.
+func (s DataPageBadgeSchemaSize) GetNull() (v struct{}, ok bool) {
+	if !s.IsNull() {
+		return v, false
+	}
+	return s.Null, true
+}
+
+// NewNullDataPageBadgeSchemaSize returns new DataPageBadgeSchemaSize from struct{}.
+func NewNullDataPageBadgeSchemaSize(v struct{}) DataPageBadgeSchemaSize {
+	var s DataPageBadgeSchemaSize
+	s.SetNull(v)
+	return s
+}
+
+// DataPageBadgeSchemaTotal represents sum type.
+type DataPageBadgeSchemaTotal struct {
+	Type DataPageBadgeSchemaTotalType // switch on this field
+	Int  int
+	Null struct{}
+}
+
+// DataPageBadgeSchemaTotalType is oneOf type of DataPageBadgeSchemaTotal.
+type DataPageBadgeSchemaTotalType string
+
+// Possible values for DataPageBadgeSchemaTotalType.
+const (
+	IntDataPageBadgeSchemaTotal  DataPageBadgeSchemaTotalType = "int"
+	NullDataPageBadgeSchemaTotal DataPageBadgeSchemaTotalType = "struct{}"
+)
+
+// IsInt reports whether DataPageBadgeSchemaTotal is int.
+func (s DataPageBadgeSchemaTotal) IsInt() bool { return s.Type == IntDataPageBadgeSchemaTotal }
+
+// IsNull reports whether DataPageBadgeSchemaTotal is struct{}.
+func (s DataPageBadgeSchemaTotal) IsNull() bool { return s.Type == NullDataPageBadgeSchemaTotal }
+
+// SetInt sets DataPageBadgeSchemaTotal to int.
+func (s *DataPageBadgeSchemaTotal) SetInt(v int) {
+	s.Type = IntDataPageBadgeSchemaTotal
+	s.Int = v
+}
+
+// GetInt returns int and true boolean if DataPageBadgeSchemaTotal is int.
+func (s DataPageBadgeSchemaTotal) GetInt() (v int, ok bool) {
+	if !s.IsInt() {
+		return v, false
+	}
+	return s.Int, true
+}
+
+// NewIntDataPageBadgeSchemaTotal returns new DataPageBadgeSchemaTotal from int.
+func NewIntDataPageBadgeSchemaTotal(v int) DataPageBadgeSchemaTotal {
+	var s DataPageBadgeSchemaTotal
+	s.SetInt(v)
+	return s
+}
+
+// SetNull sets DataPageBadgeSchemaTotal to struct{}.
+func (s *DataPageBadgeSchemaTotal) SetNull(v struct{}) {
+	s.Type = NullDataPageBadgeSchemaTotal
+	s.Null = v
+}
+
+// GetNull returns struct{} and true boolean if DataPageBadgeSchemaTotal is struct{}.
+func (s DataPageBadgeSchemaTotal) GetNull() (v struct{}, ok bool) {
+	if !s.IsNull() {
+		return v, false
+	}
+	return s.Null, true
+}
+
+// NewNullDataPageBadgeSchemaTotal returns new DataPageBadgeSchemaTotal from struct{}.
+func NewNullDataPageBadgeSchemaTotal(v struct{}) DataPageBadgeSchemaTotal {
+	var s DataPageBadgeSchemaTotal
 	s.SetNull(v)
 	return s
 }
@@ -18214,25 +18770,26 @@ func (s *DeleteItemSchemaCooldown) SetReason(val DeleteItemSchemaCooldownReason)
 type DeleteItemSchemaCooldownReason string
 
 const (
-	DeleteItemSchemaCooldownReasonMovement         DeleteItemSchemaCooldownReason = "movement"
-	DeleteItemSchemaCooldownReasonFight            DeleteItemSchemaCooldownReason = "fight"
-	DeleteItemSchemaCooldownReasonCrafting         DeleteItemSchemaCooldownReason = "crafting"
-	DeleteItemSchemaCooldownReasonGathering        DeleteItemSchemaCooldownReason = "gathering"
-	DeleteItemSchemaCooldownReasonBuyGe            DeleteItemSchemaCooldownReason = "buy_ge"
-	DeleteItemSchemaCooldownReasonSellGe           DeleteItemSchemaCooldownReason = "sell_ge"
-	DeleteItemSchemaCooldownReasonCancelGe         DeleteItemSchemaCooldownReason = "cancel_ge"
-	DeleteItemSchemaCooldownReasonDeleteItem       DeleteItemSchemaCooldownReason = "delete_item"
-	DeleteItemSchemaCooldownReasonDeposit          DeleteItemSchemaCooldownReason = "deposit"
-	DeleteItemSchemaCooldownReasonWithdraw         DeleteItemSchemaCooldownReason = "withdraw"
-	DeleteItemSchemaCooldownReasonDepositGold      DeleteItemSchemaCooldownReason = "deposit_gold"
-	DeleteItemSchemaCooldownReasonWithdrawGold     DeleteItemSchemaCooldownReason = "withdraw_gold"
-	DeleteItemSchemaCooldownReasonEquip            DeleteItemSchemaCooldownReason = "equip"
-	DeleteItemSchemaCooldownReasonUnequip          DeleteItemSchemaCooldownReason = "unequip"
-	DeleteItemSchemaCooldownReasonTask             DeleteItemSchemaCooldownReason = "task"
-	DeleteItemSchemaCooldownReasonRecycling        DeleteItemSchemaCooldownReason = "recycling"
-	DeleteItemSchemaCooldownReasonRest             DeleteItemSchemaCooldownReason = "rest"
-	DeleteItemSchemaCooldownReasonUse              DeleteItemSchemaCooldownReason = "use"
-	DeleteItemSchemaCooldownReasonBuyBankExpansion DeleteItemSchemaCooldownReason = "buy_bank_expansion"
+	DeleteItemSchemaCooldownReasonMovement          DeleteItemSchemaCooldownReason = "movement"
+	DeleteItemSchemaCooldownReasonFight             DeleteItemSchemaCooldownReason = "fight"
+	DeleteItemSchemaCooldownReasonCrafting          DeleteItemSchemaCooldownReason = "crafting"
+	DeleteItemSchemaCooldownReasonGathering         DeleteItemSchemaCooldownReason = "gathering"
+	DeleteItemSchemaCooldownReasonBuyGe             DeleteItemSchemaCooldownReason = "buy_ge"
+	DeleteItemSchemaCooldownReasonSellGe            DeleteItemSchemaCooldownReason = "sell_ge"
+	DeleteItemSchemaCooldownReasonCancelGe          DeleteItemSchemaCooldownReason = "cancel_ge"
+	DeleteItemSchemaCooldownReasonDeleteItem        DeleteItemSchemaCooldownReason = "delete_item"
+	DeleteItemSchemaCooldownReasonDeposit           DeleteItemSchemaCooldownReason = "deposit"
+	DeleteItemSchemaCooldownReasonWithdraw          DeleteItemSchemaCooldownReason = "withdraw"
+	DeleteItemSchemaCooldownReasonDepositGold       DeleteItemSchemaCooldownReason = "deposit_gold"
+	DeleteItemSchemaCooldownReasonWithdrawGold      DeleteItemSchemaCooldownReason = "withdraw_gold"
+	DeleteItemSchemaCooldownReasonEquip             DeleteItemSchemaCooldownReason = "equip"
+	DeleteItemSchemaCooldownReasonUnequip           DeleteItemSchemaCooldownReason = "unequip"
+	DeleteItemSchemaCooldownReasonTask              DeleteItemSchemaCooldownReason = "task"
+	DeleteItemSchemaCooldownReasonChristmasExchange DeleteItemSchemaCooldownReason = "christmas_exchange"
+	DeleteItemSchemaCooldownReasonRecycling         DeleteItemSchemaCooldownReason = "recycling"
+	DeleteItemSchemaCooldownReasonRest              DeleteItemSchemaCooldownReason = "rest"
+	DeleteItemSchemaCooldownReasonUse               DeleteItemSchemaCooldownReason = "use"
+	DeleteItemSchemaCooldownReasonBuyBankExpansion  DeleteItemSchemaCooldownReason = "buy_bank_expansion"
 )
 
 // AllValues returns all DeleteItemSchemaCooldownReason values.
@@ -18253,6 +18810,7 @@ func (DeleteItemSchemaCooldownReason) AllValues() []DeleteItemSchemaCooldownReas
 		DeleteItemSchemaCooldownReasonEquip,
 		DeleteItemSchemaCooldownReasonUnequip,
 		DeleteItemSchemaCooldownReasonTask,
+		DeleteItemSchemaCooldownReasonChristmasExchange,
 		DeleteItemSchemaCooldownReasonRecycling,
 		DeleteItemSchemaCooldownReasonRest,
 		DeleteItemSchemaCooldownReasonUse,
@@ -18292,6 +18850,8 @@ func (s DeleteItemSchemaCooldownReason) MarshalText() ([]byte, error) {
 	case DeleteItemSchemaCooldownReasonUnequip:
 		return []byte(s), nil
 	case DeleteItemSchemaCooldownReasonTask:
+		return []byte(s), nil
+	case DeleteItemSchemaCooldownReasonChristmasExchange:
 		return []byte(s), nil
 	case DeleteItemSchemaCooldownReasonRecycling:
 		return []byte(s), nil
@@ -18353,6 +18913,9 @@ func (s *DeleteItemSchemaCooldownReason) UnmarshalText(data []byte) error {
 		return nil
 	case DeleteItemSchemaCooldownReasonTask:
 		*s = DeleteItemSchemaCooldownReasonTask
+		return nil
+	case DeleteItemSchemaCooldownReasonChristmasExchange:
+		*s = DeleteItemSchemaCooldownReasonChristmasExchange
 		return nil
 	case DeleteItemSchemaCooldownReasonRecycling:
 		*s = DeleteItemSchemaCooldownReasonRecycling
@@ -19613,25 +20176,26 @@ func (s *EquipRequestSchemaCooldown) SetReason(val EquipRequestSchemaCooldownRea
 type EquipRequestSchemaCooldownReason string
 
 const (
-	EquipRequestSchemaCooldownReasonMovement         EquipRequestSchemaCooldownReason = "movement"
-	EquipRequestSchemaCooldownReasonFight            EquipRequestSchemaCooldownReason = "fight"
-	EquipRequestSchemaCooldownReasonCrafting         EquipRequestSchemaCooldownReason = "crafting"
-	EquipRequestSchemaCooldownReasonGathering        EquipRequestSchemaCooldownReason = "gathering"
-	EquipRequestSchemaCooldownReasonBuyGe            EquipRequestSchemaCooldownReason = "buy_ge"
-	EquipRequestSchemaCooldownReasonSellGe           EquipRequestSchemaCooldownReason = "sell_ge"
-	EquipRequestSchemaCooldownReasonCancelGe         EquipRequestSchemaCooldownReason = "cancel_ge"
-	EquipRequestSchemaCooldownReasonDeleteItem       EquipRequestSchemaCooldownReason = "delete_item"
-	EquipRequestSchemaCooldownReasonDeposit          EquipRequestSchemaCooldownReason = "deposit"
-	EquipRequestSchemaCooldownReasonWithdraw         EquipRequestSchemaCooldownReason = "withdraw"
-	EquipRequestSchemaCooldownReasonDepositGold      EquipRequestSchemaCooldownReason = "deposit_gold"
-	EquipRequestSchemaCooldownReasonWithdrawGold     EquipRequestSchemaCooldownReason = "withdraw_gold"
-	EquipRequestSchemaCooldownReasonEquip            EquipRequestSchemaCooldownReason = "equip"
-	EquipRequestSchemaCooldownReasonUnequip          EquipRequestSchemaCooldownReason = "unequip"
-	EquipRequestSchemaCooldownReasonTask             EquipRequestSchemaCooldownReason = "task"
-	EquipRequestSchemaCooldownReasonRecycling        EquipRequestSchemaCooldownReason = "recycling"
-	EquipRequestSchemaCooldownReasonRest             EquipRequestSchemaCooldownReason = "rest"
-	EquipRequestSchemaCooldownReasonUse              EquipRequestSchemaCooldownReason = "use"
-	EquipRequestSchemaCooldownReasonBuyBankExpansion EquipRequestSchemaCooldownReason = "buy_bank_expansion"
+	EquipRequestSchemaCooldownReasonMovement          EquipRequestSchemaCooldownReason = "movement"
+	EquipRequestSchemaCooldownReasonFight             EquipRequestSchemaCooldownReason = "fight"
+	EquipRequestSchemaCooldownReasonCrafting          EquipRequestSchemaCooldownReason = "crafting"
+	EquipRequestSchemaCooldownReasonGathering         EquipRequestSchemaCooldownReason = "gathering"
+	EquipRequestSchemaCooldownReasonBuyGe             EquipRequestSchemaCooldownReason = "buy_ge"
+	EquipRequestSchemaCooldownReasonSellGe            EquipRequestSchemaCooldownReason = "sell_ge"
+	EquipRequestSchemaCooldownReasonCancelGe          EquipRequestSchemaCooldownReason = "cancel_ge"
+	EquipRequestSchemaCooldownReasonDeleteItem        EquipRequestSchemaCooldownReason = "delete_item"
+	EquipRequestSchemaCooldownReasonDeposit           EquipRequestSchemaCooldownReason = "deposit"
+	EquipRequestSchemaCooldownReasonWithdraw          EquipRequestSchemaCooldownReason = "withdraw"
+	EquipRequestSchemaCooldownReasonDepositGold       EquipRequestSchemaCooldownReason = "deposit_gold"
+	EquipRequestSchemaCooldownReasonWithdrawGold      EquipRequestSchemaCooldownReason = "withdraw_gold"
+	EquipRequestSchemaCooldownReasonEquip             EquipRequestSchemaCooldownReason = "equip"
+	EquipRequestSchemaCooldownReasonUnequip           EquipRequestSchemaCooldownReason = "unequip"
+	EquipRequestSchemaCooldownReasonTask              EquipRequestSchemaCooldownReason = "task"
+	EquipRequestSchemaCooldownReasonChristmasExchange EquipRequestSchemaCooldownReason = "christmas_exchange"
+	EquipRequestSchemaCooldownReasonRecycling         EquipRequestSchemaCooldownReason = "recycling"
+	EquipRequestSchemaCooldownReasonRest              EquipRequestSchemaCooldownReason = "rest"
+	EquipRequestSchemaCooldownReasonUse               EquipRequestSchemaCooldownReason = "use"
+	EquipRequestSchemaCooldownReasonBuyBankExpansion  EquipRequestSchemaCooldownReason = "buy_bank_expansion"
 )
 
 // AllValues returns all EquipRequestSchemaCooldownReason values.
@@ -19652,6 +20216,7 @@ func (EquipRequestSchemaCooldownReason) AllValues() []EquipRequestSchemaCooldown
 		EquipRequestSchemaCooldownReasonEquip,
 		EquipRequestSchemaCooldownReasonUnequip,
 		EquipRequestSchemaCooldownReasonTask,
+		EquipRequestSchemaCooldownReasonChristmasExchange,
 		EquipRequestSchemaCooldownReasonRecycling,
 		EquipRequestSchemaCooldownReasonRest,
 		EquipRequestSchemaCooldownReasonUse,
@@ -19691,6 +20256,8 @@ func (s EquipRequestSchemaCooldownReason) MarshalText() ([]byte, error) {
 	case EquipRequestSchemaCooldownReasonUnequip:
 		return []byte(s), nil
 	case EquipRequestSchemaCooldownReasonTask:
+		return []byte(s), nil
+	case EquipRequestSchemaCooldownReasonChristmasExchange:
 		return []byte(s), nil
 	case EquipRequestSchemaCooldownReasonRecycling:
 		return []byte(s), nil
@@ -19752,6 +20319,9 @@ func (s *EquipRequestSchemaCooldownReason) UnmarshalText(data []byte) error {
 		return nil
 	case EquipRequestSchemaCooldownReasonTask:
 		*s = EquipRequestSchemaCooldownReasonTask
+		return nil
+	case EquipRequestSchemaCooldownReasonChristmasExchange:
+		*s = EquipRequestSchemaCooldownReasonChristmasExchange
 		return nil
 	case EquipRequestSchemaCooldownReasonRecycling:
 		*s = EquipRequestSchemaCooldownReasonRecycling
@@ -21673,25 +22243,26 @@ func (s *GEOrderTransactionSchemaCooldown) SetReason(val GEOrderTransactionSchem
 type GEOrderTransactionSchemaCooldownReason string
 
 const (
-	GEOrderTransactionSchemaCooldownReasonMovement         GEOrderTransactionSchemaCooldownReason = "movement"
-	GEOrderTransactionSchemaCooldownReasonFight            GEOrderTransactionSchemaCooldownReason = "fight"
-	GEOrderTransactionSchemaCooldownReasonCrafting         GEOrderTransactionSchemaCooldownReason = "crafting"
-	GEOrderTransactionSchemaCooldownReasonGathering        GEOrderTransactionSchemaCooldownReason = "gathering"
-	GEOrderTransactionSchemaCooldownReasonBuyGe            GEOrderTransactionSchemaCooldownReason = "buy_ge"
-	GEOrderTransactionSchemaCooldownReasonSellGe           GEOrderTransactionSchemaCooldownReason = "sell_ge"
-	GEOrderTransactionSchemaCooldownReasonCancelGe         GEOrderTransactionSchemaCooldownReason = "cancel_ge"
-	GEOrderTransactionSchemaCooldownReasonDeleteItem       GEOrderTransactionSchemaCooldownReason = "delete_item"
-	GEOrderTransactionSchemaCooldownReasonDeposit          GEOrderTransactionSchemaCooldownReason = "deposit"
-	GEOrderTransactionSchemaCooldownReasonWithdraw         GEOrderTransactionSchemaCooldownReason = "withdraw"
-	GEOrderTransactionSchemaCooldownReasonDepositGold      GEOrderTransactionSchemaCooldownReason = "deposit_gold"
-	GEOrderTransactionSchemaCooldownReasonWithdrawGold     GEOrderTransactionSchemaCooldownReason = "withdraw_gold"
-	GEOrderTransactionSchemaCooldownReasonEquip            GEOrderTransactionSchemaCooldownReason = "equip"
-	GEOrderTransactionSchemaCooldownReasonUnequip          GEOrderTransactionSchemaCooldownReason = "unequip"
-	GEOrderTransactionSchemaCooldownReasonTask             GEOrderTransactionSchemaCooldownReason = "task"
-	GEOrderTransactionSchemaCooldownReasonRecycling        GEOrderTransactionSchemaCooldownReason = "recycling"
-	GEOrderTransactionSchemaCooldownReasonRest             GEOrderTransactionSchemaCooldownReason = "rest"
-	GEOrderTransactionSchemaCooldownReasonUse              GEOrderTransactionSchemaCooldownReason = "use"
-	GEOrderTransactionSchemaCooldownReasonBuyBankExpansion GEOrderTransactionSchemaCooldownReason = "buy_bank_expansion"
+	GEOrderTransactionSchemaCooldownReasonMovement          GEOrderTransactionSchemaCooldownReason = "movement"
+	GEOrderTransactionSchemaCooldownReasonFight             GEOrderTransactionSchemaCooldownReason = "fight"
+	GEOrderTransactionSchemaCooldownReasonCrafting          GEOrderTransactionSchemaCooldownReason = "crafting"
+	GEOrderTransactionSchemaCooldownReasonGathering         GEOrderTransactionSchemaCooldownReason = "gathering"
+	GEOrderTransactionSchemaCooldownReasonBuyGe             GEOrderTransactionSchemaCooldownReason = "buy_ge"
+	GEOrderTransactionSchemaCooldownReasonSellGe            GEOrderTransactionSchemaCooldownReason = "sell_ge"
+	GEOrderTransactionSchemaCooldownReasonCancelGe          GEOrderTransactionSchemaCooldownReason = "cancel_ge"
+	GEOrderTransactionSchemaCooldownReasonDeleteItem        GEOrderTransactionSchemaCooldownReason = "delete_item"
+	GEOrderTransactionSchemaCooldownReasonDeposit           GEOrderTransactionSchemaCooldownReason = "deposit"
+	GEOrderTransactionSchemaCooldownReasonWithdraw          GEOrderTransactionSchemaCooldownReason = "withdraw"
+	GEOrderTransactionSchemaCooldownReasonDepositGold       GEOrderTransactionSchemaCooldownReason = "deposit_gold"
+	GEOrderTransactionSchemaCooldownReasonWithdrawGold      GEOrderTransactionSchemaCooldownReason = "withdraw_gold"
+	GEOrderTransactionSchemaCooldownReasonEquip             GEOrderTransactionSchemaCooldownReason = "equip"
+	GEOrderTransactionSchemaCooldownReasonUnequip           GEOrderTransactionSchemaCooldownReason = "unequip"
+	GEOrderTransactionSchemaCooldownReasonTask              GEOrderTransactionSchemaCooldownReason = "task"
+	GEOrderTransactionSchemaCooldownReasonChristmasExchange GEOrderTransactionSchemaCooldownReason = "christmas_exchange"
+	GEOrderTransactionSchemaCooldownReasonRecycling         GEOrderTransactionSchemaCooldownReason = "recycling"
+	GEOrderTransactionSchemaCooldownReasonRest              GEOrderTransactionSchemaCooldownReason = "rest"
+	GEOrderTransactionSchemaCooldownReasonUse               GEOrderTransactionSchemaCooldownReason = "use"
+	GEOrderTransactionSchemaCooldownReasonBuyBankExpansion  GEOrderTransactionSchemaCooldownReason = "buy_bank_expansion"
 )
 
 // AllValues returns all GEOrderTransactionSchemaCooldownReason values.
@@ -21712,6 +22283,7 @@ func (GEOrderTransactionSchemaCooldownReason) AllValues() []GEOrderTransactionSc
 		GEOrderTransactionSchemaCooldownReasonEquip,
 		GEOrderTransactionSchemaCooldownReasonUnequip,
 		GEOrderTransactionSchemaCooldownReasonTask,
+		GEOrderTransactionSchemaCooldownReasonChristmasExchange,
 		GEOrderTransactionSchemaCooldownReasonRecycling,
 		GEOrderTransactionSchemaCooldownReasonRest,
 		GEOrderTransactionSchemaCooldownReasonUse,
@@ -21751,6 +22323,8 @@ func (s GEOrderTransactionSchemaCooldownReason) MarshalText() ([]byte, error) {
 	case GEOrderTransactionSchemaCooldownReasonUnequip:
 		return []byte(s), nil
 	case GEOrderTransactionSchemaCooldownReasonTask:
+		return []byte(s), nil
+	case GEOrderTransactionSchemaCooldownReasonChristmasExchange:
 		return []byte(s), nil
 	case GEOrderTransactionSchemaCooldownReasonRecycling:
 		return []byte(s), nil
@@ -21812,6 +22386,9 @@ func (s *GEOrderTransactionSchemaCooldownReason) UnmarshalText(data []byte) erro
 		return nil
 	case GEOrderTransactionSchemaCooldownReasonTask:
 		*s = GEOrderTransactionSchemaCooldownReasonTask
+		return nil
+	case GEOrderTransactionSchemaCooldownReasonChristmasExchange:
+		*s = GEOrderTransactionSchemaCooldownReasonChristmasExchange
 		return nil
 	case GEOrderTransactionSchemaCooldownReasonRecycling:
 		*s = GEOrderTransactionSchemaCooldownReasonRecycling
@@ -22996,25 +23573,26 @@ func (s *GETransactionListSchemaCooldown) SetReason(val GETransactionListSchemaC
 type GETransactionListSchemaCooldownReason string
 
 const (
-	GETransactionListSchemaCooldownReasonMovement         GETransactionListSchemaCooldownReason = "movement"
-	GETransactionListSchemaCooldownReasonFight            GETransactionListSchemaCooldownReason = "fight"
-	GETransactionListSchemaCooldownReasonCrafting         GETransactionListSchemaCooldownReason = "crafting"
-	GETransactionListSchemaCooldownReasonGathering        GETransactionListSchemaCooldownReason = "gathering"
-	GETransactionListSchemaCooldownReasonBuyGe            GETransactionListSchemaCooldownReason = "buy_ge"
-	GETransactionListSchemaCooldownReasonSellGe           GETransactionListSchemaCooldownReason = "sell_ge"
-	GETransactionListSchemaCooldownReasonCancelGe         GETransactionListSchemaCooldownReason = "cancel_ge"
-	GETransactionListSchemaCooldownReasonDeleteItem       GETransactionListSchemaCooldownReason = "delete_item"
-	GETransactionListSchemaCooldownReasonDeposit          GETransactionListSchemaCooldownReason = "deposit"
-	GETransactionListSchemaCooldownReasonWithdraw         GETransactionListSchemaCooldownReason = "withdraw"
-	GETransactionListSchemaCooldownReasonDepositGold      GETransactionListSchemaCooldownReason = "deposit_gold"
-	GETransactionListSchemaCooldownReasonWithdrawGold     GETransactionListSchemaCooldownReason = "withdraw_gold"
-	GETransactionListSchemaCooldownReasonEquip            GETransactionListSchemaCooldownReason = "equip"
-	GETransactionListSchemaCooldownReasonUnequip          GETransactionListSchemaCooldownReason = "unequip"
-	GETransactionListSchemaCooldownReasonTask             GETransactionListSchemaCooldownReason = "task"
-	GETransactionListSchemaCooldownReasonRecycling        GETransactionListSchemaCooldownReason = "recycling"
-	GETransactionListSchemaCooldownReasonRest             GETransactionListSchemaCooldownReason = "rest"
-	GETransactionListSchemaCooldownReasonUse              GETransactionListSchemaCooldownReason = "use"
-	GETransactionListSchemaCooldownReasonBuyBankExpansion GETransactionListSchemaCooldownReason = "buy_bank_expansion"
+	GETransactionListSchemaCooldownReasonMovement          GETransactionListSchemaCooldownReason = "movement"
+	GETransactionListSchemaCooldownReasonFight             GETransactionListSchemaCooldownReason = "fight"
+	GETransactionListSchemaCooldownReasonCrafting          GETransactionListSchemaCooldownReason = "crafting"
+	GETransactionListSchemaCooldownReasonGathering         GETransactionListSchemaCooldownReason = "gathering"
+	GETransactionListSchemaCooldownReasonBuyGe             GETransactionListSchemaCooldownReason = "buy_ge"
+	GETransactionListSchemaCooldownReasonSellGe            GETransactionListSchemaCooldownReason = "sell_ge"
+	GETransactionListSchemaCooldownReasonCancelGe          GETransactionListSchemaCooldownReason = "cancel_ge"
+	GETransactionListSchemaCooldownReasonDeleteItem        GETransactionListSchemaCooldownReason = "delete_item"
+	GETransactionListSchemaCooldownReasonDeposit           GETransactionListSchemaCooldownReason = "deposit"
+	GETransactionListSchemaCooldownReasonWithdraw          GETransactionListSchemaCooldownReason = "withdraw"
+	GETransactionListSchemaCooldownReasonDepositGold       GETransactionListSchemaCooldownReason = "deposit_gold"
+	GETransactionListSchemaCooldownReasonWithdrawGold      GETransactionListSchemaCooldownReason = "withdraw_gold"
+	GETransactionListSchemaCooldownReasonEquip             GETransactionListSchemaCooldownReason = "equip"
+	GETransactionListSchemaCooldownReasonUnequip           GETransactionListSchemaCooldownReason = "unequip"
+	GETransactionListSchemaCooldownReasonTask              GETransactionListSchemaCooldownReason = "task"
+	GETransactionListSchemaCooldownReasonChristmasExchange GETransactionListSchemaCooldownReason = "christmas_exchange"
+	GETransactionListSchemaCooldownReasonRecycling         GETransactionListSchemaCooldownReason = "recycling"
+	GETransactionListSchemaCooldownReasonRest              GETransactionListSchemaCooldownReason = "rest"
+	GETransactionListSchemaCooldownReasonUse               GETransactionListSchemaCooldownReason = "use"
+	GETransactionListSchemaCooldownReasonBuyBankExpansion  GETransactionListSchemaCooldownReason = "buy_bank_expansion"
 )
 
 // AllValues returns all GETransactionListSchemaCooldownReason values.
@@ -23035,6 +23613,7 @@ func (GETransactionListSchemaCooldownReason) AllValues() []GETransactionListSche
 		GETransactionListSchemaCooldownReasonEquip,
 		GETransactionListSchemaCooldownReasonUnequip,
 		GETransactionListSchemaCooldownReasonTask,
+		GETransactionListSchemaCooldownReasonChristmasExchange,
 		GETransactionListSchemaCooldownReasonRecycling,
 		GETransactionListSchemaCooldownReasonRest,
 		GETransactionListSchemaCooldownReasonUse,
@@ -23074,6 +23653,8 @@ func (s GETransactionListSchemaCooldownReason) MarshalText() ([]byte, error) {
 	case GETransactionListSchemaCooldownReasonUnequip:
 		return []byte(s), nil
 	case GETransactionListSchemaCooldownReasonTask:
+		return []byte(s), nil
+	case GETransactionListSchemaCooldownReasonChristmasExchange:
 		return []byte(s), nil
 	case GETransactionListSchemaCooldownReasonRecycling:
 		return []byte(s), nil
@@ -23135,6 +23716,9 @@ func (s *GETransactionListSchemaCooldownReason) UnmarshalText(data []byte) error
 		return nil
 	case GETransactionListSchemaCooldownReasonTask:
 		*s = GETransactionListSchemaCooldownReasonTask
+		return nil
+	case GETransactionListSchemaCooldownReasonChristmasExchange:
+		*s = GETransactionListSchemaCooldownReasonChristmasExchange
 		return nil
 	case GETransactionListSchemaCooldownReasonRecycling:
 		*s = GETransactionListSchemaCooldownReasonRecycling
@@ -23961,6 +24545,11 @@ func (s *GetAllTasksTasksListGetType) UnmarshalText(data []byte) error {
 	}
 }
 
+// GetBadgeBadgesCodeGetNotFound is response for GetBadgeBadgesCodeGet operation.
+type GetBadgeBadgesCodeGetNotFound struct{}
+
+func (*GetBadgeBadgesCodeGetNotFound) getBadgeBadgesCodeGetRes() {}
+
 // GetCharacterCharactersNameGetNotFound is response for GetCharacterCharactersNameGet operation.
 type GetCharacterCharactersNameGetNotFound struct{}
 
@@ -24575,31 +25164,32 @@ func NewNullLogSchemaCooldownExpiration(v struct{}) LogSchemaCooldownExpiration 
 type LogSchemaType string
 
 const (
-	LogSchemaTypeSpawn            LogSchemaType = "spawn"
-	LogSchemaTypeMovement         LogSchemaType = "movement"
-	LogSchemaTypeFight            LogSchemaType = "fight"
-	LogSchemaTypeCrafting         LogSchemaType = "crafting"
-	LogSchemaTypeGathering        LogSchemaType = "gathering"
-	LogSchemaTypeBuyGe            LogSchemaType = "buy_ge"
-	LogSchemaTypeSellGe           LogSchemaType = "sell_ge"
-	LogSchemaTypeCancelGe         LogSchemaType = "cancel_ge"
-	LogSchemaTypeDeleteItem       LogSchemaType = "delete_item"
-	LogSchemaTypeDeposit          LogSchemaType = "deposit"
-	LogSchemaTypeWithdraw         LogSchemaType = "withdraw"
-	LogSchemaTypeDepositGold      LogSchemaType = "deposit_gold"
-	LogSchemaTypeWithdrawGold     LogSchemaType = "withdraw_gold"
-	LogSchemaTypeEquip            LogSchemaType = "equip"
-	LogSchemaTypeUnequip          LogSchemaType = "unequip"
-	LogSchemaTypeNewTask          LogSchemaType = "new_task"
-	LogSchemaTypeTaskExchange     LogSchemaType = "task_exchange"
-	LogSchemaTypeTaskCancelled    LogSchemaType = "task_cancelled"
-	LogSchemaTypeTaskCompleted    LogSchemaType = "task_completed"
-	LogSchemaTypeTaskTrade        LogSchemaType = "task_trade"
-	LogSchemaTypeRecycling        LogSchemaType = "recycling"
-	LogSchemaTypeRest             LogSchemaType = "rest"
-	LogSchemaTypeUse              LogSchemaType = "use"
-	LogSchemaTypeBuyBankExpansion LogSchemaType = "buy_bank_expansion"
-	LogSchemaTypeAchievement      LogSchemaType = "achievement"
+	LogSchemaTypeSpawn             LogSchemaType = "spawn"
+	LogSchemaTypeMovement          LogSchemaType = "movement"
+	LogSchemaTypeFight             LogSchemaType = "fight"
+	LogSchemaTypeCrafting          LogSchemaType = "crafting"
+	LogSchemaTypeGathering         LogSchemaType = "gathering"
+	LogSchemaTypeBuyGe             LogSchemaType = "buy_ge"
+	LogSchemaTypeSellGe            LogSchemaType = "sell_ge"
+	LogSchemaTypeCancelGe          LogSchemaType = "cancel_ge"
+	LogSchemaTypeDeleteItem        LogSchemaType = "delete_item"
+	LogSchemaTypeDeposit           LogSchemaType = "deposit"
+	LogSchemaTypeWithdraw          LogSchemaType = "withdraw"
+	LogSchemaTypeDepositGold       LogSchemaType = "deposit_gold"
+	LogSchemaTypeWithdrawGold      LogSchemaType = "withdraw_gold"
+	LogSchemaTypeEquip             LogSchemaType = "equip"
+	LogSchemaTypeUnequip           LogSchemaType = "unequip"
+	LogSchemaTypeNewTask           LogSchemaType = "new_task"
+	LogSchemaTypeTaskExchange      LogSchemaType = "task_exchange"
+	LogSchemaTypeTaskCancelled     LogSchemaType = "task_cancelled"
+	LogSchemaTypeTaskCompleted     LogSchemaType = "task_completed"
+	LogSchemaTypeTaskTrade         LogSchemaType = "task_trade"
+	LogSchemaTypeChristmasExchange LogSchemaType = "christmas_exchange"
+	LogSchemaTypeRecycling         LogSchemaType = "recycling"
+	LogSchemaTypeRest              LogSchemaType = "rest"
+	LogSchemaTypeUse               LogSchemaType = "use"
+	LogSchemaTypeBuyBankExpansion  LogSchemaType = "buy_bank_expansion"
+	LogSchemaTypeAchievement       LogSchemaType = "achievement"
 )
 
 // AllValues returns all LogSchemaType values.
@@ -24625,6 +25215,7 @@ func (LogSchemaType) AllValues() []LogSchemaType {
 		LogSchemaTypeTaskCancelled,
 		LogSchemaTypeTaskCompleted,
 		LogSchemaTypeTaskTrade,
+		LogSchemaTypeChristmasExchange,
 		LogSchemaTypeRecycling,
 		LogSchemaTypeRest,
 		LogSchemaTypeUse,
@@ -24675,6 +25266,8 @@ func (s LogSchemaType) MarshalText() ([]byte, error) {
 	case LogSchemaTypeTaskCompleted:
 		return []byte(s), nil
 	case LogSchemaTypeTaskTrade:
+		return []byte(s), nil
+	case LogSchemaTypeChristmasExchange:
 		return []byte(s), nil
 	case LogSchemaTypeRecycling:
 		return []byte(s), nil
@@ -24753,6 +25346,9 @@ func (s *LogSchemaType) UnmarshalText(data []byte) error {
 		return nil
 	case LogSchemaTypeTaskTrade:
 		*s = LogSchemaTypeTaskTrade
+		return nil
+	case LogSchemaTypeChristmasExchange:
+		*s = LogSchemaTypeChristmasExchange
 		return nil
 	case LogSchemaTypeRecycling:
 		*s = LogSchemaTypeRecycling
@@ -25162,7 +25758,7 @@ type MyAccountDetails struct {
 	// Member status.
 	Status MyAccountDetailsStatus `json:"status"`
 	// Account badges.
-	Badges OptMyAccountDetailsBadges `json:"badges"`
+	Badges []jx.Raw `json:"badges"`
 	// Gems.
 	Gems int `json:"gems"`
 	// Achievement points.
@@ -25194,7 +25790,7 @@ func (s *MyAccountDetails) GetStatus() MyAccountDetailsStatus {
 }
 
 // GetBadges returns the value of Badges.
-func (s *MyAccountDetails) GetBadges() OptMyAccountDetailsBadges {
+func (s *MyAccountDetails) GetBadges() []jx.Raw {
 	return s.Badges
 }
 
@@ -25239,7 +25835,7 @@ func (s *MyAccountDetails) SetStatus(val MyAccountDetailsStatus) {
 }
 
 // SetBadges sets the value of Badges.
-func (s *MyAccountDetails) SetBadges(val OptMyAccountDetailsBadges) {
+func (s *MyAccountDetails) SetBadges(val []jx.Raw) {
 	s.Badges = val
 }
 
@@ -25261,71 +25857,6 @@ func (s *MyAccountDetails) SetBanned(val bool) {
 // SetBanReason sets the value of BanReason.
 func (s *MyAccountDetails) SetBanReason(val OptString) {
 	s.BanReason = val
-}
-
-// Account badges.
-// MyAccountDetailsBadges represents sum type.
-type MyAccountDetailsBadges struct {
-	Type     MyAccountDetailsBadgesType // switch on this field
-	AnyArray []jx.Raw
-	Null     struct{}
-}
-
-// MyAccountDetailsBadgesType is oneOf type of MyAccountDetailsBadges.
-type MyAccountDetailsBadgesType string
-
-// Possible values for MyAccountDetailsBadgesType.
-const (
-	AnyArrayMyAccountDetailsBadges MyAccountDetailsBadgesType = "[]jx.Raw"
-	NullMyAccountDetailsBadges     MyAccountDetailsBadgesType = "struct{}"
-)
-
-// IsAnyArray reports whether MyAccountDetailsBadges is []jx.Raw.
-func (s MyAccountDetailsBadges) IsAnyArray() bool { return s.Type == AnyArrayMyAccountDetailsBadges }
-
-// IsNull reports whether MyAccountDetailsBadges is struct{}.
-func (s MyAccountDetailsBadges) IsNull() bool { return s.Type == NullMyAccountDetailsBadges }
-
-// SetAnyArray sets MyAccountDetailsBadges to []jx.Raw.
-func (s *MyAccountDetailsBadges) SetAnyArray(v []jx.Raw) {
-	s.Type = AnyArrayMyAccountDetailsBadges
-	s.AnyArray = v
-}
-
-// GetAnyArray returns []jx.Raw and true boolean if MyAccountDetailsBadges is []jx.Raw.
-func (s MyAccountDetailsBadges) GetAnyArray() (v []jx.Raw, ok bool) {
-	if !s.IsAnyArray() {
-		return v, false
-	}
-	return s.AnyArray, true
-}
-
-// NewAnyArrayMyAccountDetailsBadges returns new MyAccountDetailsBadges from []jx.Raw.
-func NewAnyArrayMyAccountDetailsBadges(v []jx.Raw) MyAccountDetailsBadges {
-	var s MyAccountDetailsBadges
-	s.SetAnyArray(v)
-	return s
-}
-
-// SetNull sets MyAccountDetailsBadges to struct{}.
-func (s *MyAccountDetailsBadges) SetNull(v struct{}) {
-	s.Type = NullMyAccountDetailsBadges
-	s.Null = v
-}
-
-// GetNull returns struct{} and true boolean if MyAccountDetailsBadges is struct{}.
-func (s MyAccountDetailsBadges) GetNull() (v struct{}, ok bool) {
-	if !s.IsNull() {
-		return v, false
-	}
-	return s.Null, true
-}
-
-// NewNullMyAccountDetailsBadges returns new MyAccountDetailsBadges from struct{}.
-func NewNullMyAccountDetailsBadges(v struct{}) MyAccountDetailsBadges {
-	var s MyAccountDetailsBadges
-	s.SetNull(v)
-	return s
 }
 
 // Ref: #/components/schemas/MyAccountDetailsSchema
@@ -25414,38 +25945,38 @@ func (s *MyCharactersListSchema) SetData(val []CharacterSchema) {
 	s.Data = val
 }
 
-// NewOptAccountDetailsBadges returns new OptAccountDetailsBadges with value set to v.
-func NewOptAccountDetailsBadges(v AccountDetailsBadges) OptAccountDetailsBadges {
-	return OptAccountDetailsBadges{
+// NewOptBadgeSchemaSeason returns new OptBadgeSchemaSeason with value set to v.
+func NewOptBadgeSchemaSeason(v BadgeSchemaSeason) OptBadgeSchemaSeason {
+	return OptBadgeSchemaSeason{
 		Value: v,
 		Set:   true,
 	}
 }
 
-// OptAccountDetailsBadges is optional AccountDetailsBadges.
-type OptAccountDetailsBadges struct {
-	Value AccountDetailsBadges
+// OptBadgeSchemaSeason is optional BadgeSchemaSeason.
+type OptBadgeSchemaSeason struct {
+	Value BadgeSchemaSeason
 	Set   bool
 }
 
-// IsSet returns true if OptAccountDetailsBadges was set.
-func (o OptAccountDetailsBadges) IsSet() bool { return o.Set }
+// IsSet returns true if OptBadgeSchemaSeason was set.
+func (o OptBadgeSchemaSeason) IsSet() bool { return o.Set }
 
 // Reset unsets value.
-func (o *OptAccountDetailsBadges) Reset() {
-	var v AccountDetailsBadges
+func (o *OptBadgeSchemaSeason) Reset() {
+	var v BadgeSchemaSeason
 	o.Value = v
 	o.Set = false
 }
 
 // SetTo sets value to v.
-func (o *OptAccountDetailsBadges) SetTo(v AccountDetailsBadges) {
+func (o *OptBadgeSchemaSeason) SetTo(v BadgeSchemaSeason) {
 	o.Set = true
 	o.Value = v
 }
 
 // Get returns value and boolean that denotes whether value was set.
-func (o OptAccountDetailsBadges) Get() (v AccountDetailsBadges, ok bool) {
+func (o OptBadgeSchemaSeason) Get() (v BadgeSchemaSeason, ok bool) {
 	if !o.Set {
 		return v, false
 	}
@@ -25453,7 +25984,7 @@ func (o OptAccountDetailsBadges) Get() (v AccountDetailsBadges, ok bool) {
 }
 
 // Or returns value if set, or given parameter if does not.
-func (o OptAccountDetailsBadges) Or(d AccountDetailsBadges) AccountDetailsBadges {
+func (o OptBadgeSchemaSeason) Or(d BadgeSchemaSeason) BadgeSchemaSeason {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -25776,6 +26307,52 @@ func (o OptDataPageActiveEventSchemaPages) Get() (v DataPageActiveEventSchemaPag
 
 // Or returns value if set, or given parameter if does not.
 func (o OptDataPageActiveEventSchemaPages) Or(d DataPageActiveEventSchemaPages) DataPageActiveEventSchemaPages {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptDataPageBadgeSchemaPages returns new OptDataPageBadgeSchemaPages with value set to v.
+func NewOptDataPageBadgeSchemaPages(v DataPageBadgeSchemaPages) OptDataPageBadgeSchemaPages {
+	return OptDataPageBadgeSchemaPages{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptDataPageBadgeSchemaPages is optional DataPageBadgeSchemaPages.
+type OptDataPageBadgeSchemaPages struct {
+	Value DataPageBadgeSchemaPages
+	Set   bool
+}
+
+// IsSet returns true if OptDataPageBadgeSchemaPages was set.
+func (o OptDataPageBadgeSchemaPages) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptDataPageBadgeSchemaPages) Reset() {
+	var v DataPageBadgeSchemaPages
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptDataPageBadgeSchemaPages) SetTo(v DataPageBadgeSchemaPages) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptDataPageBadgeSchemaPages) Get() (v DataPageBadgeSchemaPages, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptDataPageBadgeSchemaPages) Or(d DataPageBadgeSchemaPages) DataPageBadgeSchemaPages {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -26926,52 +27503,6 @@ func (o OptItemSchemaCraft) Get() (v ItemSchemaCraft, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptItemSchemaCraft) Or(d ItemSchemaCraft) ItemSchemaCraft {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptMyAccountDetailsBadges returns new OptMyAccountDetailsBadges with value set to v.
-func NewOptMyAccountDetailsBadges(v MyAccountDetailsBadges) OptMyAccountDetailsBadges {
-	return OptMyAccountDetailsBadges{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptMyAccountDetailsBadges is optional MyAccountDetailsBadges.
-type OptMyAccountDetailsBadges struct {
-	Value MyAccountDetailsBadges
-	Set   bool
-}
-
-// IsSet returns true if OptMyAccountDetailsBadges was set.
-func (o OptMyAccountDetailsBadges) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptMyAccountDetailsBadges) Reset() {
-	var v MyAccountDetailsBadges
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptMyAccountDetailsBadges) SetTo(v MyAccountDetailsBadges) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptMyAccountDetailsBadges) Get() (v MyAccountDetailsBadges, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptMyAccountDetailsBadges) Or(d MyAccountDetailsBadges) MyAccountDetailsBadges {
 	if v, ok := o.Get(); ok {
 		return v
 	}
@@ -28149,25 +28680,26 @@ func (s *RecyclingDataSchemaCooldown) SetReason(val RecyclingDataSchemaCooldownR
 type RecyclingDataSchemaCooldownReason string
 
 const (
-	RecyclingDataSchemaCooldownReasonMovement         RecyclingDataSchemaCooldownReason = "movement"
-	RecyclingDataSchemaCooldownReasonFight            RecyclingDataSchemaCooldownReason = "fight"
-	RecyclingDataSchemaCooldownReasonCrafting         RecyclingDataSchemaCooldownReason = "crafting"
-	RecyclingDataSchemaCooldownReasonGathering        RecyclingDataSchemaCooldownReason = "gathering"
-	RecyclingDataSchemaCooldownReasonBuyGe            RecyclingDataSchemaCooldownReason = "buy_ge"
-	RecyclingDataSchemaCooldownReasonSellGe           RecyclingDataSchemaCooldownReason = "sell_ge"
-	RecyclingDataSchemaCooldownReasonCancelGe         RecyclingDataSchemaCooldownReason = "cancel_ge"
-	RecyclingDataSchemaCooldownReasonDeleteItem       RecyclingDataSchemaCooldownReason = "delete_item"
-	RecyclingDataSchemaCooldownReasonDeposit          RecyclingDataSchemaCooldownReason = "deposit"
-	RecyclingDataSchemaCooldownReasonWithdraw         RecyclingDataSchemaCooldownReason = "withdraw"
-	RecyclingDataSchemaCooldownReasonDepositGold      RecyclingDataSchemaCooldownReason = "deposit_gold"
-	RecyclingDataSchemaCooldownReasonWithdrawGold     RecyclingDataSchemaCooldownReason = "withdraw_gold"
-	RecyclingDataSchemaCooldownReasonEquip            RecyclingDataSchemaCooldownReason = "equip"
-	RecyclingDataSchemaCooldownReasonUnequip          RecyclingDataSchemaCooldownReason = "unequip"
-	RecyclingDataSchemaCooldownReasonTask             RecyclingDataSchemaCooldownReason = "task"
-	RecyclingDataSchemaCooldownReasonRecycling        RecyclingDataSchemaCooldownReason = "recycling"
-	RecyclingDataSchemaCooldownReasonRest             RecyclingDataSchemaCooldownReason = "rest"
-	RecyclingDataSchemaCooldownReasonUse              RecyclingDataSchemaCooldownReason = "use"
-	RecyclingDataSchemaCooldownReasonBuyBankExpansion RecyclingDataSchemaCooldownReason = "buy_bank_expansion"
+	RecyclingDataSchemaCooldownReasonMovement          RecyclingDataSchemaCooldownReason = "movement"
+	RecyclingDataSchemaCooldownReasonFight             RecyclingDataSchemaCooldownReason = "fight"
+	RecyclingDataSchemaCooldownReasonCrafting          RecyclingDataSchemaCooldownReason = "crafting"
+	RecyclingDataSchemaCooldownReasonGathering         RecyclingDataSchemaCooldownReason = "gathering"
+	RecyclingDataSchemaCooldownReasonBuyGe             RecyclingDataSchemaCooldownReason = "buy_ge"
+	RecyclingDataSchemaCooldownReasonSellGe            RecyclingDataSchemaCooldownReason = "sell_ge"
+	RecyclingDataSchemaCooldownReasonCancelGe          RecyclingDataSchemaCooldownReason = "cancel_ge"
+	RecyclingDataSchemaCooldownReasonDeleteItem        RecyclingDataSchemaCooldownReason = "delete_item"
+	RecyclingDataSchemaCooldownReasonDeposit           RecyclingDataSchemaCooldownReason = "deposit"
+	RecyclingDataSchemaCooldownReasonWithdraw          RecyclingDataSchemaCooldownReason = "withdraw"
+	RecyclingDataSchemaCooldownReasonDepositGold       RecyclingDataSchemaCooldownReason = "deposit_gold"
+	RecyclingDataSchemaCooldownReasonWithdrawGold      RecyclingDataSchemaCooldownReason = "withdraw_gold"
+	RecyclingDataSchemaCooldownReasonEquip             RecyclingDataSchemaCooldownReason = "equip"
+	RecyclingDataSchemaCooldownReasonUnequip           RecyclingDataSchemaCooldownReason = "unequip"
+	RecyclingDataSchemaCooldownReasonTask              RecyclingDataSchemaCooldownReason = "task"
+	RecyclingDataSchemaCooldownReasonChristmasExchange RecyclingDataSchemaCooldownReason = "christmas_exchange"
+	RecyclingDataSchemaCooldownReasonRecycling         RecyclingDataSchemaCooldownReason = "recycling"
+	RecyclingDataSchemaCooldownReasonRest              RecyclingDataSchemaCooldownReason = "rest"
+	RecyclingDataSchemaCooldownReasonUse               RecyclingDataSchemaCooldownReason = "use"
+	RecyclingDataSchemaCooldownReasonBuyBankExpansion  RecyclingDataSchemaCooldownReason = "buy_bank_expansion"
 )
 
 // AllValues returns all RecyclingDataSchemaCooldownReason values.
@@ -28188,6 +28720,7 @@ func (RecyclingDataSchemaCooldownReason) AllValues() []RecyclingDataSchemaCooldo
 		RecyclingDataSchemaCooldownReasonEquip,
 		RecyclingDataSchemaCooldownReasonUnequip,
 		RecyclingDataSchemaCooldownReasonTask,
+		RecyclingDataSchemaCooldownReasonChristmasExchange,
 		RecyclingDataSchemaCooldownReasonRecycling,
 		RecyclingDataSchemaCooldownReasonRest,
 		RecyclingDataSchemaCooldownReasonUse,
@@ -28227,6 +28760,8 @@ func (s RecyclingDataSchemaCooldownReason) MarshalText() ([]byte, error) {
 	case RecyclingDataSchemaCooldownReasonUnequip:
 		return []byte(s), nil
 	case RecyclingDataSchemaCooldownReasonTask:
+		return []byte(s), nil
+	case RecyclingDataSchemaCooldownReasonChristmasExchange:
 		return []byte(s), nil
 	case RecyclingDataSchemaCooldownReasonRecycling:
 		return []byte(s), nil
@@ -28288,6 +28823,9 @@ func (s *RecyclingDataSchemaCooldownReason) UnmarshalText(data []byte) error {
 		return nil
 	case RecyclingDataSchemaCooldownReasonTask:
 		*s = RecyclingDataSchemaCooldownReasonTask
+		return nil
+	case RecyclingDataSchemaCooldownReasonChristmasExchange:
+		*s = RecyclingDataSchemaCooldownReasonChristmasExchange
 		return nil
 	case RecyclingDataSchemaCooldownReasonRecycling:
 		*s = RecyclingDataSchemaCooldownReasonRecycling
@@ -28519,6 +29057,1312 @@ func (s *ResponseSchema) SetMessage(val string) {
 
 func (*ResponseSchema) changePasswordMyChangePasswordPostRes() {}
 func (*ResponseSchema) createAccountAccountsCreatePostRes()    {}
+
+// Ref: #/components/schemas/RewardDataResponseSchema
+type RewardDataResponseSchema struct {
+	Data RewardDataSchema `json:"data"`
+}
+
+// GetData returns the value of Data.
+func (s *RewardDataResponseSchema) GetData() RewardDataSchema {
+	return s.Data
+}
+
+// SetData sets the value of Data.
+func (s *RewardDataResponseSchema) SetData(val RewardDataSchema) {
+	s.Data = val
+}
+
+func (*RewardDataResponseSchema) actionChristmasExchangeMyNameActionChristmasExchangePostRes() {}
+func (*RewardDataResponseSchema) actionCompleteTaskMyNameActionTaskCompletePostRes()           {}
+func (*RewardDataResponseSchema) actionTaskExchangeMyNameActionTaskExchangePostRes()           {}
+
+// Ref: #/components/schemas/RewardDataSchema
+type RewardDataSchema struct {
+	// Cooldown details.
+	Cooldown RewardDataSchemaCooldown `json:"cooldown"`
+	// Reward details.
+	Rewards RewardDataSchemaRewards `json:"rewards"`
+	// Player details.
+	Character RewardDataSchemaCharacter `json:"character"`
+}
+
+// GetCooldown returns the value of Cooldown.
+func (s *RewardDataSchema) GetCooldown() RewardDataSchemaCooldown {
+	return s.Cooldown
+}
+
+// GetRewards returns the value of Rewards.
+func (s *RewardDataSchema) GetRewards() RewardDataSchemaRewards {
+	return s.Rewards
+}
+
+// GetCharacter returns the value of Character.
+func (s *RewardDataSchema) GetCharacter() RewardDataSchemaCharacter {
+	return s.Character
+}
+
+// SetCooldown sets the value of Cooldown.
+func (s *RewardDataSchema) SetCooldown(val RewardDataSchemaCooldown) {
+	s.Cooldown = val
+}
+
+// SetRewards sets the value of Rewards.
+func (s *RewardDataSchema) SetRewards(val RewardDataSchemaRewards) {
+	s.Rewards = val
+}
+
+// SetCharacter sets the value of Character.
+func (s *RewardDataSchema) SetCharacter(val RewardDataSchemaCharacter) {
+	s.Character = val
+}
+
+type RewardDataSchemaCharacter struct {
+	// Name of the character.
+	Name string `json:"name"`
+	// Account name.
+	Account string `json:"account"`
+	// Character skin code.
+	Skin RewardDataSchemaCharacterSkin `json:"skin"`
+	// Combat level.
+	Level int `json:"level"`
+	// The current xp level of the combat level.
+	Xp int `json:"xp"`
+	// XP required to level up the character.
+	MaxXp int `json:"max_xp"`
+	// The numbers of gold on this character.
+	Gold int `json:"gold"`
+	// *Not available, on the roadmap. Character movement speed.
+	Speed int `json:"speed"`
+	// Mining level.
+	MiningLevel int `json:"mining_level"`
+	// The current xp level of the Mining skill.
+	MiningXp int `json:"mining_xp"`
+	// Mining XP required to level up the skill.
+	MiningMaxXp int `json:"mining_max_xp"`
+	// Woodcutting level.
+	WoodcuttingLevel int `json:"woodcutting_level"`
+	// The current xp level of the Woodcutting skill.
+	WoodcuttingXp int `json:"woodcutting_xp"`
+	// Woodcutting XP required to level up the skill.
+	WoodcuttingMaxXp int `json:"woodcutting_max_xp"`
+	// Fishing level.
+	FishingLevel int `json:"fishing_level"`
+	// The current xp level of the Fishing skill.
+	FishingXp int `json:"fishing_xp"`
+	// Fishing XP required to level up the skill.
+	FishingMaxXp int `json:"fishing_max_xp"`
+	// Weaponcrafting level.
+	WeaponcraftingLevel int `json:"weaponcrafting_level"`
+	// The current xp level of the Weaponcrafting skill.
+	WeaponcraftingXp int `json:"weaponcrafting_xp"`
+	// Weaponcrafting XP required to level up the skill.
+	WeaponcraftingMaxXp int `json:"weaponcrafting_max_xp"`
+	// Gearcrafting level.
+	GearcraftingLevel int `json:"gearcrafting_level"`
+	// The current xp level of the Gearcrafting skill.
+	GearcraftingXp int `json:"gearcrafting_xp"`
+	// Gearcrafting XP required to level up the skill.
+	GearcraftingMaxXp int `json:"gearcrafting_max_xp"`
+	// Jewelrycrafting level.
+	JewelrycraftingLevel int `json:"jewelrycrafting_level"`
+	// The current xp level of the Jewelrycrafting skill.
+	JewelrycraftingXp int `json:"jewelrycrafting_xp"`
+	// Jewelrycrafting XP required to level up the skill.
+	JewelrycraftingMaxXp int `json:"jewelrycrafting_max_xp"`
+	// The current xp level of the Cooking skill.
+	CookingLevel int `json:"cooking_level"`
+	// Cooking XP.
+	CookingXp int `json:"cooking_xp"`
+	// Cooking XP required to level up the skill.
+	CookingMaxXp int `json:"cooking_max_xp"`
+	// Alchemy level.
+	AlchemyLevel int `json:"alchemy_level"`
+	// Alchemy XP.
+	AlchemyXp int `json:"alchemy_xp"`
+	// Alchemy XP required to level up the skill.
+	AlchemyMaxXp int `json:"alchemy_max_xp"`
+	// Character actual HP.
+	Hp int `json:"hp"`
+	// Character max HP.
+	MaxHp int `json:"max_hp"`
+	// *Character Haste. Increase speed attack (reduce fight cooldown).
+	Haste int `json:"haste"`
+	// *Not available, on the roadmap. Character Critical   Strike. Critical strikes increase the
+	// attack's damage.
+	CriticalStrike int `json:"critical_strike"`
+	// *Not available, on the roadmap. Regenerates life at the start of each turn.
+	Stamina int `json:"stamina"`
+	// Fire attack.
+	AttackFire int `json:"attack_fire"`
+	// Earth attack.
+	AttackEarth int `json:"attack_earth"`
+	// Water attack.
+	AttackWater int `json:"attack_water"`
+	// Air attack.
+	AttackAir int `json:"attack_air"`
+	// % Fire damage.
+	DmgFire int `json:"dmg_fire"`
+	// % Earth damage.
+	DmgEarth int `json:"dmg_earth"`
+	// % Water damage.
+	DmgWater int `json:"dmg_water"`
+	// % Air damage.
+	DmgAir int `json:"dmg_air"`
+	// % Fire resistance.
+	ResFire int `json:"res_fire"`
+	// % Earth resistance.
+	ResEarth int `json:"res_earth"`
+	// % Water resistance.
+	ResWater int `json:"res_water"`
+	// % Air resistance.
+	ResAir int `json:"res_air"`
+	// Character x coordinate.
+	X int `json:"x"`
+	// Character y coordinate.
+	Y int `json:"y"`
+	// Cooldown in seconds.
+	Cooldown int `json:"cooldown"`
+	// Datetime Cooldown expiration.
+	CooldownExpiration OptDateTime `json:"cooldown_expiration"`
+	// Weapon slot.
+	WeaponSlot string `json:"weapon_slot"`
+	// Shield slot.
+	ShieldSlot string `json:"shield_slot"`
+	// Helmet slot.
+	HelmetSlot string `json:"helmet_slot"`
+	// Body armor slot.
+	BodyArmorSlot string `json:"body_armor_slot"`
+	// Leg armor slot.
+	LegArmorSlot string `json:"leg_armor_slot"`
+	// Boots slot.
+	BootsSlot string `json:"boots_slot"`
+	// Ring 1 slot.
+	Ring1Slot string `json:"ring1_slot"`
+	// Ring 2 slot.
+	Ring2Slot string `json:"ring2_slot"`
+	// Amulet slot.
+	AmuletSlot string `json:"amulet_slot"`
+	// Artifact 1 slot.
+	Artifact1Slot string `json:"artifact1_slot"`
+	// Artifact 2 slot.
+	Artifact2Slot string `json:"artifact2_slot"`
+	// Artifact 3 slot.
+	Artifact3Slot string `json:"artifact3_slot"`
+	// Utility 1 slot.
+	Utility1Slot string `json:"utility1_slot"`
+	// Utility 1 quantity.
+	Utility1SlotQuantity int `json:"utility1_slot_quantity"`
+	// Utility 2 slot.
+	Utility2Slot string `json:"utility2_slot"`
+	// Utility 2 quantity.
+	Utility2SlotQuantity int `json:"utility2_slot_quantity"`
+	// Task in progress.
+	Task string `json:"task"`
+	// Task type.
+	TaskType string `json:"task_type"`
+	// Task progression.
+	TaskProgress int `json:"task_progress"`
+	// Task total objective.
+	TaskTotal int `json:"task_total"`
+	// Inventory max items.
+	InventoryMaxItems int `json:"inventory_max_items"`
+	// List of inventory slots.
+	Inventory []InventorySlot `json:"inventory"`
+}
+
+// GetName returns the value of Name.
+func (s *RewardDataSchemaCharacter) GetName() string {
+	return s.Name
+}
+
+// GetAccount returns the value of Account.
+func (s *RewardDataSchemaCharacter) GetAccount() string {
+	return s.Account
+}
+
+// GetSkin returns the value of Skin.
+func (s *RewardDataSchemaCharacter) GetSkin() RewardDataSchemaCharacterSkin {
+	return s.Skin
+}
+
+// GetLevel returns the value of Level.
+func (s *RewardDataSchemaCharacter) GetLevel() int {
+	return s.Level
+}
+
+// GetXp returns the value of Xp.
+func (s *RewardDataSchemaCharacter) GetXp() int {
+	return s.Xp
+}
+
+// GetMaxXp returns the value of MaxXp.
+func (s *RewardDataSchemaCharacter) GetMaxXp() int {
+	return s.MaxXp
+}
+
+// GetGold returns the value of Gold.
+func (s *RewardDataSchemaCharacter) GetGold() int {
+	return s.Gold
+}
+
+// GetSpeed returns the value of Speed.
+func (s *RewardDataSchemaCharacter) GetSpeed() int {
+	return s.Speed
+}
+
+// GetMiningLevel returns the value of MiningLevel.
+func (s *RewardDataSchemaCharacter) GetMiningLevel() int {
+	return s.MiningLevel
+}
+
+// GetMiningXp returns the value of MiningXp.
+func (s *RewardDataSchemaCharacter) GetMiningXp() int {
+	return s.MiningXp
+}
+
+// GetMiningMaxXp returns the value of MiningMaxXp.
+func (s *RewardDataSchemaCharacter) GetMiningMaxXp() int {
+	return s.MiningMaxXp
+}
+
+// GetWoodcuttingLevel returns the value of WoodcuttingLevel.
+func (s *RewardDataSchemaCharacter) GetWoodcuttingLevel() int {
+	return s.WoodcuttingLevel
+}
+
+// GetWoodcuttingXp returns the value of WoodcuttingXp.
+func (s *RewardDataSchemaCharacter) GetWoodcuttingXp() int {
+	return s.WoodcuttingXp
+}
+
+// GetWoodcuttingMaxXp returns the value of WoodcuttingMaxXp.
+func (s *RewardDataSchemaCharacter) GetWoodcuttingMaxXp() int {
+	return s.WoodcuttingMaxXp
+}
+
+// GetFishingLevel returns the value of FishingLevel.
+func (s *RewardDataSchemaCharacter) GetFishingLevel() int {
+	return s.FishingLevel
+}
+
+// GetFishingXp returns the value of FishingXp.
+func (s *RewardDataSchemaCharacter) GetFishingXp() int {
+	return s.FishingXp
+}
+
+// GetFishingMaxXp returns the value of FishingMaxXp.
+func (s *RewardDataSchemaCharacter) GetFishingMaxXp() int {
+	return s.FishingMaxXp
+}
+
+// GetWeaponcraftingLevel returns the value of WeaponcraftingLevel.
+func (s *RewardDataSchemaCharacter) GetWeaponcraftingLevel() int {
+	return s.WeaponcraftingLevel
+}
+
+// GetWeaponcraftingXp returns the value of WeaponcraftingXp.
+func (s *RewardDataSchemaCharacter) GetWeaponcraftingXp() int {
+	return s.WeaponcraftingXp
+}
+
+// GetWeaponcraftingMaxXp returns the value of WeaponcraftingMaxXp.
+func (s *RewardDataSchemaCharacter) GetWeaponcraftingMaxXp() int {
+	return s.WeaponcraftingMaxXp
+}
+
+// GetGearcraftingLevel returns the value of GearcraftingLevel.
+func (s *RewardDataSchemaCharacter) GetGearcraftingLevel() int {
+	return s.GearcraftingLevel
+}
+
+// GetGearcraftingXp returns the value of GearcraftingXp.
+func (s *RewardDataSchemaCharacter) GetGearcraftingXp() int {
+	return s.GearcraftingXp
+}
+
+// GetGearcraftingMaxXp returns the value of GearcraftingMaxXp.
+func (s *RewardDataSchemaCharacter) GetGearcraftingMaxXp() int {
+	return s.GearcraftingMaxXp
+}
+
+// GetJewelrycraftingLevel returns the value of JewelrycraftingLevel.
+func (s *RewardDataSchemaCharacter) GetJewelrycraftingLevel() int {
+	return s.JewelrycraftingLevel
+}
+
+// GetJewelrycraftingXp returns the value of JewelrycraftingXp.
+func (s *RewardDataSchemaCharacter) GetJewelrycraftingXp() int {
+	return s.JewelrycraftingXp
+}
+
+// GetJewelrycraftingMaxXp returns the value of JewelrycraftingMaxXp.
+func (s *RewardDataSchemaCharacter) GetJewelrycraftingMaxXp() int {
+	return s.JewelrycraftingMaxXp
+}
+
+// GetCookingLevel returns the value of CookingLevel.
+func (s *RewardDataSchemaCharacter) GetCookingLevel() int {
+	return s.CookingLevel
+}
+
+// GetCookingXp returns the value of CookingXp.
+func (s *RewardDataSchemaCharacter) GetCookingXp() int {
+	return s.CookingXp
+}
+
+// GetCookingMaxXp returns the value of CookingMaxXp.
+func (s *RewardDataSchemaCharacter) GetCookingMaxXp() int {
+	return s.CookingMaxXp
+}
+
+// GetAlchemyLevel returns the value of AlchemyLevel.
+func (s *RewardDataSchemaCharacter) GetAlchemyLevel() int {
+	return s.AlchemyLevel
+}
+
+// GetAlchemyXp returns the value of AlchemyXp.
+func (s *RewardDataSchemaCharacter) GetAlchemyXp() int {
+	return s.AlchemyXp
+}
+
+// GetAlchemyMaxXp returns the value of AlchemyMaxXp.
+func (s *RewardDataSchemaCharacter) GetAlchemyMaxXp() int {
+	return s.AlchemyMaxXp
+}
+
+// GetHp returns the value of Hp.
+func (s *RewardDataSchemaCharacter) GetHp() int {
+	return s.Hp
+}
+
+// GetMaxHp returns the value of MaxHp.
+func (s *RewardDataSchemaCharacter) GetMaxHp() int {
+	return s.MaxHp
+}
+
+// GetHaste returns the value of Haste.
+func (s *RewardDataSchemaCharacter) GetHaste() int {
+	return s.Haste
+}
+
+// GetCriticalStrike returns the value of CriticalStrike.
+func (s *RewardDataSchemaCharacter) GetCriticalStrike() int {
+	return s.CriticalStrike
+}
+
+// GetStamina returns the value of Stamina.
+func (s *RewardDataSchemaCharacter) GetStamina() int {
+	return s.Stamina
+}
+
+// GetAttackFire returns the value of AttackFire.
+func (s *RewardDataSchemaCharacter) GetAttackFire() int {
+	return s.AttackFire
+}
+
+// GetAttackEarth returns the value of AttackEarth.
+func (s *RewardDataSchemaCharacter) GetAttackEarth() int {
+	return s.AttackEarth
+}
+
+// GetAttackWater returns the value of AttackWater.
+func (s *RewardDataSchemaCharacter) GetAttackWater() int {
+	return s.AttackWater
+}
+
+// GetAttackAir returns the value of AttackAir.
+func (s *RewardDataSchemaCharacter) GetAttackAir() int {
+	return s.AttackAir
+}
+
+// GetDmgFire returns the value of DmgFire.
+func (s *RewardDataSchemaCharacter) GetDmgFire() int {
+	return s.DmgFire
+}
+
+// GetDmgEarth returns the value of DmgEarth.
+func (s *RewardDataSchemaCharacter) GetDmgEarth() int {
+	return s.DmgEarth
+}
+
+// GetDmgWater returns the value of DmgWater.
+func (s *RewardDataSchemaCharacter) GetDmgWater() int {
+	return s.DmgWater
+}
+
+// GetDmgAir returns the value of DmgAir.
+func (s *RewardDataSchemaCharacter) GetDmgAir() int {
+	return s.DmgAir
+}
+
+// GetResFire returns the value of ResFire.
+func (s *RewardDataSchemaCharacter) GetResFire() int {
+	return s.ResFire
+}
+
+// GetResEarth returns the value of ResEarth.
+func (s *RewardDataSchemaCharacter) GetResEarth() int {
+	return s.ResEarth
+}
+
+// GetResWater returns the value of ResWater.
+func (s *RewardDataSchemaCharacter) GetResWater() int {
+	return s.ResWater
+}
+
+// GetResAir returns the value of ResAir.
+func (s *RewardDataSchemaCharacter) GetResAir() int {
+	return s.ResAir
+}
+
+// GetX returns the value of X.
+func (s *RewardDataSchemaCharacter) GetX() int {
+	return s.X
+}
+
+// GetY returns the value of Y.
+func (s *RewardDataSchemaCharacter) GetY() int {
+	return s.Y
+}
+
+// GetCooldown returns the value of Cooldown.
+func (s *RewardDataSchemaCharacter) GetCooldown() int {
+	return s.Cooldown
+}
+
+// GetCooldownExpiration returns the value of CooldownExpiration.
+func (s *RewardDataSchemaCharacter) GetCooldownExpiration() OptDateTime {
+	return s.CooldownExpiration
+}
+
+// GetWeaponSlot returns the value of WeaponSlot.
+func (s *RewardDataSchemaCharacter) GetWeaponSlot() string {
+	return s.WeaponSlot
+}
+
+// GetShieldSlot returns the value of ShieldSlot.
+func (s *RewardDataSchemaCharacter) GetShieldSlot() string {
+	return s.ShieldSlot
+}
+
+// GetHelmetSlot returns the value of HelmetSlot.
+func (s *RewardDataSchemaCharacter) GetHelmetSlot() string {
+	return s.HelmetSlot
+}
+
+// GetBodyArmorSlot returns the value of BodyArmorSlot.
+func (s *RewardDataSchemaCharacter) GetBodyArmorSlot() string {
+	return s.BodyArmorSlot
+}
+
+// GetLegArmorSlot returns the value of LegArmorSlot.
+func (s *RewardDataSchemaCharacter) GetLegArmorSlot() string {
+	return s.LegArmorSlot
+}
+
+// GetBootsSlot returns the value of BootsSlot.
+func (s *RewardDataSchemaCharacter) GetBootsSlot() string {
+	return s.BootsSlot
+}
+
+// GetRing1Slot returns the value of Ring1Slot.
+func (s *RewardDataSchemaCharacter) GetRing1Slot() string {
+	return s.Ring1Slot
+}
+
+// GetRing2Slot returns the value of Ring2Slot.
+func (s *RewardDataSchemaCharacter) GetRing2Slot() string {
+	return s.Ring2Slot
+}
+
+// GetAmuletSlot returns the value of AmuletSlot.
+func (s *RewardDataSchemaCharacter) GetAmuletSlot() string {
+	return s.AmuletSlot
+}
+
+// GetArtifact1Slot returns the value of Artifact1Slot.
+func (s *RewardDataSchemaCharacter) GetArtifact1Slot() string {
+	return s.Artifact1Slot
+}
+
+// GetArtifact2Slot returns the value of Artifact2Slot.
+func (s *RewardDataSchemaCharacter) GetArtifact2Slot() string {
+	return s.Artifact2Slot
+}
+
+// GetArtifact3Slot returns the value of Artifact3Slot.
+func (s *RewardDataSchemaCharacter) GetArtifact3Slot() string {
+	return s.Artifact3Slot
+}
+
+// GetUtility1Slot returns the value of Utility1Slot.
+func (s *RewardDataSchemaCharacter) GetUtility1Slot() string {
+	return s.Utility1Slot
+}
+
+// GetUtility1SlotQuantity returns the value of Utility1SlotQuantity.
+func (s *RewardDataSchemaCharacter) GetUtility1SlotQuantity() int {
+	return s.Utility1SlotQuantity
+}
+
+// GetUtility2Slot returns the value of Utility2Slot.
+func (s *RewardDataSchemaCharacter) GetUtility2Slot() string {
+	return s.Utility2Slot
+}
+
+// GetUtility2SlotQuantity returns the value of Utility2SlotQuantity.
+func (s *RewardDataSchemaCharacter) GetUtility2SlotQuantity() int {
+	return s.Utility2SlotQuantity
+}
+
+// GetTask returns the value of Task.
+func (s *RewardDataSchemaCharacter) GetTask() string {
+	return s.Task
+}
+
+// GetTaskType returns the value of TaskType.
+func (s *RewardDataSchemaCharacter) GetTaskType() string {
+	return s.TaskType
+}
+
+// GetTaskProgress returns the value of TaskProgress.
+func (s *RewardDataSchemaCharacter) GetTaskProgress() int {
+	return s.TaskProgress
+}
+
+// GetTaskTotal returns the value of TaskTotal.
+func (s *RewardDataSchemaCharacter) GetTaskTotal() int {
+	return s.TaskTotal
+}
+
+// GetInventoryMaxItems returns the value of InventoryMaxItems.
+func (s *RewardDataSchemaCharacter) GetInventoryMaxItems() int {
+	return s.InventoryMaxItems
+}
+
+// GetInventory returns the value of Inventory.
+func (s *RewardDataSchemaCharacter) GetInventory() []InventorySlot {
+	return s.Inventory
+}
+
+// SetName sets the value of Name.
+func (s *RewardDataSchemaCharacter) SetName(val string) {
+	s.Name = val
+}
+
+// SetAccount sets the value of Account.
+func (s *RewardDataSchemaCharacter) SetAccount(val string) {
+	s.Account = val
+}
+
+// SetSkin sets the value of Skin.
+func (s *RewardDataSchemaCharacter) SetSkin(val RewardDataSchemaCharacterSkin) {
+	s.Skin = val
+}
+
+// SetLevel sets the value of Level.
+func (s *RewardDataSchemaCharacter) SetLevel(val int) {
+	s.Level = val
+}
+
+// SetXp sets the value of Xp.
+func (s *RewardDataSchemaCharacter) SetXp(val int) {
+	s.Xp = val
+}
+
+// SetMaxXp sets the value of MaxXp.
+func (s *RewardDataSchemaCharacter) SetMaxXp(val int) {
+	s.MaxXp = val
+}
+
+// SetGold sets the value of Gold.
+func (s *RewardDataSchemaCharacter) SetGold(val int) {
+	s.Gold = val
+}
+
+// SetSpeed sets the value of Speed.
+func (s *RewardDataSchemaCharacter) SetSpeed(val int) {
+	s.Speed = val
+}
+
+// SetMiningLevel sets the value of MiningLevel.
+func (s *RewardDataSchemaCharacter) SetMiningLevel(val int) {
+	s.MiningLevel = val
+}
+
+// SetMiningXp sets the value of MiningXp.
+func (s *RewardDataSchemaCharacter) SetMiningXp(val int) {
+	s.MiningXp = val
+}
+
+// SetMiningMaxXp sets the value of MiningMaxXp.
+func (s *RewardDataSchemaCharacter) SetMiningMaxXp(val int) {
+	s.MiningMaxXp = val
+}
+
+// SetWoodcuttingLevel sets the value of WoodcuttingLevel.
+func (s *RewardDataSchemaCharacter) SetWoodcuttingLevel(val int) {
+	s.WoodcuttingLevel = val
+}
+
+// SetWoodcuttingXp sets the value of WoodcuttingXp.
+func (s *RewardDataSchemaCharacter) SetWoodcuttingXp(val int) {
+	s.WoodcuttingXp = val
+}
+
+// SetWoodcuttingMaxXp sets the value of WoodcuttingMaxXp.
+func (s *RewardDataSchemaCharacter) SetWoodcuttingMaxXp(val int) {
+	s.WoodcuttingMaxXp = val
+}
+
+// SetFishingLevel sets the value of FishingLevel.
+func (s *RewardDataSchemaCharacter) SetFishingLevel(val int) {
+	s.FishingLevel = val
+}
+
+// SetFishingXp sets the value of FishingXp.
+func (s *RewardDataSchemaCharacter) SetFishingXp(val int) {
+	s.FishingXp = val
+}
+
+// SetFishingMaxXp sets the value of FishingMaxXp.
+func (s *RewardDataSchemaCharacter) SetFishingMaxXp(val int) {
+	s.FishingMaxXp = val
+}
+
+// SetWeaponcraftingLevel sets the value of WeaponcraftingLevel.
+func (s *RewardDataSchemaCharacter) SetWeaponcraftingLevel(val int) {
+	s.WeaponcraftingLevel = val
+}
+
+// SetWeaponcraftingXp sets the value of WeaponcraftingXp.
+func (s *RewardDataSchemaCharacter) SetWeaponcraftingXp(val int) {
+	s.WeaponcraftingXp = val
+}
+
+// SetWeaponcraftingMaxXp sets the value of WeaponcraftingMaxXp.
+func (s *RewardDataSchemaCharacter) SetWeaponcraftingMaxXp(val int) {
+	s.WeaponcraftingMaxXp = val
+}
+
+// SetGearcraftingLevel sets the value of GearcraftingLevel.
+func (s *RewardDataSchemaCharacter) SetGearcraftingLevel(val int) {
+	s.GearcraftingLevel = val
+}
+
+// SetGearcraftingXp sets the value of GearcraftingXp.
+func (s *RewardDataSchemaCharacter) SetGearcraftingXp(val int) {
+	s.GearcraftingXp = val
+}
+
+// SetGearcraftingMaxXp sets the value of GearcraftingMaxXp.
+func (s *RewardDataSchemaCharacter) SetGearcraftingMaxXp(val int) {
+	s.GearcraftingMaxXp = val
+}
+
+// SetJewelrycraftingLevel sets the value of JewelrycraftingLevel.
+func (s *RewardDataSchemaCharacter) SetJewelrycraftingLevel(val int) {
+	s.JewelrycraftingLevel = val
+}
+
+// SetJewelrycraftingXp sets the value of JewelrycraftingXp.
+func (s *RewardDataSchemaCharacter) SetJewelrycraftingXp(val int) {
+	s.JewelrycraftingXp = val
+}
+
+// SetJewelrycraftingMaxXp sets the value of JewelrycraftingMaxXp.
+func (s *RewardDataSchemaCharacter) SetJewelrycraftingMaxXp(val int) {
+	s.JewelrycraftingMaxXp = val
+}
+
+// SetCookingLevel sets the value of CookingLevel.
+func (s *RewardDataSchemaCharacter) SetCookingLevel(val int) {
+	s.CookingLevel = val
+}
+
+// SetCookingXp sets the value of CookingXp.
+func (s *RewardDataSchemaCharacter) SetCookingXp(val int) {
+	s.CookingXp = val
+}
+
+// SetCookingMaxXp sets the value of CookingMaxXp.
+func (s *RewardDataSchemaCharacter) SetCookingMaxXp(val int) {
+	s.CookingMaxXp = val
+}
+
+// SetAlchemyLevel sets the value of AlchemyLevel.
+func (s *RewardDataSchemaCharacter) SetAlchemyLevel(val int) {
+	s.AlchemyLevel = val
+}
+
+// SetAlchemyXp sets the value of AlchemyXp.
+func (s *RewardDataSchemaCharacter) SetAlchemyXp(val int) {
+	s.AlchemyXp = val
+}
+
+// SetAlchemyMaxXp sets the value of AlchemyMaxXp.
+func (s *RewardDataSchemaCharacter) SetAlchemyMaxXp(val int) {
+	s.AlchemyMaxXp = val
+}
+
+// SetHp sets the value of Hp.
+func (s *RewardDataSchemaCharacter) SetHp(val int) {
+	s.Hp = val
+}
+
+// SetMaxHp sets the value of MaxHp.
+func (s *RewardDataSchemaCharacter) SetMaxHp(val int) {
+	s.MaxHp = val
+}
+
+// SetHaste sets the value of Haste.
+func (s *RewardDataSchemaCharacter) SetHaste(val int) {
+	s.Haste = val
+}
+
+// SetCriticalStrike sets the value of CriticalStrike.
+func (s *RewardDataSchemaCharacter) SetCriticalStrike(val int) {
+	s.CriticalStrike = val
+}
+
+// SetStamina sets the value of Stamina.
+func (s *RewardDataSchemaCharacter) SetStamina(val int) {
+	s.Stamina = val
+}
+
+// SetAttackFire sets the value of AttackFire.
+func (s *RewardDataSchemaCharacter) SetAttackFire(val int) {
+	s.AttackFire = val
+}
+
+// SetAttackEarth sets the value of AttackEarth.
+func (s *RewardDataSchemaCharacter) SetAttackEarth(val int) {
+	s.AttackEarth = val
+}
+
+// SetAttackWater sets the value of AttackWater.
+func (s *RewardDataSchemaCharacter) SetAttackWater(val int) {
+	s.AttackWater = val
+}
+
+// SetAttackAir sets the value of AttackAir.
+func (s *RewardDataSchemaCharacter) SetAttackAir(val int) {
+	s.AttackAir = val
+}
+
+// SetDmgFire sets the value of DmgFire.
+func (s *RewardDataSchemaCharacter) SetDmgFire(val int) {
+	s.DmgFire = val
+}
+
+// SetDmgEarth sets the value of DmgEarth.
+func (s *RewardDataSchemaCharacter) SetDmgEarth(val int) {
+	s.DmgEarth = val
+}
+
+// SetDmgWater sets the value of DmgWater.
+func (s *RewardDataSchemaCharacter) SetDmgWater(val int) {
+	s.DmgWater = val
+}
+
+// SetDmgAir sets the value of DmgAir.
+func (s *RewardDataSchemaCharacter) SetDmgAir(val int) {
+	s.DmgAir = val
+}
+
+// SetResFire sets the value of ResFire.
+func (s *RewardDataSchemaCharacter) SetResFire(val int) {
+	s.ResFire = val
+}
+
+// SetResEarth sets the value of ResEarth.
+func (s *RewardDataSchemaCharacter) SetResEarth(val int) {
+	s.ResEarth = val
+}
+
+// SetResWater sets the value of ResWater.
+func (s *RewardDataSchemaCharacter) SetResWater(val int) {
+	s.ResWater = val
+}
+
+// SetResAir sets the value of ResAir.
+func (s *RewardDataSchemaCharacter) SetResAir(val int) {
+	s.ResAir = val
+}
+
+// SetX sets the value of X.
+func (s *RewardDataSchemaCharacter) SetX(val int) {
+	s.X = val
+}
+
+// SetY sets the value of Y.
+func (s *RewardDataSchemaCharacter) SetY(val int) {
+	s.Y = val
+}
+
+// SetCooldown sets the value of Cooldown.
+func (s *RewardDataSchemaCharacter) SetCooldown(val int) {
+	s.Cooldown = val
+}
+
+// SetCooldownExpiration sets the value of CooldownExpiration.
+func (s *RewardDataSchemaCharacter) SetCooldownExpiration(val OptDateTime) {
+	s.CooldownExpiration = val
+}
+
+// SetWeaponSlot sets the value of WeaponSlot.
+func (s *RewardDataSchemaCharacter) SetWeaponSlot(val string) {
+	s.WeaponSlot = val
+}
+
+// SetShieldSlot sets the value of ShieldSlot.
+func (s *RewardDataSchemaCharacter) SetShieldSlot(val string) {
+	s.ShieldSlot = val
+}
+
+// SetHelmetSlot sets the value of HelmetSlot.
+func (s *RewardDataSchemaCharacter) SetHelmetSlot(val string) {
+	s.HelmetSlot = val
+}
+
+// SetBodyArmorSlot sets the value of BodyArmorSlot.
+func (s *RewardDataSchemaCharacter) SetBodyArmorSlot(val string) {
+	s.BodyArmorSlot = val
+}
+
+// SetLegArmorSlot sets the value of LegArmorSlot.
+func (s *RewardDataSchemaCharacter) SetLegArmorSlot(val string) {
+	s.LegArmorSlot = val
+}
+
+// SetBootsSlot sets the value of BootsSlot.
+func (s *RewardDataSchemaCharacter) SetBootsSlot(val string) {
+	s.BootsSlot = val
+}
+
+// SetRing1Slot sets the value of Ring1Slot.
+func (s *RewardDataSchemaCharacter) SetRing1Slot(val string) {
+	s.Ring1Slot = val
+}
+
+// SetRing2Slot sets the value of Ring2Slot.
+func (s *RewardDataSchemaCharacter) SetRing2Slot(val string) {
+	s.Ring2Slot = val
+}
+
+// SetAmuletSlot sets the value of AmuletSlot.
+func (s *RewardDataSchemaCharacter) SetAmuletSlot(val string) {
+	s.AmuletSlot = val
+}
+
+// SetArtifact1Slot sets the value of Artifact1Slot.
+func (s *RewardDataSchemaCharacter) SetArtifact1Slot(val string) {
+	s.Artifact1Slot = val
+}
+
+// SetArtifact2Slot sets the value of Artifact2Slot.
+func (s *RewardDataSchemaCharacter) SetArtifact2Slot(val string) {
+	s.Artifact2Slot = val
+}
+
+// SetArtifact3Slot sets the value of Artifact3Slot.
+func (s *RewardDataSchemaCharacter) SetArtifact3Slot(val string) {
+	s.Artifact3Slot = val
+}
+
+// SetUtility1Slot sets the value of Utility1Slot.
+func (s *RewardDataSchemaCharacter) SetUtility1Slot(val string) {
+	s.Utility1Slot = val
+}
+
+// SetUtility1SlotQuantity sets the value of Utility1SlotQuantity.
+func (s *RewardDataSchemaCharacter) SetUtility1SlotQuantity(val int) {
+	s.Utility1SlotQuantity = val
+}
+
+// SetUtility2Slot sets the value of Utility2Slot.
+func (s *RewardDataSchemaCharacter) SetUtility2Slot(val string) {
+	s.Utility2Slot = val
+}
+
+// SetUtility2SlotQuantity sets the value of Utility2SlotQuantity.
+func (s *RewardDataSchemaCharacter) SetUtility2SlotQuantity(val int) {
+	s.Utility2SlotQuantity = val
+}
+
+// SetTask sets the value of Task.
+func (s *RewardDataSchemaCharacter) SetTask(val string) {
+	s.Task = val
+}
+
+// SetTaskType sets the value of TaskType.
+func (s *RewardDataSchemaCharacter) SetTaskType(val string) {
+	s.TaskType = val
+}
+
+// SetTaskProgress sets the value of TaskProgress.
+func (s *RewardDataSchemaCharacter) SetTaskProgress(val int) {
+	s.TaskProgress = val
+}
+
+// SetTaskTotal sets the value of TaskTotal.
+func (s *RewardDataSchemaCharacter) SetTaskTotal(val int) {
+	s.TaskTotal = val
+}
+
+// SetInventoryMaxItems sets the value of InventoryMaxItems.
+func (s *RewardDataSchemaCharacter) SetInventoryMaxItems(val int) {
+	s.InventoryMaxItems = val
+}
+
+// SetInventory sets the value of Inventory.
+func (s *RewardDataSchemaCharacter) SetInventory(val []InventorySlot) {
+	s.Inventory = val
+}
+
+type RewardDataSchemaCharacterSkin string
+
+const (
+	RewardDataSchemaCharacterSkinMen1   RewardDataSchemaCharacterSkin = "men1"
+	RewardDataSchemaCharacterSkinMen2   RewardDataSchemaCharacterSkin = "men2"
+	RewardDataSchemaCharacterSkinMen3   RewardDataSchemaCharacterSkin = "men3"
+	RewardDataSchemaCharacterSkinWomen1 RewardDataSchemaCharacterSkin = "women1"
+	RewardDataSchemaCharacterSkinWomen2 RewardDataSchemaCharacterSkin = "women2"
+	RewardDataSchemaCharacterSkinWomen3 RewardDataSchemaCharacterSkin = "women3"
+)
+
+// AllValues returns all RewardDataSchemaCharacterSkin values.
+func (RewardDataSchemaCharacterSkin) AllValues() []RewardDataSchemaCharacterSkin {
+	return []RewardDataSchemaCharacterSkin{
+		RewardDataSchemaCharacterSkinMen1,
+		RewardDataSchemaCharacterSkinMen2,
+		RewardDataSchemaCharacterSkinMen3,
+		RewardDataSchemaCharacterSkinWomen1,
+		RewardDataSchemaCharacterSkinWomen2,
+		RewardDataSchemaCharacterSkinWomen3,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s RewardDataSchemaCharacterSkin) MarshalText() ([]byte, error) {
+	switch s {
+	case RewardDataSchemaCharacterSkinMen1:
+		return []byte(s), nil
+	case RewardDataSchemaCharacterSkinMen2:
+		return []byte(s), nil
+	case RewardDataSchemaCharacterSkinMen3:
+		return []byte(s), nil
+	case RewardDataSchemaCharacterSkinWomen1:
+		return []byte(s), nil
+	case RewardDataSchemaCharacterSkinWomen2:
+		return []byte(s), nil
+	case RewardDataSchemaCharacterSkinWomen3:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *RewardDataSchemaCharacterSkin) UnmarshalText(data []byte) error {
+	switch RewardDataSchemaCharacterSkin(data) {
+	case RewardDataSchemaCharacterSkinMen1:
+		*s = RewardDataSchemaCharacterSkinMen1
+		return nil
+	case RewardDataSchemaCharacterSkinMen2:
+		*s = RewardDataSchemaCharacterSkinMen2
+		return nil
+	case RewardDataSchemaCharacterSkinMen3:
+		*s = RewardDataSchemaCharacterSkinMen3
+		return nil
+	case RewardDataSchemaCharacterSkinWomen1:
+		*s = RewardDataSchemaCharacterSkinWomen1
+		return nil
+	case RewardDataSchemaCharacterSkinWomen2:
+		*s = RewardDataSchemaCharacterSkinWomen2
+		return nil
+	case RewardDataSchemaCharacterSkinWomen3:
+		*s = RewardDataSchemaCharacterSkinWomen3
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+type RewardDataSchemaCooldown struct {
+	// The total seconds of the cooldown.
+	TotalSeconds int `json:"total_seconds"`
+	// The remaining seconds of the cooldown.
+	RemainingSeconds int `json:"remaining_seconds"`
+	// The start of the cooldown.
+	StartedAt time.Time `json:"started_at"`
+	// The expiration of the cooldown.
+	Expiration time.Time `json:"expiration"`
+	// The reason of the cooldown.
+	Reason RewardDataSchemaCooldownReason `json:"reason"`
+}
+
+// GetTotalSeconds returns the value of TotalSeconds.
+func (s *RewardDataSchemaCooldown) GetTotalSeconds() int {
+	return s.TotalSeconds
+}
+
+// GetRemainingSeconds returns the value of RemainingSeconds.
+func (s *RewardDataSchemaCooldown) GetRemainingSeconds() int {
+	return s.RemainingSeconds
+}
+
+// GetStartedAt returns the value of StartedAt.
+func (s *RewardDataSchemaCooldown) GetStartedAt() time.Time {
+	return s.StartedAt
+}
+
+// GetExpiration returns the value of Expiration.
+func (s *RewardDataSchemaCooldown) GetExpiration() time.Time {
+	return s.Expiration
+}
+
+// GetReason returns the value of Reason.
+func (s *RewardDataSchemaCooldown) GetReason() RewardDataSchemaCooldownReason {
+	return s.Reason
+}
+
+// SetTotalSeconds sets the value of TotalSeconds.
+func (s *RewardDataSchemaCooldown) SetTotalSeconds(val int) {
+	s.TotalSeconds = val
+}
+
+// SetRemainingSeconds sets the value of RemainingSeconds.
+func (s *RewardDataSchemaCooldown) SetRemainingSeconds(val int) {
+	s.RemainingSeconds = val
+}
+
+// SetStartedAt sets the value of StartedAt.
+func (s *RewardDataSchemaCooldown) SetStartedAt(val time.Time) {
+	s.StartedAt = val
+}
+
+// SetExpiration sets the value of Expiration.
+func (s *RewardDataSchemaCooldown) SetExpiration(val time.Time) {
+	s.Expiration = val
+}
+
+// SetReason sets the value of Reason.
+func (s *RewardDataSchemaCooldown) SetReason(val RewardDataSchemaCooldownReason) {
+	s.Reason = val
+}
+
+type RewardDataSchemaCooldownReason string
+
+const (
+	RewardDataSchemaCooldownReasonMovement          RewardDataSchemaCooldownReason = "movement"
+	RewardDataSchemaCooldownReasonFight             RewardDataSchemaCooldownReason = "fight"
+	RewardDataSchemaCooldownReasonCrafting          RewardDataSchemaCooldownReason = "crafting"
+	RewardDataSchemaCooldownReasonGathering         RewardDataSchemaCooldownReason = "gathering"
+	RewardDataSchemaCooldownReasonBuyGe             RewardDataSchemaCooldownReason = "buy_ge"
+	RewardDataSchemaCooldownReasonSellGe            RewardDataSchemaCooldownReason = "sell_ge"
+	RewardDataSchemaCooldownReasonCancelGe          RewardDataSchemaCooldownReason = "cancel_ge"
+	RewardDataSchemaCooldownReasonDeleteItem        RewardDataSchemaCooldownReason = "delete_item"
+	RewardDataSchemaCooldownReasonDeposit           RewardDataSchemaCooldownReason = "deposit"
+	RewardDataSchemaCooldownReasonWithdraw          RewardDataSchemaCooldownReason = "withdraw"
+	RewardDataSchemaCooldownReasonDepositGold       RewardDataSchemaCooldownReason = "deposit_gold"
+	RewardDataSchemaCooldownReasonWithdrawGold      RewardDataSchemaCooldownReason = "withdraw_gold"
+	RewardDataSchemaCooldownReasonEquip             RewardDataSchemaCooldownReason = "equip"
+	RewardDataSchemaCooldownReasonUnequip           RewardDataSchemaCooldownReason = "unequip"
+	RewardDataSchemaCooldownReasonTask              RewardDataSchemaCooldownReason = "task"
+	RewardDataSchemaCooldownReasonChristmasExchange RewardDataSchemaCooldownReason = "christmas_exchange"
+	RewardDataSchemaCooldownReasonRecycling         RewardDataSchemaCooldownReason = "recycling"
+	RewardDataSchemaCooldownReasonRest              RewardDataSchemaCooldownReason = "rest"
+	RewardDataSchemaCooldownReasonUse               RewardDataSchemaCooldownReason = "use"
+	RewardDataSchemaCooldownReasonBuyBankExpansion  RewardDataSchemaCooldownReason = "buy_bank_expansion"
+)
+
+// AllValues returns all RewardDataSchemaCooldownReason values.
+func (RewardDataSchemaCooldownReason) AllValues() []RewardDataSchemaCooldownReason {
+	return []RewardDataSchemaCooldownReason{
+		RewardDataSchemaCooldownReasonMovement,
+		RewardDataSchemaCooldownReasonFight,
+		RewardDataSchemaCooldownReasonCrafting,
+		RewardDataSchemaCooldownReasonGathering,
+		RewardDataSchemaCooldownReasonBuyGe,
+		RewardDataSchemaCooldownReasonSellGe,
+		RewardDataSchemaCooldownReasonCancelGe,
+		RewardDataSchemaCooldownReasonDeleteItem,
+		RewardDataSchemaCooldownReasonDeposit,
+		RewardDataSchemaCooldownReasonWithdraw,
+		RewardDataSchemaCooldownReasonDepositGold,
+		RewardDataSchemaCooldownReasonWithdrawGold,
+		RewardDataSchemaCooldownReasonEquip,
+		RewardDataSchemaCooldownReasonUnequip,
+		RewardDataSchemaCooldownReasonTask,
+		RewardDataSchemaCooldownReasonChristmasExchange,
+		RewardDataSchemaCooldownReasonRecycling,
+		RewardDataSchemaCooldownReasonRest,
+		RewardDataSchemaCooldownReasonUse,
+		RewardDataSchemaCooldownReasonBuyBankExpansion,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s RewardDataSchemaCooldownReason) MarshalText() ([]byte, error) {
+	switch s {
+	case RewardDataSchemaCooldownReasonMovement:
+		return []byte(s), nil
+	case RewardDataSchemaCooldownReasonFight:
+		return []byte(s), nil
+	case RewardDataSchemaCooldownReasonCrafting:
+		return []byte(s), nil
+	case RewardDataSchemaCooldownReasonGathering:
+		return []byte(s), nil
+	case RewardDataSchemaCooldownReasonBuyGe:
+		return []byte(s), nil
+	case RewardDataSchemaCooldownReasonSellGe:
+		return []byte(s), nil
+	case RewardDataSchemaCooldownReasonCancelGe:
+		return []byte(s), nil
+	case RewardDataSchemaCooldownReasonDeleteItem:
+		return []byte(s), nil
+	case RewardDataSchemaCooldownReasonDeposit:
+		return []byte(s), nil
+	case RewardDataSchemaCooldownReasonWithdraw:
+		return []byte(s), nil
+	case RewardDataSchemaCooldownReasonDepositGold:
+		return []byte(s), nil
+	case RewardDataSchemaCooldownReasonWithdrawGold:
+		return []byte(s), nil
+	case RewardDataSchemaCooldownReasonEquip:
+		return []byte(s), nil
+	case RewardDataSchemaCooldownReasonUnequip:
+		return []byte(s), nil
+	case RewardDataSchemaCooldownReasonTask:
+		return []byte(s), nil
+	case RewardDataSchemaCooldownReasonChristmasExchange:
+		return []byte(s), nil
+	case RewardDataSchemaCooldownReasonRecycling:
+		return []byte(s), nil
+	case RewardDataSchemaCooldownReasonRest:
+		return []byte(s), nil
+	case RewardDataSchemaCooldownReasonUse:
+		return []byte(s), nil
+	case RewardDataSchemaCooldownReasonBuyBankExpansion:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *RewardDataSchemaCooldownReason) UnmarshalText(data []byte) error {
+	switch RewardDataSchemaCooldownReason(data) {
+	case RewardDataSchemaCooldownReasonMovement:
+		*s = RewardDataSchemaCooldownReasonMovement
+		return nil
+	case RewardDataSchemaCooldownReasonFight:
+		*s = RewardDataSchemaCooldownReasonFight
+		return nil
+	case RewardDataSchemaCooldownReasonCrafting:
+		*s = RewardDataSchemaCooldownReasonCrafting
+		return nil
+	case RewardDataSchemaCooldownReasonGathering:
+		*s = RewardDataSchemaCooldownReasonGathering
+		return nil
+	case RewardDataSchemaCooldownReasonBuyGe:
+		*s = RewardDataSchemaCooldownReasonBuyGe
+		return nil
+	case RewardDataSchemaCooldownReasonSellGe:
+		*s = RewardDataSchemaCooldownReasonSellGe
+		return nil
+	case RewardDataSchemaCooldownReasonCancelGe:
+		*s = RewardDataSchemaCooldownReasonCancelGe
+		return nil
+	case RewardDataSchemaCooldownReasonDeleteItem:
+		*s = RewardDataSchemaCooldownReasonDeleteItem
+		return nil
+	case RewardDataSchemaCooldownReasonDeposit:
+		*s = RewardDataSchemaCooldownReasonDeposit
+		return nil
+	case RewardDataSchemaCooldownReasonWithdraw:
+		*s = RewardDataSchemaCooldownReasonWithdraw
+		return nil
+	case RewardDataSchemaCooldownReasonDepositGold:
+		*s = RewardDataSchemaCooldownReasonDepositGold
+		return nil
+	case RewardDataSchemaCooldownReasonWithdrawGold:
+		*s = RewardDataSchemaCooldownReasonWithdrawGold
+		return nil
+	case RewardDataSchemaCooldownReasonEquip:
+		*s = RewardDataSchemaCooldownReasonEquip
+		return nil
+	case RewardDataSchemaCooldownReasonUnequip:
+		*s = RewardDataSchemaCooldownReasonUnequip
+		return nil
+	case RewardDataSchemaCooldownReasonTask:
+		*s = RewardDataSchemaCooldownReasonTask
+		return nil
+	case RewardDataSchemaCooldownReasonChristmasExchange:
+		*s = RewardDataSchemaCooldownReasonChristmasExchange
+		return nil
+	case RewardDataSchemaCooldownReasonRecycling:
+		*s = RewardDataSchemaCooldownReasonRecycling
+		return nil
+	case RewardDataSchemaCooldownReasonRest:
+		*s = RewardDataSchemaCooldownReasonRest
+		return nil
+	case RewardDataSchemaCooldownReasonUse:
+		*s = RewardDataSchemaCooldownReasonUse
+		return nil
+	case RewardDataSchemaCooldownReasonBuyBankExpansion:
+		*s = RewardDataSchemaCooldownReasonBuyBankExpansion
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
+type RewardDataSchemaRewards struct {
+	// Items rewards.
+	Items []SimpleItemSchema `json:"items"`
+	// Gold rewards.
+	Gold int `json:"gold"`
+}
+
+// GetItems returns the value of Items.
+func (s *RewardDataSchemaRewards) GetItems() []SimpleItemSchema {
+	return s.Items
+}
+
+// GetGold returns the value of Gold.
+func (s *RewardDataSchemaRewards) GetGold() int {
+	return s.Gold
+}
+
+// SetItems sets the value of Items.
+func (s *RewardDataSchemaRewards) SetItems(val []SimpleItemSchema) {
+	s.Items = val
+}
+
+// SetGold sets the value of Gold.
+func (s *RewardDataSchemaRewards) SetGold(val int) {
+	s.Gold = val
+}
+
+// Ref: #/components/schemas/RewardResponseSchema
+type RewardResponseSchema struct {
+	Data DropRateSchema `json:"data"`
+}
+
+// GetData returns the value of Data.
+func (s *RewardResponseSchema) GetData() DropRateSchema {
+	return s.Data
+}
+
+// SetData sets the value of Data.
+func (s *RewardResponseSchema) SetData(val DropRateSchema) {
+	s.Data = val
+}
+
+func (*RewardResponseSchema) getTasksRewardTasksRewardsCodeGetRes() {}
 
 // Ref: #/components/schemas/SimpleItemSchema
 type SimpleItemSchema struct {
@@ -29627,25 +31471,26 @@ func (s *SkillDataSchemaCooldown) SetReason(val SkillDataSchemaCooldownReason) {
 type SkillDataSchemaCooldownReason string
 
 const (
-	SkillDataSchemaCooldownReasonMovement         SkillDataSchemaCooldownReason = "movement"
-	SkillDataSchemaCooldownReasonFight            SkillDataSchemaCooldownReason = "fight"
-	SkillDataSchemaCooldownReasonCrafting         SkillDataSchemaCooldownReason = "crafting"
-	SkillDataSchemaCooldownReasonGathering        SkillDataSchemaCooldownReason = "gathering"
-	SkillDataSchemaCooldownReasonBuyGe            SkillDataSchemaCooldownReason = "buy_ge"
-	SkillDataSchemaCooldownReasonSellGe           SkillDataSchemaCooldownReason = "sell_ge"
-	SkillDataSchemaCooldownReasonCancelGe         SkillDataSchemaCooldownReason = "cancel_ge"
-	SkillDataSchemaCooldownReasonDeleteItem       SkillDataSchemaCooldownReason = "delete_item"
-	SkillDataSchemaCooldownReasonDeposit          SkillDataSchemaCooldownReason = "deposit"
-	SkillDataSchemaCooldownReasonWithdraw         SkillDataSchemaCooldownReason = "withdraw"
-	SkillDataSchemaCooldownReasonDepositGold      SkillDataSchemaCooldownReason = "deposit_gold"
-	SkillDataSchemaCooldownReasonWithdrawGold     SkillDataSchemaCooldownReason = "withdraw_gold"
-	SkillDataSchemaCooldownReasonEquip            SkillDataSchemaCooldownReason = "equip"
-	SkillDataSchemaCooldownReasonUnequip          SkillDataSchemaCooldownReason = "unequip"
-	SkillDataSchemaCooldownReasonTask             SkillDataSchemaCooldownReason = "task"
-	SkillDataSchemaCooldownReasonRecycling        SkillDataSchemaCooldownReason = "recycling"
-	SkillDataSchemaCooldownReasonRest             SkillDataSchemaCooldownReason = "rest"
-	SkillDataSchemaCooldownReasonUse              SkillDataSchemaCooldownReason = "use"
-	SkillDataSchemaCooldownReasonBuyBankExpansion SkillDataSchemaCooldownReason = "buy_bank_expansion"
+	SkillDataSchemaCooldownReasonMovement          SkillDataSchemaCooldownReason = "movement"
+	SkillDataSchemaCooldownReasonFight             SkillDataSchemaCooldownReason = "fight"
+	SkillDataSchemaCooldownReasonCrafting          SkillDataSchemaCooldownReason = "crafting"
+	SkillDataSchemaCooldownReasonGathering         SkillDataSchemaCooldownReason = "gathering"
+	SkillDataSchemaCooldownReasonBuyGe             SkillDataSchemaCooldownReason = "buy_ge"
+	SkillDataSchemaCooldownReasonSellGe            SkillDataSchemaCooldownReason = "sell_ge"
+	SkillDataSchemaCooldownReasonCancelGe          SkillDataSchemaCooldownReason = "cancel_ge"
+	SkillDataSchemaCooldownReasonDeleteItem        SkillDataSchemaCooldownReason = "delete_item"
+	SkillDataSchemaCooldownReasonDeposit           SkillDataSchemaCooldownReason = "deposit"
+	SkillDataSchemaCooldownReasonWithdraw          SkillDataSchemaCooldownReason = "withdraw"
+	SkillDataSchemaCooldownReasonDepositGold       SkillDataSchemaCooldownReason = "deposit_gold"
+	SkillDataSchemaCooldownReasonWithdrawGold      SkillDataSchemaCooldownReason = "withdraw_gold"
+	SkillDataSchemaCooldownReasonEquip             SkillDataSchemaCooldownReason = "equip"
+	SkillDataSchemaCooldownReasonUnequip           SkillDataSchemaCooldownReason = "unequip"
+	SkillDataSchemaCooldownReasonTask              SkillDataSchemaCooldownReason = "task"
+	SkillDataSchemaCooldownReasonChristmasExchange SkillDataSchemaCooldownReason = "christmas_exchange"
+	SkillDataSchemaCooldownReasonRecycling         SkillDataSchemaCooldownReason = "recycling"
+	SkillDataSchemaCooldownReasonRest              SkillDataSchemaCooldownReason = "rest"
+	SkillDataSchemaCooldownReasonUse               SkillDataSchemaCooldownReason = "use"
+	SkillDataSchemaCooldownReasonBuyBankExpansion  SkillDataSchemaCooldownReason = "buy_bank_expansion"
 )
 
 // AllValues returns all SkillDataSchemaCooldownReason values.
@@ -29666,6 +31511,7 @@ func (SkillDataSchemaCooldownReason) AllValues() []SkillDataSchemaCooldownReason
 		SkillDataSchemaCooldownReasonEquip,
 		SkillDataSchemaCooldownReasonUnequip,
 		SkillDataSchemaCooldownReasonTask,
+		SkillDataSchemaCooldownReasonChristmasExchange,
 		SkillDataSchemaCooldownReasonRecycling,
 		SkillDataSchemaCooldownReasonRest,
 		SkillDataSchemaCooldownReasonUse,
@@ -29705,6 +31551,8 @@ func (s SkillDataSchemaCooldownReason) MarshalText() ([]byte, error) {
 	case SkillDataSchemaCooldownReasonUnequip:
 		return []byte(s), nil
 	case SkillDataSchemaCooldownReasonTask:
+		return []byte(s), nil
+	case SkillDataSchemaCooldownReasonChristmasExchange:
 		return []byte(s), nil
 	case SkillDataSchemaCooldownReasonRecycling:
 		return []byte(s), nil
@@ -29766,6 +31614,9 @@ func (s *SkillDataSchemaCooldownReason) UnmarshalText(data []byte) error {
 		return nil
 	case SkillDataSchemaCooldownReasonTask:
 		*s = SkillDataSchemaCooldownReasonTask
+		return nil
+	case SkillDataSchemaCooldownReasonChristmasExchange:
+		*s = SkillDataSchemaCooldownReasonChristmasExchange
 		return nil
 	case SkillDataSchemaCooldownReasonRecycling:
 		*s = SkillDataSchemaCooldownReasonRecycling
@@ -31028,25 +32879,26 @@ func (s *TaskCancelledSchemaCooldown) SetReason(val TaskCancelledSchemaCooldownR
 type TaskCancelledSchemaCooldownReason string
 
 const (
-	TaskCancelledSchemaCooldownReasonMovement         TaskCancelledSchemaCooldownReason = "movement"
-	TaskCancelledSchemaCooldownReasonFight            TaskCancelledSchemaCooldownReason = "fight"
-	TaskCancelledSchemaCooldownReasonCrafting         TaskCancelledSchemaCooldownReason = "crafting"
-	TaskCancelledSchemaCooldownReasonGathering        TaskCancelledSchemaCooldownReason = "gathering"
-	TaskCancelledSchemaCooldownReasonBuyGe            TaskCancelledSchemaCooldownReason = "buy_ge"
-	TaskCancelledSchemaCooldownReasonSellGe           TaskCancelledSchemaCooldownReason = "sell_ge"
-	TaskCancelledSchemaCooldownReasonCancelGe         TaskCancelledSchemaCooldownReason = "cancel_ge"
-	TaskCancelledSchemaCooldownReasonDeleteItem       TaskCancelledSchemaCooldownReason = "delete_item"
-	TaskCancelledSchemaCooldownReasonDeposit          TaskCancelledSchemaCooldownReason = "deposit"
-	TaskCancelledSchemaCooldownReasonWithdraw         TaskCancelledSchemaCooldownReason = "withdraw"
-	TaskCancelledSchemaCooldownReasonDepositGold      TaskCancelledSchemaCooldownReason = "deposit_gold"
-	TaskCancelledSchemaCooldownReasonWithdrawGold     TaskCancelledSchemaCooldownReason = "withdraw_gold"
-	TaskCancelledSchemaCooldownReasonEquip            TaskCancelledSchemaCooldownReason = "equip"
-	TaskCancelledSchemaCooldownReasonUnequip          TaskCancelledSchemaCooldownReason = "unequip"
-	TaskCancelledSchemaCooldownReasonTask             TaskCancelledSchemaCooldownReason = "task"
-	TaskCancelledSchemaCooldownReasonRecycling        TaskCancelledSchemaCooldownReason = "recycling"
-	TaskCancelledSchemaCooldownReasonRest             TaskCancelledSchemaCooldownReason = "rest"
-	TaskCancelledSchemaCooldownReasonUse              TaskCancelledSchemaCooldownReason = "use"
-	TaskCancelledSchemaCooldownReasonBuyBankExpansion TaskCancelledSchemaCooldownReason = "buy_bank_expansion"
+	TaskCancelledSchemaCooldownReasonMovement          TaskCancelledSchemaCooldownReason = "movement"
+	TaskCancelledSchemaCooldownReasonFight             TaskCancelledSchemaCooldownReason = "fight"
+	TaskCancelledSchemaCooldownReasonCrafting          TaskCancelledSchemaCooldownReason = "crafting"
+	TaskCancelledSchemaCooldownReasonGathering         TaskCancelledSchemaCooldownReason = "gathering"
+	TaskCancelledSchemaCooldownReasonBuyGe             TaskCancelledSchemaCooldownReason = "buy_ge"
+	TaskCancelledSchemaCooldownReasonSellGe            TaskCancelledSchemaCooldownReason = "sell_ge"
+	TaskCancelledSchemaCooldownReasonCancelGe          TaskCancelledSchemaCooldownReason = "cancel_ge"
+	TaskCancelledSchemaCooldownReasonDeleteItem        TaskCancelledSchemaCooldownReason = "delete_item"
+	TaskCancelledSchemaCooldownReasonDeposit           TaskCancelledSchemaCooldownReason = "deposit"
+	TaskCancelledSchemaCooldownReasonWithdraw          TaskCancelledSchemaCooldownReason = "withdraw"
+	TaskCancelledSchemaCooldownReasonDepositGold       TaskCancelledSchemaCooldownReason = "deposit_gold"
+	TaskCancelledSchemaCooldownReasonWithdrawGold      TaskCancelledSchemaCooldownReason = "withdraw_gold"
+	TaskCancelledSchemaCooldownReasonEquip             TaskCancelledSchemaCooldownReason = "equip"
+	TaskCancelledSchemaCooldownReasonUnequip           TaskCancelledSchemaCooldownReason = "unequip"
+	TaskCancelledSchemaCooldownReasonTask              TaskCancelledSchemaCooldownReason = "task"
+	TaskCancelledSchemaCooldownReasonChristmasExchange TaskCancelledSchemaCooldownReason = "christmas_exchange"
+	TaskCancelledSchemaCooldownReasonRecycling         TaskCancelledSchemaCooldownReason = "recycling"
+	TaskCancelledSchemaCooldownReasonRest              TaskCancelledSchemaCooldownReason = "rest"
+	TaskCancelledSchemaCooldownReasonUse               TaskCancelledSchemaCooldownReason = "use"
+	TaskCancelledSchemaCooldownReasonBuyBankExpansion  TaskCancelledSchemaCooldownReason = "buy_bank_expansion"
 )
 
 // AllValues returns all TaskCancelledSchemaCooldownReason values.
@@ -31067,6 +32919,7 @@ func (TaskCancelledSchemaCooldownReason) AllValues() []TaskCancelledSchemaCooldo
 		TaskCancelledSchemaCooldownReasonEquip,
 		TaskCancelledSchemaCooldownReasonUnequip,
 		TaskCancelledSchemaCooldownReasonTask,
+		TaskCancelledSchemaCooldownReasonChristmasExchange,
 		TaskCancelledSchemaCooldownReasonRecycling,
 		TaskCancelledSchemaCooldownReasonRest,
 		TaskCancelledSchemaCooldownReasonUse,
@@ -31106,6 +32959,8 @@ func (s TaskCancelledSchemaCooldownReason) MarshalText() ([]byte, error) {
 	case TaskCancelledSchemaCooldownReasonUnequip:
 		return []byte(s), nil
 	case TaskCancelledSchemaCooldownReasonTask:
+		return []byte(s), nil
+	case TaskCancelledSchemaCooldownReasonChristmasExchange:
 		return []byte(s), nil
 	case TaskCancelledSchemaCooldownReasonRecycling:
 		return []byte(s), nil
@@ -31167,6 +33022,9 @@ func (s *TaskCancelledSchemaCooldownReason) UnmarshalText(data []byte) error {
 		return nil
 	case TaskCancelledSchemaCooldownReasonTask:
 		*s = TaskCancelledSchemaCooldownReasonTask
+		return nil
+	case TaskCancelledSchemaCooldownReasonChristmasExchange:
+		*s = TaskCancelledSchemaCooldownReasonChristmasExchange
 		return nil
 	case TaskCancelledSchemaCooldownReasonRecycling:
 		*s = TaskCancelledSchemaCooldownReasonRecycling
@@ -32264,25 +34122,26 @@ func (s *TaskDataSchemaCooldown) SetReason(val TaskDataSchemaCooldownReason) {
 type TaskDataSchemaCooldownReason string
 
 const (
-	TaskDataSchemaCooldownReasonMovement         TaskDataSchemaCooldownReason = "movement"
-	TaskDataSchemaCooldownReasonFight            TaskDataSchemaCooldownReason = "fight"
-	TaskDataSchemaCooldownReasonCrafting         TaskDataSchemaCooldownReason = "crafting"
-	TaskDataSchemaCooldownReasonGathering        TaskDataSchemaCooldownReason = "gathering"
-	TaskDataSchemaCooldownReasonBuyGe            TaskDataSchemaCooldownReason = "buy_ge"
-	TaskDataSchemaCooldownReasonSellGe           TaskDataSchemaCooldownReason = "sell_ge"
-	TaskDataSchemaCooldownReasonCancelGe         TaskDataSchemaCooldownReason = "cancel_ge"
-	TaskDataSchemaCooldownReasonDeleteItem       TaskDataSchemaCooldownReason = "delete_item"
-	TaskDataSchemaCooldownReasonDeposit          TaskDataSchemaCooldownReason = "deposit"
-	TaskDataSchemaCooldownReasonWithdraw         TaskDataSchemaCooldownReason = "withdraw"
-	TaskDataSchemaCooldownReasonDepositGold      TaskDataSchemaCooldownReason = "deposit_gold"
-	TaskDataSchemaCooldownReasonWithdrawGold     TaskDataSchemaCooldownReason = "withdraw_gold"
-	TaskDataSchemaCooldownReasonEquip            TaskDataSchemaCooldownReason = "equip"
-	TaskDataSchemaCooldownReasonUnequip          TaskDataSchemaCooldownReason = "unequip"
-	TaskDataSchemaCooldownReasonTask             TaskDataSchemaCooldownReason = "task"
-	TaskDataSchemaCooldownReasonRecycling        TaskDataSchemaCooldownReason = "recycling"
-	TaskDataSchemaCooldownReasonRest             TaskDataSchemaCooldownReason = "rest"
-	TaskDataSchemaCooldownReasonUse              TaskDataSchemaCooldownReason = "use"
-	TaskDataSchemaCooldownReasonBuyBankExpansion TaskDataSchemaCooldownReason = "buy_bank_expansion"
+	TaskDataSchemaCooldownReasonMovement          TaskDataSchemaCooldownReason = "movement"
+	TaskDataSchemaCooldownReasonFight             TaskDataSchemaCooldownReason = "fight"
+	TaskDataSchemaCooldownReasonCrafting          TaskDataSchemaCooldownReason = "crafting"
+	TaskDataSchemaCooldownReasonGathering         TaskDataSchemaCooldownReason = "gathering"
+	TaskDataSchemaCooldownReasonBuyGe             TaskDataSchemaCooldownReason = "buy_ge"
+	TaskDataSchemaCooldownReasonSellGe            TaskDataSchemaCooldownReason = "sell_ge"
+	TaskDataSchemaCooldownReasonCancelGe          TaskDataSchemaCooldownReason = "cancel_ge"
+	TaskDataSchemaCooldownReasonDeleteItem        TaskDataSchemaCooldownReason = "delete_item"
+	TaskDataSchemaCooldownReasonDeposit           TaskDataSchemaCooldownReason = "deposit"
+	TaskDataSchemaCooldownReasonWithdraw          TaskDataSchemaCooldownReason = "withdraw"
+	TaskDataSchemaCooldownReasonDepositGold       TaskDataSchemaCooldownReason = "deposit_gold"
+	TaskDataSchemaCooldownReasonWithdrawGold      TaskDataSchemaCooldownReason = "withdraw_gold"
+	TaskDataSchemaCooldownReasonEquip             TaskDataSchemaCooldownReason = "equip"
+	TaskDataSchemaCooldownReasonUnequip           TaskDataSchemaCooldownReason = "unequip"
+	TaskDataSchemaCooldownReasonTask              TaskDataSchemaCooldownReason = "task"
+	TaskDataSchemaCooldownReasonChristmasExchange TaskDataSchemaCooldownReason = "christmas_exchange"
+	TaskDataSchemaCooldownReasonRecycling         TaskDataSchemaCooldownReason = "recycling"
+	TaskDataSchemaCooldownReasonRest              TaskDataSchemaCooldownReason = "rest"
+	TaskDataSchemaCooldownReasonUse               TaskDataSchemaCooldownReason = "use"
+	TaskDataSchemaCooldownReasonBuyBankExpansion  TaskDataSchemaCooldownReason = "buy_bank_expansion"
 )
 
 // AllValues returns all TaskDataSchemaCooldownReason values.
@@ -32303,6 +34162,7 @@ func (TaskDataSchemaCooldownReason) AllValues() []TaskDataSchemaCooldownReason {
 		TaskDataSchemaCooldownReasonEquip,
 		TaskDataSchemaCooldownReasonUnequip,
 		TaskDataSchemaCooldownReasonTask,
+		TaskDataSchemaCooldownReasonChristmasExchange,
 		TaskDataSchemaCooldownReasonRecycling,
 		TaskDataSchemaCooldownReasonRest,
 		TaskDataSchemaCooldownReasonUse,
@@ -32342,6 +34202,8 @@ func (s TaskDataSchemaCooldownReason) MarshalText() ([]byte, error) {
 	case TaskDataSchemaCooldownReasonUnequip:
 		return []byte(s), nil
 	case TaskDataSchemaCooldownReasonTask:
+		return []byte(s), nil
+	case TaskDataSchemaCooldownReasonChristmasExchange:
 		return []byte(s), nil
 	case TaskDataSchemaCooldownReasonRecycling:
 		return []byte(s), nil
@@ -32403,6 +34265,9 @@ func (s *TaskDataSchemaCooldownReason) UnmarshalText(data []byte) error {
 		return nil
 	case TaskDataSchemaCooldownReasonTask:
 		*s = TaskDataSchemaCooldownReasonTask
+		return nil
+	case TaskDataSchemaCooldownReasonChristmasExchange:
+		*s = TaskDataSchemaCooldownReasonChristmasExchange
 		return nil
 	case TaskDataSchemaCooldownReasonRecycling:
 		*s = TaskDataSchemaCooldownReasonRecycling
@@ -33874,25 +35739,26 @@ func (s *TaskTradeDataSchemaCooldown) SetReason(val TaskTradeDataSchemaCooldownR
 type TaskTradeDataSchemaCooldownReason string
 
 const (
-	TaskTradeDataSchemaCooldownReasonMovement         TaskTradeDataSchemaCooldownReason = "movement"
-	TaskTradeDataSchemaCooldownReasonFight            TaskTradeDataSchemaCooldownReason = "fight"
-	TaskTradeDataSchemaCooldownReasonCrafting         TaskTradeDataSchemaCooldownReason = "crafting"
-	TaskTradeDataSchemaCooldownReasonGathering        TaskTradeDataSchemaCooldownReason = "gathering"
-	TaskTradeDataSchemaCooldownReasonBuyGe            TaskTradeDataSchemaCooldownReason = "buy_ge"
-	TaskTradeDataSchemaCooldownReasonSellGe           TaskTradeDataSchemaCooldownReason = "sell_ge"
-	TaskTradeDataSchemaCooldownReasonCancelGe         TaskTradeDataSchemaCooldownReason = "cancel_ge"
-	TaskTradeDataSchemaCooldownReasonDeleteItem       TaskTradeDataSchemaCooldownReason = "delete_item"
-	TaskTradeDataSchemaCooldownReasonDeposit          TaskTradeDataSchemaCooldownReason = "deposit"
-	TaskTradeDataSchemaCooldownReasonWithdraw         TaskTradeDataSchemaCooldownReason = "withdraw"
-	TaskTradeDataSchemaCooldownReasonDepositGold      TaskTradeDataSchemaCooldownReason = "deposit_gold"
-	TaskTradeDataSchemaCooldownReasonWithdrawGold     TaskTradeDataSchemaCooldownReason = "withdraw_gold"
-	TaskTradeDataSchemaCooldownReasonEquip            TaskTradeDataSchemaCooldownReason = "equip"
-	TaskTradeDataSchemaCooldownReasonUnequip          TaskTradeDataSchemaCooldownReason = "unequip"
-	TaskTradeDataSchemaCooldownReasonTask             TaskTradeDataSchemaCooldownReason = "task"
-	TaskTradeDataSchemaCooldownReasonRecycling        TaskTradeDataSchemaCooldownReason = "recycling"
-	TaskTradeDataSchemaCooldownReasonRest             TaskTradeDataSchemaCooldownReason = "rest"
-	TaskTradeDataSchemaCooldownReasonUse              TaskTradeDataSchemaCooldownReason = "use"
-	TaskTradeDataSchemaCooldownReasonBuyBankExpansion TaskTradeDataSchemaCooldownReason = "buy_bank_expansion"
+	TaskTradeDataSchemaCooldownReasonMovement          TaskTradeDataSchemaCooldownReason = "movement"
+	TaskTradeDataSchemaCooldownReasonFight             TaskTradeDataSchemaCooldownReason = "fight"
+	TaskTradeDataSchemaCooldownReasonCrafting          TaskTradeDataSchemaCooldownReason = "crafting"
+	TaskTradeDataSchemaCooldownReasonGathering         TaskTradeDataSchemaCooldownReason = "gathering"
+	TaskTradeDataSchemaCooldownReasonBuyGe             TaskTradeDataSchemaCooldownReason = "buy_ge"
+	TaskTradeDataSchemaCooldownReasonSellGe            TaskTradeDataSchemaCooldownReason = "sell_ge"
+	TaskTradeDataSchemaCooldownReasonCancelGe          TaskTradeDataSchemaCooldownReason = "cancel_ge"
+	TaskTradeDataSchemaCooldownReasonDeleteItem        TaskTradeDataSchemaCooldownReason = "delete_item"
+	TaskTradeDataSchemaCooldownReasonDeposit           TaskTradeDataSchemaCooldownReason = "deposit"
+	TaskTradeDataSchemaCooldownReasonWithdraw          TaskTradeDataSchemaCooldownReason = "withdraw"
+	TaskTradeDataSchemaCooldownReasonDepositGold       TaskTradeDataSchemaCooldownReason = "deposit_gold"
+	TaskTradeDataSchemaCooldownReasonWithdrawGold      TaskTradeDataSchemaCooldownReason = "withdraw_gold"
+	TaskTradeDataSchemaCooldownReasonEquip             TaskTradeDataSchemaCooldownReason = "equip"
+	TaskTradeDataSchemaCooldownReasonUnequip           TaskTradeDataSchemaCooldownReason = "unequip"
+	TaskTradeDataSchemaCooldownReasonTask              TaskTradeDataSchemaCooldownReason = "task"
+	TaskTradeDataSchemaCooldownReasonChristmasExchange TaskTradeDataSchemaCooldownReason = "christmas_exchange"
+	TaskTradeDataSchemaCooldownReasonRecycling         TaskTradeDataSchemaCooldownReason = "recycling"
+	TaskTradeDataSchemaCooldownReasonRest              TaskTradeDataSchemaCooldownReason = "rest"
+	TaskTradeDataSchemaCooldownReasonUse               TaskTradeDataSchemaCooldownReason = "use"
+	TaskTradeDataSchemaCooldownReasonBuyBankExpansion  TaskTradeDataSchemaCooldownReason = "buy_bank_expansion"
 )
 
 // AllValues returns all TaskTradeDataSchemaCooldownReason values.
@@ -33913,6 +35779,7 @@ func (TaskTradeDataSchemaCooldownReason) AllValues() []TaskTradeDataSchemaCooldo
 		TaskTradeDataSchemaCooldownReasonEquip,
 		TaskTradeDataSchemaCooldownReasonUnequip,
 		TaskTradeDataSchemaCooldownReasonTask,
+		TaskTradeDataSchemaCooldownReasonChristmasExchange,
 		TaskTradeDataSchemaCooldownReasonRecycling,
 		TaskTradeDataSchemaCooldownReasonRest,
 		TaskTradeDataSchemaCooldownReasonUse,
@@ -33952,6 +35819,8 @@ func (s TaskTradeDataSchemaCooldownReason) MarshalText() ([]byte, error) {
 	case TaskTradeDataSchemaCooldownReasonUnequip:
 		return []byte(s), nil
 	case TaskTradeDataSchemaCooldownReasonTask:
+		return []byte(s), nil
+	case TaskTradeDataSchemaCooldownReasonChristmasExchange:
 		return []byte(s), nil
 	case TaskTradeDataSchemaCooldownReasonRecycling:
 		return []byte(s), nil
@@ -34014,6 +35883,9 @@ func (s *TaskTradeDataSchemaCooldownReason) UnmarshalText(data []byte) error {
 	case TaskTradeDataSchemaCooldownReasonTask:
 		*s = TaskTradeDataSchemaCooldownReasonTask
 		return nil
+	case TaskTradeDataSchemaCooldownReasonChristmasExchange:
+		*s = TaskTradeDataSchemaCooldownReasonChristmasExchange
+		return nil
 	case TaskTradeDataSchemaCooldownReasonRecycling:
 		*s = TaskTradeDataSchemaCooldownReasonRecycling
 		return nil
@@ -34074,1304 +35946,6 @@ func (s *TaskTradeResponseSchema) SetData(val TaskTradeDataSchema) {
 }
 
 func (*TaskTradeResponseSchema) actionTaskTradeMyNameActionTaskTradePostRes() {}
-
-// Ref: #/components/schemas/TasksRewardDataResponseSchema
-type TasksRewardDataResponseSchema struct {
-	Data TasksRewardDataSchema `json:"data"`
-}
-
-// GetData returns the value of Data.
-func (s *TasksRewardDataResponseSchema) GetData() TasksRewardDataSchema {
-	return s.Data
-}
-
-// SetData sets the value of Data.
-func (s *TasksRewardDataResponseSchema) SetData(val TasksRewardDataSchema) {
-	s.Data = val
-}
-
-func (*TasksRewardDataResponseSchema) actionCompleteTaskMyNameActionTaskCompletePostRes() {}
-func (*TasksRewardDataResponseSchema) actionTaskExchangeMyNameActionTaskExchangePostRes() {}
-
-// Ref: #/components/schemas/TasksRewardDataSchema
-type TasksRewardDataSchema struct {
-	// Cooldown details.
-	Cooldown TasksRewardDataSchemaCooldown `json:"cooldown"`
-	// Reward details.
-	Rewards TasksRewardDataSchemaRewards `json:"rewards"`
-	// Player details.
-	Character TasksRewardDataSchemaCharacter `json:"character"`
-}
-
-// GetCooldown returns the value of Cooldown.
-func (s *TasksRewardDataSchema) GetCooldown() TasksRewardDataSchemaCooldown {
-	return s.Cooldown
-}
-
-// GetRewards returns the value of Rewards.
-func (s *TasksRewardDataSchema) GetRewards() TasksRewardDataSchemaRewards {
-	return s.Rewards
-}
-
-// GetCharacter returns the value of Character.
-func (s *TasksRewardDataSchema) GetCharacter() TasksRewardDataSchemaCharacter {
-	return s.Character
-}
-
-// SetCooldown sets the value of Cooldown.
-func (s *TasksRewardDataSchema) SetCooldown(val TasksRewardDataSchemaCooldown) {
-	s.Cooldown = val
-}
-
-// SetRewards sets the value of Rewards.
-func (s *TasksRewardDataSchema) SetRewards(val TasksRewardDataSchemaRewards) {
-	s.Rewards = val
-}
-
-// SetCharacter sets the value of Character.
-func (s *TasksRewardDataSchema) SetCharacter(val TasksRewardDataSchemaCharacter) {
-	s.Character = val
-}
-
-type TasksRewardDataSchemaCharacter struct {
-	// Name of the character.
-	Name string `json:"name"`
-	// Account name.
-	Account string `json:"account"`
-	// Character skin code.
-	Skin TasksRewardDataSchemaCharacterSkin `json:"skin"`
-	// Combat level.
-	Level int `json:"level"`
-	// The current xp level of the combat level.
-	Xp int `json:"xp"`
-	// XP required to level up the character.
-	MaxXp int `json:"max_xp"`
-	// The numbers of gold on this character.
-	Gold int `json:"gold"`
-	// *Not available, on the roadmap. Character movement speed.
-	Speed int `json:"speed"`
-	// Mining level.
-	MiningLevel int `json:"mining_level"`
-	// The current xp level of the Mining skill.
-	MiningXp int `json:"mining_xp"`
-	// Mining XP required to level up the skill.
-	MiningMaxXp int `json:"mining_max_xp"`
-	// Woodcutting level.
-	WoodcuttingLevel int `json:"woodcutting_level"`
-	// The current xp level of the Woodcutting skill.
-	WoodcuttingXp int `json:"woodcutting_xp"`
-	// Woodcutting XP required to level up the skill.
-	WoodcuttingMaxXp int `json:"woodcutting_max_xp"`
-	// Fishing level.
-	FishingLevel int `json:"fishing_level"`
-	// The current xp level of the Fishing skill.
-	FishingXp int `json:"fishing_xp"`
-	// Fishing XP required to level up the skill.
-	FishingMaxXp int `json:"fishing_max_xp"`
-	// Weaponcrafting level.
-	WeaponcraftingLevel int `json:"weaponcrafting_level"`
-	// The current xp level of the Weaponcrafting skill.
-	WeaponcraftingXp int `json:"weaponcrafting_xp"`
-	// Weaponcrafting XP required to level up the skill.
-	WeaponcraftingMaxXp int `json:"weaponcrafting_max_xp"`
-	// Gearcrafting level.
-	GearcraftingLevel int `json:"gearcrafting_level"`
-	// The current xp level of the Gearcrafting skill.
-	GearcraftingXp int `json:"gearcrafting_xp"`
-	// Gearcrafting XP required to level up the skill.
-	GearcraftingMaxXp int `json:"gearcrafting_max_xp"`
-	// Jewelrycrafting level.
-	JewelrycraftingLevel int `json:"jewelrycrafting_level"`
-	// The current xp level of the Jewelrycrafting skill.
-	JewelrycraftingXp int `json:"jewelrycrafting_xp"`
-	// Jewelrycrafting XP required to level up the skill.
-	JewelrycraftingMaxXp int `json:"jewelrycrafting_max_xp"`
-	// The current xp level of the Cooking skill.
-	CookingLevel int `json:"cooking_level"`
-	// Cooking XP.
-	CookingXp int `json:"cooking_xp"`
-	// Cooking XP required to level up the skill.
-	CookingMaxXp int `json:"cooking_max_xp"`
-	// Alchemy level.
-	AlchemyLevel int `json:"alchemy_level"`
-	// Alchemy XP.
-	AlchemyXp int `json:"alchemy_xp"`
-	// Alchemy XP required to level up the skill.
-	AlchemyMaxXp int `json:"alchemy_max_xp"`
-	// Character actual HP.
-	Hp int `json:"hp"`
-	// Character max HP.
-	MaxHp int `json:"max_hp"`
-	// *Character Haste. Increase speed attack (reduce fight cooldown).
-	Haste int `json:"haste"`
-	// *Not available, on the roadmap. Character Critical   Strike. Critical strikes increase the
-	// attack's damage.
-	CriticalStrike int `json:"critical_strike"`
-	// *Not available, on the roadmap. Regenerates life at the start of each turn.
-	Stamina int `json:"stamina"`
-	// Fire attack.
-	AttackFire int `json:"attack_fire"`
-	// Earth attack.
-	AttackEarth int `json:"attack_earth"`
-	// Water attack.
-	AttackWater int `json:"attack_water"`
-	// Air attack.
-	AttackAir int `json:"attack_air"`
-	// % Fire damage.
-	DmgFire int `json:"dmg_fire"`
-	// % Earth damage.
-	DmgEarth int `json:"dmg_earth"`
-	// % Water damage.
-	DmgWater int `json:"dmg_water"`
-	// % Air damage.
-	DmgAir int `json:"dmg_air"`
-	// % Fire resistance.
-	ResFire int `json:"res_fire"`
-	// % Earth resistance.
-	ResEarth int `json:"res_earth"`
-	// % Water resistance.
-	ResWater int `json:"res_water"`
-	// % Air resistance.
-	ResAir int `json:"res_air"`
-	// Character x coordinate.
-	X int `json:"x"`
-	// Character y coordinate.
-	Y int `json:"y"`
-	// Cooldown in seconds.
-	Cooldown int `json:"cooldown"`
-	// Datetime Cooldown expiration.
-	CooldownExpiration OptDateTime `json:"cooldown_expiration"`
-	// Weapon slot.
-	WeaponSlot string `json:"weapon_slot"`
-	// Shield slot.
-	ShieldSlot string `json:"shield_slot"`
-	// Helmet slot.
-	HelmetSlot string `json:"helmet_slot"`
-	// Body armor slot.
-	BodyArmorSlot string `json:"body_armor_slot"`
-	// Leg armor slot.
-	LegArmorSlot string `json:"leg_armor_slot"`
-	// Boots slot.
-	BootsSlot string `json:"boots_slot"`
-	// Ring 1 slot.
-	Ring1Slot string `json:"ring1_slot"`
-	// Ring 2 slot.
-	Ring2Slot string `json:"ring2_slot"`
-	// Amulet slot.
-	AmuletSlot string `json:"amulet_slot"`
-	// Artifact 1 slot.
-	Artifact1Slot string `json:"artifact1_slot"`
-	// Artifact 2 slot.
-	Artifact2Slot string `json:"artifact2_slot"`
-	// Artifact 3 slot.
-	Artifact3Slot string `json:"artifact3_slot"`
-	// Utility 1 slot.
-	Utility1Slot string `json:"utility1_slot"`
-	// Utility 1 quantity.
-	Utility1SlotQuantity int `json:"utility1_slot_quantity"`
-	// Utility 2 slot.
-	Utility2Slot string `json:"utility2_slot"`
-	// Utility 2 quantity.
-	Utility2SlotQuantity int `json:"utility2_slot_quantity"`
-	// Task in progress.
-	Task string `json:"task"`
-	// Task type.
-	TaskType string `json:"task_type"`
-	// Task progression.
-	TaskProgress int `json:"task_progress"`
-	// Task total objective.
-	TaskTotal int `json:"task_total"`
-	// Inventory max items.
-	InventoryMaxItems int `json:"inventory_max_items"`
-	// List of inventory slots.
-	Inventory []InventorySlot `json:"inventory"`
-}
-
-// GetName returns the value of Name.
-func (s *TasksRewardDataSchemaCharacter) GetName() string {
-	return s.Name
-}
-
-// GetAccount returns the value of Account.
-func (s *TasksRewardDataSchemaCharacter) GetAccount() string {
-	return s.Account
-}
-
-// GetSkin returns the value of Skin.
-func (s *TasksRewardDataSchemaCharacter) GetSkin() TasksRewardDataSchemaCharacterSkin {
-	return s.Skin
-}
-
-// GetLevel returns the value of Level.
-func (s *TasksRewardDataSchemaCharacter) GetLevel() int {
-	return s.Level
-}
-
-// GetXp returns the value of Xp.
-func (s *TasksRewardDataSchemaCharacter) GetXp() int {
-	return s.Xp
-}
-
-// GetMaxXp returns the value of MaxXp.
-func (s *TasksRewardDataSchemaCharacter) GetMaxXp() int {
-	return s.MaxXp
-}
-
-// GetGold returns the value of Gold.
-func (s *TasksRewardDataSchemaCharacter) GetGold() int {
-	return s.Gold
-}
-
-// GetSpeed returns the value of Speed.
-func (s *TasksRewardDataSchemaCharacter) GetSpeed() int {
-	return s.Speed
-}
-
-// GetMiningLevel returns the value of MiningLevel.
-func (s *TasksRewardDataSchemaCharacter) GetMiningLevel() int {
-	return s.MiningLevel
-}
-
-// GetMiningXp returns the value of MiningXp.
-func (s *TasksRewardDataSchemaCharacter) GetMiningXp() int {
-	return s.MiningXp
-}
-
-// GetMiningMaxXp returns the value of MiningMaxXp.
-func (s *TasksRewardDataSchemaCharacter) GetMiningMaxXp() int {
-	return s.MiningMaxXp
-}
-
-// GetWoodcuttingLevel returns the value of WoodcuttingLevel.
-func (s *TasksRewardDataSchemaCharacter) GetWoodcuttingLevel() int {
-	return s.WoodcuttingLevel
-}
-
-// GetWoodcuttingXp returns the value of WoodcuttingXp.
-func (s *TasksRewardDataSchemaCharacter) GetWoodcuttingXp() int {
-	return s.WoodcuttingXp
-}
-
-// GetWoodcuttingMaxXp returns the value of WoodcuttingMaxXp.
-func (s *TasksRewardDataSchemaCharacter) GetWoodcuttingMaxXp() int {
-	return s.WoodcuttingMaxXp
-}
-
-// GetFishingLevel returns the value of FishingLevel.
-func (s *TasksRewardDataSchemaCharacter) GetFishingLevel() int {
-	return s.FishingLevel
-}
-
-// GetFishingXp returns the value of FishingXp.
-func (s *TasksRewardDataSchemaCharacter) GetFishingXp() int {
-	return s.FishingXp
-}
-
-// GetFishingMaxXp returns the value of FishingMaxXp.
-func (s *TasksRewardDataSchemaCharacter) GetFishingMaxXp() int {
-	return s.FishingMaxXp
-}
-
-// GetWeaponcraftingLevel returns the value of WeaponcraftingLevel.
-func (s *TasksRewardDataSchemaCharacter) GetWeaponcraftingLevel() int {
-	return s.WeaponcraftingLevel
-}
-
-// GetWeaponcraftingXp returns the value of WeaponcraftingXp.
-func (s *TasksRewardDataSchemaCharacter) GetWeaponcraftingXp() int {
-	return s.WeaponcraftingXp
-}
-
-// GetWeaponcraftingMaxXp returns the value of WeaponcraftingMaxXp.
-func (s *TasksRewardDataSchemaCharacter) GetWeaponcraftingMaxXp() int {
-	return s.WeaponcraftingMaxXp
-}
-
-// GetGearcraftingLevel returns the value of GearcraftingLevel.
-func (s *TasksRewardDataSchemaCharacter) GetGearcraftingLevel() int {
-	return s.GearcraftingLevel
-}
-
-// GetGearcraftingXp returns the value of GearcraftingXp.
-func (s *TasksRewardDataSchemaCharacter) GetGearcraftingXp() int {
-	return s.GearcraftingXp
-}
-
-// GetGearcraftingMaxXp returns the value of GearcraftingMaxXp.
-func (s *TasksRewardDataSchemaCharacter) GetGearcraftingMaxXp() int {
-	return s.GearcraftingMaxXp
-}
-
-// GetJewelrycraftingLevel returns the value of JewelrycraftingLevel.
-func (s *TasksRewardDataSchemaCharacter) GetJewelrycraftingLevel() int {
-	return s.JewelrycraftingLevel
-}
-
-// GetJewelrycraftingXp returns the value of JewelrycraftingXp.
-func (s *TasksRewardDataSchemaCharacter) GetJewelrycraftingXp() int {
-	return s.JewelrycraftingXp
-}
-
-// GetJewelrycraftingMaxXp returns the value of JewelrycraftingMaxXp.
-func (s *TasksRewardDataSchemaCharacter) GetJewelrycraftingMaxXp() int {
-	return s.JewelrycraftingMaxXp
-}
-
-// GetCookingLevel returns the value of CookingLevel.
-func (s *TasksRewardDataSchemaCharacter) GetCookingLevel() int {
-	return s.CookingLevel
-}
-
-// GetCookingXp returns the value of CookingXp.
-func (s *TasksRewardDataSchemaCharacter) GetCookingXp() int {
-	return s.CookingXp
-}
-
-// GetCookingMaxXp returns the value of CookingMaxXp.
-func (s *TasksRewardDataSchemaCharacter) GetCookingMaxXp() int {
-	return s.CookingMaxXp
-}
-
-// GetAlchemyLevel returns the value of AlchemyLevel.
-func (s *TasksRewardDataSchemaCharacter) GetAlchemyLevel() int {
-	return s.AlchemyLevel
-}
-
-// GetAlchemyXp returns the value of AlchemyXp.
-func (s *TasksRewardDataSchemaCharacter) GetAlchemyXp() int {
-	return s.AlchemyXp
-}
-
-// GetAlchemyMaxXp returns the value of AlchemyMaxXp.
-func (s *TasksRewardDataSchemaCharacter) GetAlchemyMaxXp() int {
-	return s.AlchemyMaxXp
-}
-
-// GetHp returns the value of Hp.
-func (s *TasksRewardDataSchemaCharacter) GetHp() int {
-	return s.Hp
-}
-
-// GetMaxHp returns the value of MaxHp.
-func (s *TasksRewardDataSchemaCharacter) GetMaxHp() int {
-	return s.MaxHp
-}
-
-// GetHaste returns the value of Haste.
-func (s *TasksRewardDataSchemaCharacter) GetHaste() int {
-	return s.Haste
-}
-
-// GetCriticalStrike returns the value of CriticalStrike.
-func (s *TasksRewardDataSchemaCharacter) GetCriticalStrike() int {
-	return s.CriticalStrike
-}
-
-// GetStamina returns the value of Stamina.
-func (s *TasksRewardDataSchemaCharacter) GetStamina() int {
-	return s.Stamina
-}
-
-// GetAttackFire returns the value of AttackFire.
-func (s *TasksRewardDataSchemaCharacter) GetAttackFire() int {
-	return s.AttackFire
-}
-
-// GetAttackEarth returns the value of AttackEarth.
-func (s *TasksRewardDataSchemaCharacter) GetAttackEarth() int {
-	return s.AttackEarth
-}
-
-// GetAttackWater returns the value of AttackWater.
-func (s *TasksRewardDataSchemaCharacter) GetAttackWater() int {
-	return s.AttackWater
-}
-
-// GetAttackAir returns the value of AttackAir.
-func (s *TasksRewardDataSchemaCharacter) GetAttackAir() int {
-	return s.AttackAir
-}
-
-// GetDmgFire returns the value of DmgFire.
-func (s *TasksRewardDataSchemaCharacter) GetDmgFire() int {
-	return s.DmgFire
-}
-
-// GetDmgEarth returns the value of DmgEarth.
-func (s *TasksRewardDataSchemaCharacter) GetDmgEarth() int {
-	return s.DmgEarth
-}
-
-// GetDmgWater returns the value of DmgWater.
-func (s *TasksRewardDataSchemaCharacter) GetDmgWater() int {
-	return s.DmgWater
-}
-
-// GetDmgAir returns the value of DmgAir.
-func (s *TasksRewardDataSchemaCharacter) GetDmgAir() int {
-	return s.DmgAir
-}
-
-// GetResFire returns the value of ResFire.
-func (s *TasksRewardDataSchemaCharacter) GetResFire() int {
-	return s.ResFire
-}
-
-// GetResEarth returns the value of ResEarth.
-func (s *TasksRewardDataSchemaCharacter) GetResEarth() int {
-	return s.ResEarth
-}
-
-// GetResWater returns the value of ResWater.
-func (s *TasksRewardDataSchemaCharacter) GetResWater() int {
-	return s.ResWater
-}
-
-// GetResAir returns the value of ResAir.
-func (s *TasksRewardDataSchemaCharacter) GetResAir() int {
-	return s.ResAir
-}
-
-// GetX returns the value of X.
-func (s *TasksRewardDataSchemaCharacter) GetX() int {
-	return s.X
-}
-
-// GetY returns the value of Y.
-func (s *TasksRewardDataSchemaCharacter) GetY() int {
-	return s.Y
-}
-
-// GetCooldown returns the value of Cooldown.
-func (s *TasksRewardDataSchemaCharacter) GetCooldown() int {
-	return s.Cooldown
-}
-
-// GetCooldownExpiration returns the value of CooldownExpiration.
-func (s *TasksRewardDataSchemaCharacter) GetCooldownExpiration() OptDateTime {
-	return s.CooldownExpiration
-}
-
-// GetWeaponSlot returns the value of WeaponSlot.
-func (s *TasksRewardDataSchemaCharacter) GetWeaponSlot() string {
-	return s.WeaponSlot
-}
-
-// GetShieldSlot returns the value of ShieldSlot.
-func (s *TasksRewardDataSchemaCharacter) GetShieldSlot() string {
-	return s.ShieldSlot
-}
-
-// GetHelmetSlot returns the value of HelmetSlot.
-func (s *TasksRewardDataSchemaCharacter) GetHelmetSlot() string {
-	return s.HelmetSlot
-}
-
-// GetBodyArmorSlot returns the value of BodyArmorSlot.
-func (s *TasksRewardDataSchemaCharacter) GetBodyArmorSlot() string {
-	return s.BodyArmorSlot
-}
-
-// GetLegArmorSlot returns the value of LegArmorSlot.
-func (s *TasksRewardDataSchemaCharacter) GetLegArmorSlot() string {
-	return s.LegArmorSlot
-}
-
-// GetBootsSlot returns the value of BootsSlot.
-func (s *TasksRewardDataSchemaCharacter) GetBootsSlot() string {
-	return s.BootsSlot
-}
-
-// GetRing1Slot returns the value of Ring1Slot.
-func (s *TasksRewardDataSchemaCharacter) GetRing1Slot() string {
-	return s.Ring1Slot
-}
-
-// GetRing2Slot returns the value of Ring2Slot.
-func (s *TasksRewardDataSchemaCharacter) GetRing2Slot() string {
-	return s.Ring2Slot
-}
-
-// GetAmuletSlot returns the value of AmuletSlot.
-func (s *TasksRewardDataSchemaCharacter) GetAmuletSlot() string {
-	return s.AmuletSlot
-}
-
-// GetArtifact1Slot returns the value of Artifact1Slot.
-func (s *TasksRewardDataSchemaCharacter) GetArtifact1Slot() string {
-	return s.Artifact1Slot
-}
-
-// GetArtifact2Slot returns the value of Artifact2Slot.
-func (s *TasksRewardDataSchemaCharacter) GetArtifact2Slot() string {
-	return s.Artifact2Slot
-}
-
-// GetArtifact3Slot returns the value of Artifact3Slot.
-func (s *TasksRewardDataSchemaCharacter) GetArtifact3Slot() string {
-	return s.Artifact3Slot
-}
-
-// GetUtility1Slot returns the value of Utility1Slot.
-func (s *TasksRewardDataSchemaCharacter) GetUtility1Slot() string {
-	return s.Utility1Slot
-}
-
-// GetUtility1SlotQuantity returns the value of Utility1SlotQuantity.
-func (s *TasksRewardDataSchemaCharacter) GetUtility1SlotQuantity() int {
-	return s.Utility1SlotQuantity
-}
-
-// GetUtility2Slot returns the value of Utility2Slot.
-func (s *TasksRewardDataSchemaCharacter) GetUtility2Slot() string {
-	return s.Utility2Slot
-}
-
-// GetUtility2SlotQuantity returns the value of Utility2SlotQuantity.
-func (s *TasksRewardDataSchemaCharacter) GetUtility2SlotQuantity() int {
-	return s.Utility2SlotQuantity
-}
-
-// GetTask returns the value of Task.
-func (s *TasksRewardDataSchemaCharacter) GetTask() string {
-	return s.Task
-}
-
-// GetTaskType returns the value of TaskType.
-func (s *TasksRewardDataSchemaCharacter) GetTaskType() string {
-	return s.TaskType
-}
-
-// GetTaskProgress returns the value of TaskProgress.
-func (s *TasksRewardDataSchemaCharacter) GetTaskProgress() int {
-	return s.TaskProgress
-}
-
-// GetTaskTotal returns the value of TaskTotal.
-func (s *TasksRewardDataSchemaCharacter) GetTaskTotal() int {
-	return s.TaskTotal
-}
-
-// GetInventoryMaxItems returns the value of InventoryMaxItems.
-func (s *TasksRewardDataSchemaCharacter) GetInventoryMaxItems() int {
-	return s.InventoryMaxItems
-}
-
-// GetInventory returns the value of Inventory.
-func (s *TasksRewardDataSchemaCharacter) GetInventory() []InventorySlot {
-	return s.Inventory
-}
-
-// SetName sets the value of Name.
-func (s *TasksRewardDataSchemaCharacter) SetName(val string) {
-	s.Name = val
-}
-
-// SetAccount sets the value of Account.
-func (s *TasksRewardDataSchemaCharacter) SetAccount(val string) {
-	s.Account = val
-}
-
-// SetSkin sets the value of Skin.
-func (s *TasksRewardDataSchemaCharacter) SetSkin(val TasksRewardDataSchemaCharacterSkin) {
-	s.Skin = val
-}
-
-// SetLevel sets the value of Level.
-func (s *TasksRewardDataSchemaCharacter) SetLevel(val int) {
-	s.Level = val
-}
-
-// SetXp sets the value of Xp.
-func (s *TasksRewardDataSchemaCharacter) SetXp(val int) {
-	s.Xp = val
-}
-
-// SetMaxXp sets the value of MaxXp.
-func (s *TasksRewardDataSchemaCharacter) SetMaxXp(val int) {
-	s.MaxXp = val
-}
-
-// SetGold sets the value of Gold.
-func (s *TasksRewardDataSchemaCharacter) SetGold(val int) {
-	s.Gold = val
-}
-
-// SetSpeed sets the value of Speed.
-func (s *TasksRewardDataSchemaCharacter) SetSpeed(val int) {
-	s.Speed = val
-}
-
-// SetMiningLevel sets the value of MiningLevel.
-func (s *TasksRewardDataSchemaCharacter) SetMiningLevel(val int) {
-	s.MiningLevel = val
-}
-
-// SetMiningXp sets the value of MiningXp.
-func (s *TasksRewardDataSchemaCharacter) SetMiningXp(val int) {
-	s.MiningXp = val
-}
-
-// SetMiningMaxXp sets the value of MiningMaxXp.
-func (s *TasksRewardDataSchemaCharacter) SetMiningMaxXp(val int) {
-	s.MiningMaxXp = val
-}
-
-// SetWoodcuttingLevel sets the value of WoodcuttingLevel.
-func (s *TasksRewardDataSchemaCharacter) SetWoodcuttingLevel(val int) {
-	s.WoodcuttingLevel = val
-}
-
-// SetWoodcuttingXp sets the value of WoodcuttingXp.
-func (s *TasksRewardDataSchemaCharacter) SetWoodcuttingXp(val int) {
-	s.WoodcuttingXp = val
-}
-
-// SetWoodcuttingMaxXp sets the value of WoodcuttingMaxXp.
-func (s *TasksRewardDataSchemaCharacter) SetWoodcuttingMaxXp(val int) {
-	s.WoodcuttingMaxXp = val
-}
-
-// SetFishingLevel sets the value of FishingLevel.
-func (s *TasksRewardDataSchemaCharacter) SetFishingLevel(val int) {
-	s.FishingLevel = val
-}
-
-// SetFishingXp sets the value of FishingXp.
-func (s *TasksRewardDataSchemaCharacter) SetFishingXp(val int) {
-	s.FishingXp = val
-}
-
-// SetFishingMaxXp sets the value of FishingMaxXp.
-func (s *TasksRewardDataSchemaCharacter) SetFishingMaxXp(val int) {
-	s.FishingMaxXp = val
-}
-
-// SetWeaponcraftingLevel sets the value of WeaponcraftingLevel.
-func (s *TasksRewardDataSchemaCharacter) SetWeaponcraftingLevel(val int) {
-	s.WeaponcraftingLevel = val
-}
-
-// SetWeaponcraftingXp sets the value of WeaponcraftingXp.
-func (s *TasksRewardDataSchemaCharacter) SetWeaponcraftingXp(val int) {
-	s.WeaponcraftingXp = val
-}
-
-// SetWeaponcraftingMaxXp sets the value of WeaponcraftingMaxXp.
-func (s *TasksRewardDataSchemaCharacter) SetWeaponcraftingMaxXp(val int) {
-	s.WeaponcraftingMaxXp = val
-}
-
-// SetGearcraftingLevel sets the value of GearcraftingLevel.
-func (s *TasksRewardDataSchemaCharacter) SetGearcraftingLevel(val int) {
-	s.GearcraftingLevel = val
-}
-
-// SetGearcraftingXp sets the value of GearcraftingXp.
-func (s *TasksRewardDataSchemaCharacter) SetGearcraftingXp(val int) {
-	s.GearcraftingXp = val
-}
-
-// SetGearcraftingMaxXp sets the value of GearcraftingMaxXp.
-func (s *TasksRewardDataSchemaCharacter) SetGearcraftingMaxXp(val int) {
-	s.GearcraftingMaxXp = val
-}
-
-// SetJewelrycraftingLevel sets the value of JewelrycraftingLevel.
-func (s *TasksRewardDataSchemaCharacter) SetJewelrycraftingLevel(val int) {
-	s.JewelrycraftingLevel = val
-}
-
-// SetJewelrycraftingXp sets the value of JewelrycraftingXp.
-func (s *TasksRewardDataSchemaCharacter) SetJewelrycraftingXp(val int) {
-	s.JewelrycraftingXp = val
-}
-
-// SetJewelrycraftingMaxXp sets the value of JewelrycraftingMaxXp.
-func (s *TasksRewardDataSchemaCharacter) SetJewelrycraftingMaxXp(val int) {
-	s.JewelrycraftingMaxXp = val
-}
-
-// SetCookingLevel sets the value of CookingLevel.
-func (s *TasksRewardDataSchemaCharacter) SetCookingLevel(val int) {
-	s.CookingLevel = val
-}
-
-// SetCookingXp sets the value of CookingXp.
-func (s *TasksRewardDataSchemaCharacter) SetCookingXp(val int) {
-	s.CookingXp = val
-}
-
-// SetCookingMaxXp sets the value of CookingMaxXp.
-func (s *TasksRewardDataSchemaCharacter) SetCookingMaxXp(val int) {
-	s.CookingMaxXp = val
-}
-
-// SetAlchemyLevel sets the value of AlchemyLevel.
-func (s *TasksRewardDataSchemaCharacter) SetAlchemyLevel(val int) {
-	s.AlchemyLevel = val
-}
-
-// SetAlchemyXp sets the value of AlchemyXp.
-func (s *TasksRewardDataSchemaCharacter) SetAlchemyXp(val int) {
-	s.AlchemyXp = val
-}
-
-// SetAlchemyMaxXp sets the value of AlchemyMaxXp.
-func (s *TasksRewardDataSchemaCharacter) SetAlchemyMaxXp(val int) {
-	s.AlchemyMaxXp = val
-}
-
-// SetHp sets the value of Hp.
-func (s *TasksRewardDataSchemaCharacter) SetHp(val int) {
-	s.Hp = val
-}
-
-// SetMaxHp sets the value of MaxHp.
-func (s *TasksRewardDataSchemaCharacter) SetMaxHp(val int) {
-	s.MaxHp = val
-}
-
-// SetHaste sets the value of Haste.
-func (s *TasksRewardDataSchemaCharacter) SetHaste(val int) {
-	s.Haste = val
-}
-
-// SetCriticalStrike sets the value of CriticalStrike.
-func (s *TasksRewardDataSchemaCharacter) SetCriticalStrike(val int) {
-	s.CriticalStrike = val
-}
-
-// SetStamina sets the value of Stamina.
-func (s *TasksRewardDataSchemaCharacter) SetStamina(val int) {
-	s.Stamina = val
-}
-
-// SetAttackFire sets the value of AttackFire.
-func (s *TasksRewardDataSchemaCharacter) SetAttackFire(val int) {
-	s.AttackFire = val
-}
-
-// SetAttackEarth sets the value of AttackEarth.
-func (s *TasksRewardDataSchemaCharacter) SetAttackEarth(val int) {
-	s.AttackEarth = val
-}
-
-// SetAttackWater sets the value of AttackWater.
-func (s *TasksRewardDataSchemaCharacter) SetAttackWater(val int) {
-	s.AttackWater = val
-}
-
-// SetAttackAir sets the value of AttackAir.
-func (s *TasksRewardDataSchemaCharacter) SetAttackAir(val int) {
-	s.AttackAir = val
-}
-
-// SetDmgFire sets the value of DmgFire.
-func (s *TasksRewardDataSchemaCharacter) SetDmgFire(val int) {
-	s.DmgFire = val
-}
-
-// SetDmgEarth sets the value of DmgEarth.
-func (s *TasksRewardDataSchemaCharacter) SetDmgEarth(val int) {
-	s.DmgEarth = val
-}
-
-// SetDmgWater sets the value of DmgWater.
-func (s *TasksRewardDataSchemaCharacter) SetDmgWater(val int) {
-	s.DmgWater = val
-}
-
-// SetDmgAir sets the value of DmgAir.
-func (s *TasksRewardDataSchemaCharacter) SetDmgAir(val int) {
-	s.DmgAir = val
-}
-
-// SetResFire sets the value of ResFire.
-func (s *TasksRewardDataSchemaCharacter) SetResFire(val int) {
-	s.ResFire = val
-}
-
-// SetResEarth sets the value of ResEarth.
-func (s *TasksRewardDataSchemaCharacter) SetResEarth(val int) {
-	s.ResEarth = val
-}
-
-// SetResWater sets the value of ResWater.
-func (s *TasksRewardDataSchemaCharacter) SetResWater(val int) {
-	s.ResWater = val
-}
-
-// SetResAir sets the value of ResAir.
-func (s *TasksRewardDataSchemaCharacter) SetResAir(val int) {
-	s.ResAir = val
-}
-
-// SetX sets the value of X.
-func (s *TasksRewardDataSchemaCharacter) SetX(val int) {
-	s.X = val
-}
-
-// SetY sets the value of Y.
-func (s *TasksRewardDataSchemaCharacter) SetY(val int) {
-	s.Y = val
-}
-
-// SetCooldown sets the value of Cooldown.
-func (s *TasksRewardDataSchemaCharacter) SetCooldown(val int) {
-	s.Cooldown = val
-}
-
-// SetCooldownExpiration sets the value of CooldownExpiration.
-func (s *TasksRewardDataSchemaCharacter) SetCooldownExpiration(val OptDateTime) {
-	s.CooldownExpiration = val
-}
-
-// SetWeaponSlot sets the value of WeaponSlot.
-func (s *TasksRewardDataSchemaCharacter) SetWeaponSlot(val string) {
-	s.WeaponSlot = val
-}
-
-// SetShieldSlot sets the value of ShieldSlot.
-func (s *TasksRewardDataSchemaCharacter) SetShieldSlot(val string) {
-	s.ShieldSlot = val
-}
-
-// SetHelmetSlot sets the value of HelmetSlot.
-func (s *TasksRewardDataSchemaCharacter) SetHelmetSlot(val string) {
-	s.HelmetSlot = val
-}
-
-// SetBodyArmorSlot sets the value of BodyArmorSlot.
-func (s *TasksRewardDataSchemaCharacter) SetBodyArmorSlot(val string) {
-	s.BodyArmorSlot = val
-}
-
-// SetLegArmorSlot sets the value of LegArmorSlot.
-func (s *TasksRewardDataSchemaCharacter) SetLegArmorSlot(val string) {
-	s.LegArmorSlot = val
-}
-
-// SetBootsSlot sets the value of BootsSlot.
-func (s *TasksRewardDataSchemaCharacter) SetBootsSlot(val string) {
-	s.BootsSlot = val
-}
-
-// SetRing1Slot sets the value of Ring1Slot.
-func (s *TasksRewardDataSchemaCharacter) SetRing1Slot(val string) {
-	s.Ring1Slot = val
-}
-
-// SetRing2Slot sets the value of Ring2Slot.
-func (s *TasksRewardDataSchemaCharacter) SetRing2Slot(val string) {
-	s.Ring2Slot = val
-}
-
-// SetAmuletSlot sets the value of AmuletSlot.
-func (s *TasksRewardDataSchemaCharacter) SetAmuletSlot(val string) {
-	s.AmuletSlot = val
-}
-
-// SetArtifact1Slot sets the value of Artifact1Slot.
-func (s *TasksRewardDataSchemaCharacter) SetArtifact1Slot(val string) {
-	s.Artifact1Slot = val
-}
-
-// SetArtifact2Slot sets the value of Artifact2Slot.
-func (s *TasksRewardDataSchemaCharacter) SetArtifact2Slot(val string) {
-	s.Artifact2Slot = val
-}
-
-// SetArtifact3Slot sets the value of Artifact3Slot.
-func (s *TasksRewardDataSchemaCharacter) SetArtifact3Slot(val string) {
-	s.Artifact3Slot = val
-}
-
-// SetUtility1Slot sets the value of Utility1Slot.
-func (s *TasksRewardDataSchemaCharacter) SetUtility1Slot(val string) {
-	s.Utility1Slot = val
-}
-
-// SetUtility1SlotQuantity sets the value of Utility1SlotQuantity.
-func (s *TasksRewardDataSchemaCharacter) SetUtility1SlotQuantity(val int) {
-	s.Utility1SlotQuantity = val
-}
-
-// SetUtility2Slot sets the value of Utility2Slot.
-func (s *TasksRewardDataSchemaCharacter) SetUtility2Slot(val string) {
-	s.Utility2Slot = val
-}
-
-// SetUtility2SlotQuantity sets the value of Utility2SlotQuantity.
-func (s *TasksRewardDataSchemaCharacter) SetUtility2SlotQuantity(val int) {
-	s.Utility2SlotQuantity = val
-}
-
-// SetTask sets the value of Task.
-func (s *TasksRewardDataSchemaCharacter) SetTask(val string) {
-	s.Task = val
-}
-
-// SetTaskType sets the value of TaskType.
-func (s *TasksRewardDataSchemaCharacter) SetTaskType(val string) {
-	s.TaskType = val
-}
-
-// SetTaskProgress sets the value of TaskProgress.
-func (s *TasksRewardDataSchemaCharacter) SetTaskProgress(val int) {
-	s.TaskProgress = val
-}
-
-// SetTaskTotal sets the value of TaskTotal.
-func (s *TasksRewardDataSchemaCharacter) SetTaskTotal(val int) {
-	s.TaskTotal = val
-}
-
-// SetInventoryMaxItems sets the value of InventoryMaxItems.
-func (s *TasksRewardDataSchemaCharacter) SetInventoryMaxItems(val int) {
-	s.InventoryMaxItems = val
-}
-
-// SetInventory sets the value of Inventory.
-func (s *TasksRewardDataSchemaCharacter) SetInventory(val []InventorySlot) {
-	s.Inventory = val
-}
-
-type TasksRewardDataSchemaCharacterSkin string
-
-const (
-	TasksRewardDataSchemaCharacterSkinMen1   TasksRewardDataSchemaCharacterSkin = "men1"
-	TasksRewardDataSchemaCharacterSkinMen2   TasksRewardDataSchemaCharacterSkin = "men2"
-	TasksRewardDataSchemaCharacterSkinMen3   TasksRewardDataSchemaCharacterSkin = "men3"
-	TasksRewardDataSchemaCharacterSkinWomen1 TasksRewardDataSchemaCharacterSkin = "women1"
-	TasksRewardDataSchemaCharacterSkinWomen2 TasksRewardDataSchemaCharacterSkin = "women2"
-	TasksRewardDataSchemaCharacterSkinWomen3 TasksRewardDataSchemaCharacterSkin = "women3"
-)
-
-// AllValues returns all TasksRewardDataSchemaCharacterSkin values.
-func (TasksRewardDataSchemaCharacterSkin) AllValues() []TasksRewardDataSchemaCharacterSkin {
-	return []TasksRewardDataSchemaCharacterSkin{
-		TasksRewardDataSchemaCharacterSkinMen1,
-		TasksRewardDataSchemaCharacterSkinMen2,
-		TasksRewardDataSchemaCharacterSkinMen3,
-		TasksRewardDataSchemaCharacterSkinWomen1,
-		TasksRewardDataSchemaCharacterSkinWomen2,
-		TasksRewardDataSchemaCharacterSkinWomen3,
-	}
-}
-
-// MarshalText implements encoding.TextMarshaler.
-func (s TasksRewardDataSchemaCharacterSkin) MarshalText() ([]byte, error) {
-	switch s {
-	case TasksRewardDataSchemaCharacterSkinMen1:
-		return []byte(s), nil
-	case TasksRewardDataSchemaCharacterSkinMen2:
-		return []byte(s), nil
-	case TasksRewardDataSchemaCharacterSkinMen3:
-		return []byte(s), nil
-	case TasksRewardDataSchemaCharacterSkinWomen1:
-		return []byte(s), nil
-	case TasksRewardDataSchemaCharacterSkinWomen2:
-		return []byte(s), nil
-	case TasksRewardDataSchemaCharacterSkinWomen3:
-		return []byte(s), nil
-	default:
-		return nil, errors.Errorf("invalid value: %q", s)
-	}
-}
-
-// UnmarshalText implements encoding.TextUnmarshaler.
-func (s *TasksRewardDataSchemaCharacterSkin) UnmarshalText(data []byte) error {
-	switch TasksRewardDataSchemaCharacterSkin(data) {
-	case TasksRewardDataSchemaCharacterSkinMen1:
-		*s = TasksRewardDataSchemaCharacterSkinMen1
-		return nil
-	case TasksRewardDataSchemaCharacterSkinMen2:
-		*s = TasksRewardDataSchemaCharacterSkinMen2
-		return nil
-	case TasksRewardDataSchemaCharacterSkinMen3:
-		*s = TasksRewardDataSchemaCharacterSkinMen3
-		return nil
-	case TasksRewardDataSchemaCharacterSkinWomen1:
-		*s = TasksRewardDataSchemaCharacterSkinWomen1
-		return nil
-	case TasksRewardDataSchemaCharacterSkinWomen2:
-		*s = TasksRewardDataSchemaCharacterSkinWomen2
-		return nil
-	case TasksRewardDataSchemaCharacterSkinWomen3:
-		*s = TasksRewardDataSchemaCharacterSkinWomen3
-		return nil
-	default:
-		return errors.Errorf("invalid value: %q", data)
-	}
-}
-
-type TasksRewardDataSchemaCooldown struct {
-	// The total seconds of the cooldown.
-	TotalSeconds int `json:"total_seconds"`
-	// The remaining seconds of the cooldown.
-	RemainingSeconds int `json:"remaining_seconds"`
-	// The start of the cooldown.
-	StartedAt time.Time `json:"started_at"`
-	// The expiration of the cooldown.
-	Expiration time.Time `json:"expiration"`
-	// The reason of the cooldown.
-	Reason TasksRewardDataSchemaCooldownReason `json:"reason"`
-}
-
-// GetTotalSeconds returns the value of TotalSeconds.
-func (s *TasksRewardDataSchemaCooldown) GetTotalSeconds() int {
-	return s.TotalSeconds
-}
-
-// GetRemainingSeconds returns the value of RemainingSeconds.
-func (s *TasksRewardDataSchemaCooldown) GetRemainingSeconds() int {
-	return s.RemainingSeconds
-}
-
-// GetStartedAt returns the value of StartedAt.
-func (s *TasksRewardDataSchemaCooldown) GetStartedAt() time.Time {
-	return s.StartedAt
-}
-
-// GetExpiration returns the value of Expiration.
-func (s *TasksRewardDataSchemaCooldown) GetExpiration() time.Time {
-	return s.Expiration
-}
-
-// GetReason returns the value of Reason.
-func (s *TasksRewardDataSchemaCooldown) GetReason() TasksRewardDataSchemaCooldownReason {
-	return s.Reason
-}
-
-// SetTotalSeconds sets the value of TotalSeconds.
-func (s *TasksRewardDataSchemaCooldown) SetTotalSeconds(val int) {
-	s.TotalSeconds = val
-}
-
-// SetRemainingSeconds sets the value of RemainingSeconds.
-func (s *TasksRewardDataSchemaCooldown) SetRemainingSeconds(val int) {
-	s.RemainingSeconds = val
-}
-
-// SetStartedAt sets the value of StartedAt.
-func (s *TasksRewardDataSchemaCooldown) SetStartedAt(val time.Time) {
-	s.StartedAt = val
-}
-
-// SetExpiration sets the value of Expiration.
-func (s *TasksRewardDataSchemaCooldown) SetExpiration(val time.Time) {
-	s.Expiration = val
-}
-
-// SetReason sets the value of Reason.
-func (s *TasksRewardDataSchemaCooldown) SetReason(val TasksRewardDataSchemaCooldownReason) {
-	s.Reason = val
-}
-
-type TasksRewardDataSchemaCooldownReason string
-
-const (
-	TasksRewardDataSchemaCooldownReasonMovement         TasksRewardDataSchemaCooldownReason = "movement"
-	TasksRewardDataSchemaCooldownReasonFight            TasksRewardDataSchemaCooldownReason = "fight"
-	TasksRewardDataSchemaCooldownReasonCrafting         TasksRewardDataSchemaCooldownReason = "crafting"
-	TasksRewardDataSchemaCooldownReasonGathering        TasksRewardDataSchemaCooldownReason = "gathering"
-	TasksRewardDataSchemaCooldownReasonBuyGe            TasksRewardDataSchemaCooldownReason = "buy_ge"
-	TasksRewardDataSchemaCooldownReasonSellGe           TasksRewardDataSchemaCooldownReason = "sell_ge"
-	TasksRewardDataSchemaCooldownReasonCancelGe         TasksRewardDataSchemaCooldownReason = "cancel_ge"
-	TasksRewardDataSchemaCooldownReasonDeleteItem       TasksRewardDataSchemaCooldownReason = "delete_item"
-	TasksRewardDataSchemaCooldownReasonDeposit          TasksRewardDataSchemaCooldownReason = "deposit"
-	TasksRewardDataSchemaCooldownReasonWithdraw         TasksRewardDataSchemaCooldownReason = "withdraw"
-	TasksRewardDataSchemaCooldownReasonDepositGold      TasksRewardDataSchemaCooldownReason = "deposit_gold"
-	TasksRewardDataSchemaCooldownReasonWithdrawGold     TasksRewardDataSchemaCooldownReason = "withdraw_gold"
-	TasksRewardDataSchemaCooldownReasonEquip            TasksRewardDataSchemaCooldownReason = "equip"
-	TasksRewardDataSchemaCooldownReasonUnequip          TasksRewardDataSchemaCooldownReason = "unequip"
-	TasksRewardDataSchemaCooldownReasonTask             TasksRewardDataSchemaCooldownReason = "task"
-	TasksRewardDataSchemaCooldownReasonRecycling        TasksRewardDataSchemaCooldownReason = "recycling"
-	TasksRewardDataSchemaCooldownReasonRest             TasksRewardDataSchemaCooldownReason = "rest"
-	TasksRewardDataSchemaCooldownReasonUse              TasksRewardDataSchemaCooldownReason = "use"
-	TasksRewardDataSchemaCooldownReasonBuyBankExpansion TasksRewardDataSchemaCooldownReason = "buy_bank_expansion"
-)
-
-// AllValues returns all TasksRewardDataSchemaCooldownReason values.
-func (TasksRewardDataSchemaCooldownReason) AllValues() []TasksRewardDataSchemaCooldownReason {
-	return []TasksRewardDataSchemaCooldownReason{
-		TasksRewardDataSchemaCooldownReasonMovement,
-		TasksRewardDataSchemaCooldownReasonFight,
-		TasksRewardDataSchemaCooldownReasonCrafting,
-		TasksRewardDataSchemaCooldownReasonGathering,
-		TasksRewardDataSchemaCooldownReasonBuyGe,
-		TasksRewardDataSchemaCooldownReasonSellGe,
-		TasksRewardDataSchemaCooldownReasonCancelGe,
-		TasksRewardDataSchemaCooldownReasonDeleteItem,
-		TasksRewardDataSchemaCooldownReasonDeposit,
-		TasksRewardDataSchemaCooldownReasonWithdraw,
-		TasksRewardDataSchemaCooldownReasonDepositGold,
-		TasksRewardDataSchemaCooldownReasonWithdrawGold,
-		TasksRewardDataSchemaCooldownReasonEquip,
-		TasksRewardDataSchemaCooldownReasonUnequip,
-		TasksRewardDataSchemaCooldownReasonTask,
-		TasksRewardDataSchemaCooldownReasonRecycling,
-		TasksRewardDataSchemaCooldownReasonRest,
-		TasksRewardDataSchemaCooldownReasonUse,
-		TasksRewardDataSchemaCooldownReasonBuyBankExpansion,
-	}
-}
-
-// MarshalText implements encoding.TextMarshaler.
-func (s TasksRewardDataSchemaCooldownReason) MarshalText() ([]byte, error) {
-	switch s {
-	case TasksRewardDataSchemaCooldownReasonMovement:
-		return []byte(s), nil
-	case TasksRewardDataSchemaCooldownReasonFight:
-		return []byte(s), nil
-	case TasksRewardDataSchemaCooldownReasonCrafting:
-		return []byte(s), nil
-	case TasksRewardDataSchemaCooldownReasonGathering:
-		return []byte(s), nil
-	case TasksRewardDataSchemaCooldownReasonBuyGe:
-		return []byte(s), nil
-	case TasksRewardDataSchemaCooldownReasonSellGe:
-		return []byte(s), nil
-	case TasksRewardDataSchemaCooldownReasonCancelGe:
-		return []byte(s), nil
-	case TasksRewardDataSchemaCooldownReasonDeleteItem:
-		return []byte(s), nil
-	case TasksRewardDataSchemaCooldownReasonDeposit:
-		return []byte(s), nil
-	case TasksRewardDataSchemaCooldownReasonWithdraw:
-		return []byte(s), nil
-	case TasksRewardDataSchemaCooldownReasonDepositGold:
-		return []byte(s), nil
-	case TasksRewardDataSchemaCooldownReasonWithdrawGold:
-		return []byte(s), nil
-	case TasksRewardDataSchemaCooldownReasonEquip:
-		return []byte(s), nil
-	case TasksRewardDataSchemaCooldownReasonUnequip:
-		return []byte(s), nil
-	case TasksRewardDataSchemaCooldownReasonTask:
-		return []byte(s), nil
-	case TasksRewardDataSchemaCooldownReasonRecycling:
-		return []byte(s), nil
-	case TasksRewardDataSchemaCooldownReasonRest:
-		return []byte(s), nil
-	case TasksRewardDataSchemaCooldownReasonUse:
-		return []byte(s), nil
-	case TasksRewardDataSchemaCooldownReasonBuyBankExpansion:
-		return []byte(s), nil
-	default:
-		return nil, errors.Errorf("invalid value: %q", s)
-	}
-}
-
-// UnmarshalText implements encoding.TextUnmarshaler.
-func (s *TasksRewardDataSchemaCooldownReason) UnmarshalText(data []byte) error {
-	switch TasksRewardDataSchemaCooldownReason(data) {
-	case TasksRewardDataSchemaCooldownReasonMovement:
-		*s = TasksRewardDataSchemaCooldownReasonMovement
-		return nil
-	case TasksRewardDataSchemaCooldownReasonFight:
-		*s = TasksRewardDataSchemaCooldownReasonFight
-		return nil
-	case TasksRewardDataSchemaCooldownReasonCrafting:
-		*s = TasksRewardDataSchemaCooldownReasonCrafting
-		return nil
-	case TasksRewardDataSchemaCooldownReasonGathering:
-		*s = TasksRewardDataSchemaCooldownReasonGathering
-		return nil
-	case TasksRewardDataSchemaCooldownReasonBuyGe:
-		*s = TasksRewardDataSchemaCooldownReasonBuyGe
-		return nil
-	case TasksRewardDataSchemaCooldownReasonSellGe:
-		*s = TasksRewardDataSchemaCooldownReasonSellGe
-		return nil
-	case TasksRewardDataSchemaCooldownReasonCancelGe:
-		*s = TasksRewardDataSchemaCooldownReasonCancelGe
-		return nil
-	case TasksRewardDataSchemaCooldownReasonDeleteItem:
-		*s = TasksRewardDataSchemaCooldownReasonDeleteItem
-		return nil
-	case TasksRewardDataSchemaCooldownReasonDeposit:
-		*s = TasksRewardDataSchemaCooldownReasonDeposit
-		return nil
-	case TasksRewardDataSchemaCooldownReasonWithdraw:
-		*s = TasksRewardDataSchemaCooldownReasonWithdraw
-		return nil
-	case TasksRewardDataSchemaCooldownReasonDepositGold:
-		*s = TasksRewardDataSchemaCooldownReasonDepositGold
-		return nil
-	case TasksRewardDataSchemaCooldownReasonWithdrawGold:
-		*s = TasksRewardDataSchemaCooldownReasonWithdrawGold
-		return nil
-	case TasksRewardDataSchemaCooldownReasonEquip:
-		*s = TasksRewardDataSchemaCooldownReasonEquip
-		return nil
-	case TasksRewardDataSchemaCooldownReasonUnequip:
-		*s = TasksRewardDataSchemaCooldownReasonUnequip
-		return nil
-	case TasksRewardDataSchemaCooldownReasonTask:
-		*s = TasksRewardDataSchemaCooldownReasonTask
-		return nil
-	case TasksRewardDataSchemaCooldownReasonRecycling:
-		*s = TasksRewardDataSchemaCooldownReasonRecycling
-		return nil
-	case TasksRewardDataSchemaCooldownReasonRest:
-		*s = TasksRewardDataSchemaCooldownReasonRest
-		return nil
-	case TasksRewardDataSchemaCooldownReasonUse:
-		*s = TasksRewardDataSchemaCooldownReasonUse
-		return nil
-	case TasksRewardDataSchemaCooldownReasonBuyBankExpansion:
-		*s = TasksRewardDataSchemaCooldownReasonBuyBankExpansion
-		return nil
-	default:
-		return errors.Errorf("invalid value: %q", data)
-	}
-}
-
-type TasksRewardDataSchemaRewards struct {
-	// Items rewards.
-	Items []SimpleItemSchema `json:"items"`
-	// Gold rewards.
-	Gold int `json:"gold"`
-}
-
-// GetItems returns the value of Items.
-func (s *TasksRewardDataSchemaRewards) GetItems() []SimpleItemSchema {
-	return s.Items
-}
-
-// GetGold returns the value of Gold.
-func (s *TasksRewardDataSchemaRewards) GetGold() int {
-	return s.Gold
-}
-
-// SetItems sets the value of Items.
-func (s *TasksRewardDataSchemaRewards) SetItems(val []SimpleItemSchema) {
-	s.Items = val
-}
-
-// SetGold sets the value of Gold.
-func (s *TasksRewardDataSchemaRewards) SetGold(val int) {
-	s.Gold = val
-}
-
-// Ref: #/components/schemas/TasksRewardResponseSchema
-type TasksRewardResponseSchema struct {
-	Data DropRateSchema `json:"data"`
-}
-
-// GetData returns the value of Data.
-func (s *TasksRewardResponseSchema) GetData() DropRateSchema {
-	return s.Data
-}
-
-// SetData sets the value of Data.
-func (s *TasksRewardResponseSchema) SetData(val DropRateSchema) {
-	s.Data = val
-}
-
-func (*TasksRewardResponseSchema) getTasksRewardTasksRewardsCodeGetRes() {}
 
 // Ref: #/components/schemas/TokenResponseSchema
 type TokenResponseSchema struct {
@@ -36639,25 +37213,26 @@ func (s *UseItemSchemaCooldown) SetReason(val UseItemSchemaCooldownReason) {
 type UseItemSchemaCooldownReason string
 
 const (
-	UseItemSchemaCooldownReasonMovement         UseItemSchemaCooldownReason = "movement"
-	UseItemSchemaCooldownReasonFight            UseItemSchemaCooldownReason = "fight"
-	UseItemSchemaCooldownReasonCrafting         UseItemSchemaCooldownReason = "crafting"
-	UseItemSchemaCooldownReasonGathering        UseItemSchemaCooldownReason = "gathering"
-	UseItemSchemaCooldownReasonBuyGe            UseItemSchemaCooldownReason = "buy_ge"
-	UseItemSchemaCooldownReasonSellGe           UseItemSchemaCooldownReason = "sell_ge"
-	UseItemSchemaCooldownReasonCancelGe         UseItemSchemaCooldownReason = "cancel_ge"
-	UseItemSchemaCooldownReasonDeleteItem       UseItemSchemaCooldownReason = "delete_item"
-	UseItemSchemaCooldownReasonDeposit          UseItemSchemaCooldownReason = "deposit"
-	UseItemSchemaCooldownReasonWithdraw         UseItemSchemaCooldownReason = "withdraw"
-	UseItemSchemaCooldownReasonDepositGold      UseItemSchemaCooldownReason = "deposit_gold"
-	UseItemSchemaCooldownReasonWithdrawGold     UseItemSchemaCooldownReason = "withdraw_gold"
-	UseItemSchemaCooldownReasonEquip            UseItemSchemaCooldownReason = "equip"
-	UseItemSchemaCooldownReasonUnequip          UseItemSchemaCooldownReason = "unequip"
-	UseItemSchemaCooldownReasonTask             UseItemSchemaCooldownReason = "task"
-	UseItemSchemaCooldownReasonRecycling        UseItemSchemaCooldownReason = "recycling"
-	UseItemSchemaCooldownReasonRest             UseItemSchemaCooldownReason = "rest"
-	UseItemSchemaCooldownReasonUse              UseItemSchemaCooldownReason = "use"
-	UseItemSchemaCooldownReasonBuyBankExpansion UseItemSchemaCooldownReason = "buy_bank_expansion"
+	UseItemSchemaCooldownReasonMovement          UseItemSchemaCooldownReason = "movement"
+	UseItemSchemaCooldownReasonFight             UseItemSchemaCooldownReason = "fight"
+	UseItemSchemaCooldownReasonCrafting          UseItemSchemaCooldownReason = "crafting"
+	UseItemSchemaCooldownReasonGathering         UseItemSchemaCooldownReason = "gathering"
+	UseItemSchemaCooldownReasonBuyGe             UseItemSchemaCooldownReason = "buy_ge"
+	UseItemSchemaCooldownReasonSellGe            UseItemSchemaCooldownReason = "sell_ge"
+	UseItemSchemaCooldownReasonCancelGe          UseItemSchemaCooldownReason = "cancel_ge"
+	UseItemSchemaCooldownReasonDeleteItem        UseItemSchemaCooldownReason = "delete_item"
+	UseItemSchemaCooldownReasonDeposit           UseItemSchemaCooldownReason = "deposit"
+	UseItemSchemaCooldownReasonWithdraw          UseItemSchemaCooldownReason = "withdraw"
+	UseItemSchemaCooldownReasonDepositGold       UseItemSchemaCooldownReason = "deposit_gold"
+	UseItemSchemaCooldownReasonWithdrawGold      UseItemSchemaCooldownReason = "withdraw_gold"
+	UseItemSchemaCooldownReasonEquip             UseItemSchemaCooldownReason = "equip"
+	UseItemSchemaCooldownReasonUnequip           UseItemSchemaCooldownReason = "unequip"
+	UseItemSchemaCooldownReasonTask              UseItemSchemaCooldownReason = "task"
+	UseItemSchemaCooldownReasonChristmasExchange UseItemSchemaCooldownReason = "christmas_exchange"
+	UseItemSchemaCooldownReasonRecycling         UseItemSchemaCooldownReason = "recycling"
+	UseItemSchemaCooldownReasonRest              UseItemSchemaCooldownReason = "rest"
+	UseItemSchemaCooldownReasonUse               UseItemSchemaCooldownReason = "use"
+	UseItemSchemaCooldownReasonBuyBankExpansion  UseItemSchemaCooldownReason = "buy_bank_expansion"
 )
 
 // AllValues returns all UseItemSchemaCooldownReason values.
@@ -36678,6 +37253,7 @@ func (UseItemSchemaCooldownReason) AllValues() []UseItemSchemaCooldownReason {
 		UseItemSchemaCooldownReasonEquip,
 		UseItemSchemaCooldownReasonUnequip,
 		UseItemSchemaCooldownReasonTask,
+		UseItemSchemaCooldownReasonChristmasExchange,
 		UseItemSchemaCooldownReasonRecycling,
 		UseItemSchemaCooldownReasonRest,
 		UseItemSchemaCooldownReasonUse,
@@ -36717,6 +37293,8 @@ func (s UseItemSchemaCooldownReason) MarshalText() ([]byte, error) {
 	case UseItemSchemaCooldownReasonUnequip:
 		return []byte(s), nil
 	case UseItemSchemaCooldownReasonTask:
+		return []byte(s), nil
+	case UseItemSchemaCooldownReasonChristmasExchange:
 		return []byte(s), nil
 	case UseItemSchemaCooldownReasonRecycling:
 		return []byte(s), nil
@@ -36778,6 +37356,9 @@ func (s *UseItemSchemaCooldownReason) UnmarshalText(data []byte) error {
 		return nil
 	case UseItemSchemaCooldownReasonTask:
 		*s = UseItemSchemaCooldownReasonTask
+		return nil
+	case UseItemSchemaCooldownReasonChristmasExchange:
+		*s = UseItemSchemaCooldownReasonChristmasExchange
 		return nil
 	case UseItemSchemaCooldownReasonRecycling:
 		*s = UseItemSchemaCooldownReasonRecycling
