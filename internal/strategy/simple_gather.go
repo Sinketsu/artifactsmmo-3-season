@@ -79,8 +79,8 @@ func (s *simpleGather) Do(ctx context.Context) error {
 	}
 
 	var spot game.Point
-	for _, name := range s.events {
-		if event, err := s.game.GetEvent(name); err != nil {
+	for _, event := range s.events {
+		if event, err := s.game.GetEvent(event); err == nil {
 			spot = event
 			break
 		}

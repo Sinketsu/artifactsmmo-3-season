@@ -26,17 +26,17 @@ func (s *service) Fight(c Character, items []oas.ItemSchema, monster oas.Monster
 		}
 	}
 
-	characterDamage := round(round(effects["attack_fire"]*(1.+effects["dmg_fire"]/100))*(1.-float64(monster.ResFire)/100)) +
-		round(round(effects["attack_air"]*(1.+effects["dmg_air"]/100))*(1.-float64(monster.ResAir)/100)) +
-		round(round(effects["attack_earth"]*(1.+effects["dmg_earth"]/100))*(1.-float64(monster.ResEarth)/100)) +
-		round(round(effects["attack_water"]*(1.+effects["dmg_water"]/100))*(1.-float64(monster.ResWater)/100))
+	characterDamage := round(round(effects["attack_fire"]*(1.+effects["dmg_fire"]/100+effects["boost_dmg_fire"]/100))*(1.-float64(monster.ResFire)/100)) +
+		round(round(effects["attack_air"]*(1.+effects["dmg_air"]/100+effects["boost_dmg_air"]/100))*(1.-float64(monster.ResAir)/100)) +
+		round(round(effects["attack_earth"]*(1.+effects["dmg_earth"]/100+effects["boost_dmg_earth"]/100))*(1.-float64(monster.ResEarth)/100)) +
+		round(round(effects["attack_water"]*(1.+effects["dmg_water"]/100+effects["boost_dmg_water"]/100))*(1.-float64(monster.ResWater)/100))
 
-	monsterDamage := round(float64(monster.AttackFire)*(1.-effects["res_fire"]/100)) +
-		round(float64(monster.AttackAir)*(1.-effects["res_air"]/100)) +
-		round(float64(monster.AttackEarth)*(1.-effects["res_earth"]/100)) +
-		round(float64(monster.AttackWater)*(1.-effects["res_water"]/100))
+	monsterDamage := round(float64(monster.AttackFire)*(1.-effects["res_fire"]/100-effects["boost_res_fire"]/100)) +
+		round(float64(monster.AttackAir)*(1.-effects["res_air"]/100-effects["boost_res_air"]/100)) +
+		round(float64(monster.AttackEarth)*(1.-effects["res_earth"]/100-effects["boost_res_earth"]/100)) +
+		round(float64(monster.AttackWater)*(1.-effects["res_water"]/100-effects["boost_res_water"]/100))
 
-	totalHp := baseHp + int(effects["hp"])
+	totalHp := baseHp + int(effects["hp"]) + int(effects["boost_hp"])
 	speed := effects["speed"]
 
 	turnsToWin := math.Ceil(float64(monster.Hp) / characterDamage)
@@ -61,7 +61,7 @@ func (s *service) Fight(c Character, items []oas.ItemSchema, monster oas.Monster
 
 func round(x float64) float64 {
 	t := math.Trunc(x)
-	if math.Abs(x-t) >= 0.5 {
+	if math.Abs(x-t) > 0.5 {
 		return t + math.Copysign(1, x)
 	}
 	return t

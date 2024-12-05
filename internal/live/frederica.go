@@ -10,11 +10,12 @@ const (
 
 func (c *liveCharacter) fredericaStrategy() Strategy {
 	fight := strategy.SimpleFight(c.character, c.game).
-		Deposit("skeleton_bone", "skeleton_skull", "pig_skin", "ogre_eye", "ogre_skin", "wooden_club", "cyclops_eye").
-		Deposit("red_cloth", "gingerbread", "gift").
 		DepositGold().
 		AllowSwitchGear().
-		UseFood("cooked_bass", "cooked_salmon", "gingerbread")
+		AllowEvents("portal_demon", "bandit_camp", "snowman").
+		// event resources
+		Deposit("demon_horn", "piece_of_obsidian", "bandit_armor", "lizard_skin", "carrot", "snowman_hat", "gift").
+		UseFood("cooked_bass", "cooked_wolf_meat")
 
-	return fight.With("gingerbread")
+	return fight.With("imp").Deposit("demoniac_dust", "piece_of_obsidian")
 }

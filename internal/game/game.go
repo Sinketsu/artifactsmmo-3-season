@@ -56,7 +56,23 @@ func (g *Game) TaskMasterMonstersLocation(closestTo Point) Point {
 }
 
 func (g *Game) Find(code string, closestTo Point) (Point, error) {
-	return g.maps.get(code, closestTo)
+	point, err := g.maps.get(code, closestTo)
+	if err == nil {
+		return point, nil
+	}
+
+	events := g.events.all()
+	for _, ev := range events {
+		if ev.Map.Content.MapContentSchema.Code == code {
+			return Point{
+				X:    ev.Map.X,
+				Y:    ev.Map.Y,
+				Name: code,
+			}, nil
+		}
+	}
+
+	return Point{}, err
 }
 
 func (g *Game) GetItem(code string) (oas.ItemSchema, error) {

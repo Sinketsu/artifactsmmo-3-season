@@ -13,4 +13,6 @@ var (
 	achievmentsPointsTotal   = ycmonitoringgo.NewDGauge("achievments_points_total", ycmonitoringgo.DefaultRegistry)
 	bankGoldCount            = ycmonitoringgo.NewIGauge("bank_gold_count", ycmonitoringgo.DefaultRegistry)
 	bankItemCount            = ycmonitoringgo.NewIGauge("bank_item_count", ycmonitoringgo.DefaultRegistry, "item")
+
+	eventsActive = ycmonitoringgo.NewIGauge("events_active", ycmonitoringgo.DefaultRegistry, "event")
 )

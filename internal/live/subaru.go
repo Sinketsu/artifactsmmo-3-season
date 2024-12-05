@@ -47,7 +47,7 @@ func (c *liveCharacter) subaruStrategy() Strategy {
 
 	craft := strategy.SimpleCraft(c.character, c.game).
 		Buy(buyMap).
-		Items("cooked_bass", "cooked_salmon")
+		Items("cooked_bass", "cooked_salmon", "cooked_wolf_meat")
 
 	// if skills[string(oas.CraftSchemaSkillGearcrafting)] < 30 {
 	// 	craft = craft.Items("steel_armor", "steel_legs_armor", "steel_boots", "steel_helm", "skeleton_armor", "tromatising_mask")

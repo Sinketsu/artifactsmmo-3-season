@@ -91,7 +91,7 @@ func GetBestGearForMonster(character *generic.Character, game *game.Game, code s
 			continue
 		}
 
-		if item.Level > character.Level() || item.Subtype == "tool" {
+		if item.Level > character.Level() || item.Subtype == "tool" || item.Type == "utility" || item.Type == "consumable" || item.Type == "resource" {
 			continue
 		}
 

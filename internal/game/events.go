@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"slices"
 	"sync"
 	"time"
 
@@ -37,7 +38,7 @@ func newEventService(client *api.Client) *eventService {
 
 func (s *eventService) sync() {
 	resp, err := s.client.GetAllActiveEventsEventsActiveGet(context.Background(), oas.GetAllActiveEventsEventsActiveGetParams{
-		Size: oas.NewOptInt(50), // assume that active events count will be < 50 always (now limit is 7)
+		Size: oas.NewOptInt(50), // assume that active events count will be < 50 always (now limit is 8)
 	})
 	if err != nil {
 		slog.With("error", err).Error("fail to list events")
@@ -45,8 +46,26 @@ func (s *eventService) sync() {
 	}
 
 	s.mu.Lock()
+	for _, ev := range s.events {
+		if !slices.ContainsFunc(resp.Data, func(e oas.ActiveEventSchema) bool {
+			return e.Code == ev.Code
+		}) {
+			s.logger.Info(fmt.Sprintf("event ended: %s (%s)", ev.Name, ev.Code))
+		}
+	}
+
+	eventsActive.ResetAll()
+	for _, ev := range resp.Data {
+		eventsActive.Set(1, ev.Code)
+
+		if !slices.ContainsFunc(s.events, func(e oas.ActiveEventSchema) bool {
+			return e.Code == ev.Code
+		}) {
+			s.logger.Info(fmt.Sprintf("event started: %s (%s)", ev.Name, ev.Code))
+		}
+	}
+
 	s.events = resp.Data
-	s.logger.Debug(fmt.Sprintf("current events: %v", s.events))
 	s.mu.Unlock()
 }
 
@@ -63,7 +82,7 @@ func (s *eventService) get(code string) (Point, error) {
 	for _, event := range s.events {
 		if event.Code == code {
 			return Point{
-				Name: event.Code,
+				Name: event.Map.Content.MapContentSchema.Code,
 				X:    event.Map.X,
 				Y:    event.Map.Y,
 			}, nil
@@ -71,4 +90,11 @@ func (s *eventService) get(code string) (Point, error) {
 	}
 
 	return Point{}, fmt.Errorf("not found")
+}
+
+func (s *eventService) all() []oas.ActiveEventSchema {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	return slices.Clone(s.events)
 }

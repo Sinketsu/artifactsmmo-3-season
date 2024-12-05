@@ -29,8 +29,8 @@ func TestSimple(t *testing.T) {
 
 	items := []oas.ItemSchema{}
 
-	for _, code := range []string{"skull_staff", "steel_shield", "piggy_helmet", "bandit_armor",
-		"skeleton_pants", "steel_boots", "forest_ring", "forest_ring", "skull_amulet"} {
+	for _, code := range []string{"skull_staff", "steel_shield", "piggy_helmet", "skeleton_armor",
+		"skeleton_pants", "steel_boots", "forest_ring", "forest_ring", "skull_amulet", "health_boost_potion"} {
 		item, err := client.GetItemItemsCodeGet(context.Background(), oas.GetItemItemsCodeGetParams{
 			Code: code,
 		})
@@ -50,4 +50,34 @@ func TestSimple(t *testing.T) {
 	t.Log("seconds:", result.Seconds)
 	t.Log("remainig monster hp:", result.RemainingMonsterHp)
 	t.Log("remainig character hp:", result.RemainingCharacterHp)
+}
+
+func TestAll(t *testing.T) {
+	require.NoError(t, godotenv.Load("../../local.env"))
+
+	client, err := api.New(os.Getenv("SERVER_URL"), os.Getenv("SERVER_TOKEN"))
+	require.NoError(t, err)
+
+	sim := New()
+
+	items := []oas.ItemSchema{}
+	for _, code := range []string{"elderwood_staff", "steel_shield", "piggy_helmet", "skeleton_armor",
+		"skeleton_pants", "steel_boots", "forest_ring", "forest_ring", "skull_amulet"} {
+		item, err := client.GetItemItemsCodeGet(context.Background(), oas.GetItemItemsCodeGetParams{
+			Code: code,
+		})
+		require.NoError(t, err)
+
+		items = append(items, item.(*oas.ItemResponseSchema).Data)
+	}
+
+	monsters, err := client.GetAllMonstersMonstersGet(context.Background(), oas.GetAllMonstersMonstersGetParams{
+		Size: oas.NewOptInt(50),
+	})
+	require.NoError(t, err)
+
+	for _, monster := range monsters.Data {
+		result := sim.Fight(&characterStub{level: 33}, items, monster)
+		t.Logf("%s (%d): %t\n", monster.Code, monster.Level, result.Win)
+	}
 }

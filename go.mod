@@ -4,7 +4,7 @@ go 1.22.7
 
 require (
 	github.com/Sinketsu/yc-logging-slog v0.0.5-dev
-	github.com/Sinketsu/yc-monitoring-go v0.0.5-dev
+	github.com/Sinketsu/yc-monitoring-go v0.0.6-dev
 	github.com/go-faster/errors v0.7.1
 	github.com/go-faster/jx v1.1.0
 	github.com/joho/godotenv v1.5.1

@@ -25,6 +25,7 @@ type simpleFight struct {
 	depositGold     bool
 	food            []string
 	allowSwitchGear bool
+	events          []string
 
 	currentMonster string
 }
@@ -61,6 +62,11 @@ func (s *simpleFight) AllowSwitchGear() *simpleFight {
 	return s
 }
 
+func (s *simpleFight) AllowEvents(events ...string) *simpleFight {
+	s.events = append(s.events, events...)
+	return s
+}
+
 func (s *simpleFight) Name() string {
 	return "fight with " + s.monster
 }
@@ -80,16 +86,27 @@ func (s *simpleFight) Do(ctx context.Context) error {
 		}
 	}
 
-	monster, err := s.game.Find(s.monster, s.character.Location())
-	if err != nil {
-		return fmt.Errorf("get map: %w", err)
+	var monster game.Point
+	for _, event := range s.events {
+		if event, err := s.game.GetEvent(event); err == nil {
+			monster = event
+			break
+		}
 	}
 
-	if err := s.switchGear(ctx, monster.Name); err != nil {
-		return fmt.Errorf("swith tools: %w", err)
+	if monster.Name == "" {
+		var err error
+		monster, err = s.game.Find(s.monster, s.character.Location())
+		if err != nil {
+			return fmt.Errorf("get map: %w", err)
+		}
 	}
 
-	err = s.character.Move(ctx, monster)
+	if err := s.switchGear(ctx, monster); err != nil {
+		return fmt.Errorf("swith gear: %w", err)
+	}
+
+	err := s.character.Move(ctx, monster)
 	if err != nil {
 		return fmt.Errorf("move: %w", err)
 	}
@@ -169,12 +186,12 @@ func (s *simpleFight) heal(ctx context.Context) error {
 	return nil
 }
 
-func (s *simpleFight) switchGear(ctx context.Context, monster string) error {
+func (s *simpleFight) switchGear(ctx context.Context, monster game.Point) error {
 	if !s.allowSwitchGear {
 		return nil
 	}
 
-	if s.currentMonster == monster {
+	if s.currentMonster == monster.Name {
 		// already weared best gear
 		return nil
 	}
@@ -183,13 +200,13 @@ func (s *simpleFight) switchGear(ctx context.Context, monster string) error {
 	defer s.game.UnlockBank()
 
 	start := time.Now()
-	gear := macro.GetBestGearForMonster(s.character, s.game, monster)
-	s.character.Log(fmt.Sprintf("choose best gear for monster %s: %v", monster, time.Since(start)), slog.Any("items", gear))
+	gear := macro.GetBestGearForMonster(s.character, s.game, monster.Name)
+	s.character.Log(fmt.Sprintf("choose best gear for monster %s: %v", monster.Name, time.Since(start)), slog.Any("items", gear))
 
 	if err := macro.Wear(ctx, s.character, s.game, gear); err != nil {
 		return fmt.Errorf("wear: %w", err)
 	}
 
-	s.currentMonster = monster
+	s.currentMonster = monster.Name
 	return nil
 }
