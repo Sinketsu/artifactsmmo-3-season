@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/Sinketsu/artifactsmmo-3-season/gen/oas"
@@ -233,13 +234,21 @@ func Wear(ctx context.Context, character *generic.Character, game *game.Game, it
 		return fmt.Errorf("wear: empty item list")
 	}
 
+	specialSlots := map[oas.EquipSchemaSlot]int{
+		// type : initial slot index
+		"ring":     1,
+		"artifact": 1,
+		"utility":  1,
+	}
+
 	for _, item := range items {
-		// TODO support multi slots
-		if item.Type == "ring" || item.Type == "artifact" || item.Code == "utility" {
-			continue
+		slot := oas.EquipSchemaSlot(item.Type)
+		if specialSlots[slot] > 0 {
+			slot = slot + oas.EquipSchemaSlot(strconv.Itoa(specialSlots[slot]))
+			specialSlots[slot]++
 		}
 
-		current := character.Equiped()[oas.EquipSchemaSlot(item.Type)]
+		current := character.Equiped()[slot]
 
 		if current == item.Code {
 			continue
@@ -250,7 +259,7 @@ func Wear(ctx context.Context, character *generic.Character, game *game.Game, it
 				return err
 			}
 
-			if err := character.Unequip(ctx, oas.UnequipSchemaSlot(item.Type), 1); err != nil {
+			if err := character.Unequip(ctx, oas.UnequipSchemaSlot(slot), 1); err != nil {
 				return err
 			}
 
@@ -263,7 +272,7 @@ func Wear(ctx context.Context, character *generic.Character, game *game.Game, it
 			return err
 		}
 
-		if err := character.Equip(ctx, item.Code, oas.EquipSchemaSlot(item.Type), 1); err != nil {
+		if err := character.Equip(ctx, item.Code, slot, 1); err != nil {
 			return err
 		}
 	}

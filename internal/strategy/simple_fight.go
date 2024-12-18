@@ -3,17 +3,10 @@ package strategy
 import (
 	"context"
 	"fmt"
-	"log/slog"
-	"math"
-	"time"
 
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/game"
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/generic"
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/macro"
-)
-
-var (
-	maxFoodCount = 60
 )
 
 type simpleFight struct {
@@ -21,13 +14,13 @@ type simpleFight struct {
 	game      *game.Game
 
 	monster         string
-	deposit         []string
+	keep            []string
 	depositGold     bool
 	food            []string
 	allowSwitchGear bool
 	events          []string
 
-	currentMonster string
+	current string
 }
 
 func SimpleFight(character *generic.Character, game *game.Game) *simpleFight {
@@ -42,8 +35,8 @@ func (s *simpleFight) With(monster string) *simpleFight {
 	return s
 }
 
-func (s *simpleFight) Deposit(items ...string) *simpleFight {
-	s.deposit = append(s.deposit, items...)
+func (s *simpleFight) Keep(items ...string) *simpleFight {
+	s.keep = append(s.keep, items...)
 	return s
 }
 
@@ -54,6 +47,7 @@ func (s *simpleFight) DepositGold() *simpleFight {
 
 func (s *simpleFight) UseFood(food ...string) *simpleFight {
 	s.food = append(s.food, food...)
+	s.keep = append(s.keep, food...)
 	return s
 }
 
@@ -72,14 +66,12 @@ func (s *simpleFight) Name() string {
 }
 
 func (s *simpleFight) Do(ctx context.Context) error {
-	if s.character.HealthPercent() < 60 {
-		if err := s.heal(ctx); err != nil {
-			return fmt.Errorf("heal: %w", err)
-		}
+	if err := macro.Heal(ctx, s.character, s.game, s.food...); err != nil {
+		return fmt.Errorf("heal: %w", err)
 	}
 
 	if s.character.InventoryFull() {
-		macro.Deposit(ctx, s.character, s.game, s.deposit...)
+		macro.Deposit(ctx, s.character, s.game, s.keep...)
 
 		if s.depositGold {
 			macro.DepositGold(ctx, s.character, s.game)
@@ -102,8 +94,11 @@ func (s *simpleFight) Do(ctx context.Context) error {
 		}
 	}
 
-	if err := s.switchGear(ctx, monster); err != nil {
-		return fmt.Errorf("swith gear: %w", err)
+	if s.allowSwitchGear && s.current != monster.Name {
+		if err := macro.SwitchGear(ctx, s.character, s.game, monster); err != nil {
+			return fmt.Errorf("switch gear: %w", err)
+		}
+		s.current = monster.Name
 	}
 
 	err := s.character.Move(ctx, monster)
@@ -116,97 +111,5 @@ func (s *simpleFight) Do(ctx context.Context) error {
 		return fmt.Errorf("fight: %w", err)
 	}
 
-	return nil
-}
-
-func (s *simpleFight) heal(ctx context.Context) error {
-	inventory := s.character.Inventory()
-
-	for _, food := range s.food {
-		if inventory[food] == 0 {
-			continue
-		}
-
-		item, err := s.game.GetItem(food)
-		if err != nil {
-			continue
-		}
-
-		healEffect := 0
-		for _, ef := range item.Effects {
-			if ef.Name == "heal" {
-				healEffect = ef.Value
-			}
-		}
-
-		if healEffect == 0 {
-			continue
-		}
-
-		hp, maxHp := s.character.Health()
-
-		useCount := int(math.Ceil(float64(maxHp-hp) / float64(healEffect)))
-
-		err = s.character.Use(ctx, food, min(useCount, inventory[food]))
-		if err != nil {
-			return fmt.Errorf("use: %w", err)
-		}
-	}
-
-	hp, maxHp := s.character.Health()
-
-	if hp < maxHp {
-		bank := s.game.BankItems()
-
-		space, _ := s.character.InventorySpace()
-		limit := min(maxFoodCount, space)
-
-		for _, food := range s.food {
-			if bank[food] == 0 {
-				continue
-			}
-
-			err := s.character.Move(ctx, s.game.BankLocation(s.character.Location()))
-			if err != nil {
-				return fmt.Errorf("move: %w", err)
-			}
-
-			count := min(bank[food], limit)
-			err = s.character.Withdraw(ctx, food, count)
-			if err != nil {
-				return fmt.Errorf("withdraw: %w", err)
-			}
-
-			limit -= count
-		}
-
-		return s.character.Rest(ctx)
-	}
-
-	return nil
-}
-
-func (s *simpleFight) switchGear(ctx context.Context, monster game.Point) error {
-	if !s.allowSwitchGear {
-		return nil
-	}
-
-	if s.currentMonster == monster.Name {
-		// already weared best gear
-		return nil
-	}
-
-	s.game.LockBank()
-	defer s.game.UnlockBank()
-
-	start := time.Now()
-	gear := macro.GetBestGearForMonster(s.character, s.game, monster.Name)
-	s.character.Log(fmt.Sprintf("choose best gear for monster %s: %v", monster.Name, time.Since(start)), slog.Any("items", gear))
-
-	if err := macro.Wear(ctx, s.character, s.game, gear); err != nil {
-		return fmt.Errorf("wear: %w", err)
-	}
-
-	s.currentMonster = monster.Name
 	return nil
 }

@@ -48,6 +48,12 @@ func (s *resourceService) sync() {
 
 		for _, m := range resp.Data {
 			s.cache[m.Code] = m
+
+			for _, drop := range m.Drops {
+				if drop.Rate == 1 {
+					s.cache[drop.Code] = m
+				}
+			}
 		}
 
 		if page >= resp.Pages.Value.Int {

@@ -29,8 +29,8 @@ func TestSimple(t *testing.T) {
 
 	items := []oas.ItemSchema{}
 
-	for _, code := range []string{"skull_staff", "steel_shield", "piggy_helmet", "skeleton_armor",
-		"skeleton_pants", "steel_boots", "forest_ring", "forest_ring", "skull_amulet", "health_boost_potion"} {
+	for _, code := range []string{"death_knight_sword", "steel_shield", "piggy_helmet", "skeleton_armor",
+		"skeleton_pants", "steel_boots", "forest_ring", "forest_ring", "skull_amulet"} {
 		item, err := client.GetItemItemsCodeGet(context.Background(), oas.GetItemItemsCodeGetParams{
 			Code: code,
 		})
@@ -40,11 +40,11 @@ func TestSimple(t *testing.T) {
 	}
 
 	monster, err := client.GetMonsterMonstersCodeGet(context.Background(), oas.GetMonsterMonstersCodeGetParams{
-		Code: "bandit_lizard",
+		Code: "owlbear",
 	})
 	require.NoError(t, err)
 
-	result := sim.Fight(&characterStub{level: 33}, items, monster.(*oas.MonsterResponseSchema).Data)
+	result := sim.Fight(&characterStub{level: 35}, items, monster.(*oas.MonsterResponseSchema).Data)
 	t.Log("win:", result.Win)
 	t.Log("turns:", result.Turns)
 	t.Log("seconds:", result.Seconds)

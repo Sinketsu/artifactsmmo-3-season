@@ -3,8 +3,6 @@ package strategy
 import (
 	"context"
 	"fmt"
-	"log/slog"
-	"time"
 
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/game"
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/generic"
@@ -15,14 +13,13 @@ type simpleGather struct {
 	character *generic.Character
 	game      *game.Game
 
-	spot            string
-	craft           []string
-	deposit         []string
-	depositGold     bool
-	allowSwithTools bool
-	events          []string
+	spot        string
+	craft       []string
+	keep        []string
+	depositGold bool
+	events      []string
 
-	currentSpot string
+	current string
 }
 
 func SimpleGather(character *generic.Character, game *game.Game) *simpleGather {
@@ -39,22 +36,16 @@ func (s *simpleGather) Spot(spot string) *simpleGather {
 
 func (s *simpleGather) Craft(items ...string) *simpleGather {
 	s.craft = append(s.craft, items...)
-	s.deposit = append(s.deposit, items...)
 	return s
 }
 
-func (s *simpleGather) Deposit(items ...string) *simpleGather {
-	s.deposit = append(s.deposit, items...)
+func (s *simpleGather) Keep(items ...string) *simpleGather {
+	s.keep = append(s.keep, items...)
 	return s
 }
 
 func (s *simpleGather) DepositGold() *simpleGather {
 	s.depositGold = true
-	return s
-}
-
-func (s *simpleGather) AllowSwitchTools() *simpleGather {
-	s.allowSwithTools = true
 	return s
 }
 
@@ -71,7 +62,7 @@ func (s *simpleGather) Do(ctx context.Context) error {
 	if s.character.InventoryFull() {
 		macro.CraftFromInventory(ctx, s.character, s.game, s.craft...)
 
-		macro.Deposit(ctx, s.character, s.game, s.deposit...)
+		macro.Deposit(ctx, s.character, s.game, s.keep...)
 
 		if s.depositGold {
 			macro.DepositGold(ctx, s.character, s.game)
@@ -94,8 +85,11 @@ func (s *simpleGather) Do(ctx context.Context) error {
 		}
 	}
 
-	if err := s.switchTools(ctx, spot); err != nil {
-		return fmt.Errorf("swith tools: %w", err)
+	if s.current != spot.Name {
+		if err := macro.SwitchTools(ctx, s.character, s.game, spot); err != nil {
+			return fmt.Errorf("switch tools: %w", err)
+		}
+		s.current = spot.Name
 	}
 
 	err := s.character.Move(ctx, spot)
@@ -108,30 +102,5 @@ func (s *simpleGather) Do(ctx context.Context) error {
 		return fmt.Errorf("gather: %w", err)
 	}
 
-	return nil
-}
-
-func (s *simpleGather) switchTools(ctx context.Context, spot game.Point) error {
-	if !s.allowSwithTools {
-		return nil
-	}
-
-	if s.currentSpot == spot.Name {
-		// already weared best tool
-		return nil
-	}
-
-	s.game.LockBank()
-	defer s.game.UnlockBank()
-
-	start := time.Now()
-	gear := macro.GetBestGearForResource(s.character, s.game, spot.Name)
-	s.character.Log(fmt.Sprintf("choose best tool for resource %s: %v", spot.Name, time.Since(start)), slog.Any("items", gear))
-
-	if err := macro.Wear(ctx, s.character, s.game, gear); err != nil {
-		return fmt.Errorf("wear: %w", err)
-	}
-
-	s.currentSpot = spot.Name
 	return nil
 }

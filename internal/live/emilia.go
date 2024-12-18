@@ -9,13 +9,17 @@ const (
 )
 
 func (c *liveCharacter) emiliaStrategy() Strategy {
+	// quests := strategy.TasksMonsters(c.character, c.game).
+	// 	AllowEvents("portal_demon", "bandit_camp", "snowman").
+	// 	UseFood("cooked_salmon", "maple_syrup", "carrot", "cooked_wolf_meat").
+	// 	Cancel("hellhound", "goblin_wolfrider", "lich", "bat", "goblin", "cultist_acolyte", "imp")
+
 	fight := strategy.SimpleFight(c.character, c.game).
+		AllowEvents("portal_demon", "bandit_camp", "snowman").
+		UseFood("cooked_salmon", "maple_syrup", "carrot", "cooked_wolf_meat", "gingerbread").
 		DepositGold().
 		AllowSwitchGear().
-		AllowEvents("portal_demon", "bandit_camp", "snowman").
-		// event resources
-		Deposit("demon_horn", "piece_of_obsidian", "bandit_armor", "lizard_skin", "carrot", "snowman_hat", "gift").
-		UseFood("cooked_bass", "cooked_wolf_meat")
+		With("gingerbread")
 
-	return fight.With("death_knight").Deposit("death_knight_sword", "red_cloth")
+	return fight
 }

@@ -502,6 +502,38 @@ func (c *Character) CompleteTask(ctx context.Context) (*oas.RewardDataSchemaRewa
 	return nil, fmt.Errorf("unknown error: %v", resp)
 }
 
+func (c *Character) CancelTask(ctx context.Context) error {
+	apiRequestCount.Inc()
+
+	resp, err := c.cli.ActionTaskCancelMyNameActionTaskCancelPost(ctx, oas.ActionTaskCancelMyNameActionTaskCancelPostParams{
+		Name: c.name,
+	})
+	if err != nil {
+		return err
+	}
+
+	switch v := resp.(type) {
+	case *oas.TaskCancelledResponseSchema:
+		c.syncState(unsafe.Pointer(&v.Data.Character))
+		c.logger.Debug("cancel task")
+
+		time.Sleep(time.Duration(v.Data.Cooldown.RemainingSeconds) * time.Second)
+		return nil
+	case *oas.ActionTaskCancelMyNameActionTaskCancelPostCode478:
+		return fmt.Errorf("no tasks coins")
+	case *oas.ActionTaskCancelMyNameActionTaskCancelPostCode486:
+		return fmt.Errorf("an action is already in progress by your character")
+	case *oas.ActionTaskCancelMyNameActionTaskCancelPostCode498:
+		return fmt.Errorf("character not found")
+	case *oas.ActionTaskCancelMyNameActionTaskCancelPostCode499:
+		return fmt.Errorf("cooldown...")
+	case *oas.ActionTaskCancelMyNameActionTaskCancelPostCode598:
+		return fmt.Errorf("task master not found on this map")
+	}
+
+	return fmt.Errorf("unknown error: %v", resp)
+}
+
 func (c *Character) Equip(ctx context.Context, item string, slot oas.EquipSchemaSlot, quantity int) error {
 	apiRequestCount.Inc()
 

@@ -8,7 +8,6 @@ import (
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/game"
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/generic"
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/macro"
-	"golang.org/x/exp/maps"
 )
 
 type simpleCraft struct {
@@ -51,7 +50,7 @@ func (s *simpleCraft) Do(ctx context.Context) error {
 	macro.Recycle(ctx, s.character, s.game, s.items...)
 
 	// deposit all items
-	macro.Deposit(ctx, s.character, s.game, maps.Keys(s.character.Inventory())...)
+	macro.Deposit(ctx, s.character, s.game)
 
 	macro.CraftFromBank(ctx, s.character, s.game, s.items...)
 

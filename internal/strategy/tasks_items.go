@@ -3,16 +3,20 @@ package strategy
 import (
 	"context"
 	"fmt"
+	"slices"
 
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/game"
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/generic"
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/macro"
-	"golang.org/x/exp/maps"
 )
 
 type tasksItems struct {
 	character *generic.Character
 	game      *game.Game
+
+	cancel  []string
+	events  []string
+	current string
 }
 
 func TasksItems(character *generic.Character, game *game.Game) *tasksItems {
@@ -24,6 +28,16 @@ func TasksItems(character *generic.Character, game *game.Game) *tasksItems {
 
 func (s *tasksItems) Name() string {
 	return "do items tasks"
+}
+
+func (s *tasksItems) Cancel(tasks ...string) *tasksItems {
+	s.cancel = append(s.cancel, tasks...)
+	return s
+}
+
+func (s *tasksItems) AllowEvents(events ...string) *tasksItems {
+	s.events = append(s.events, events...)
+	return s
 }
 
 func (s *tasksItems) Do(ctx context.Context) error {
@@ -39,10 +53,21 @@ func (s *tasksItems) Do(ctx context.Context) error {
 		}
 	}
 
-	if task.Current == task.Total {
-		macro.CompleteTask(ctx, s.character, s.game)
+	if slices.Contains(s.cancel, task.Code) {
+		macro.CancelItemsTask(ctx, s.character, s.game)
+		return nil
+	}
 
-		macro.Deposit(ctx, s.character, s.game, maps.Keys(s.character.Inventory())...)
+	if task.Current == task.Total {
+		macro.CompleteItemTask(ctx, s.character, s.game)
+
+		macro.Deposit(ctx, s.character, s.game, "tasks_coin")
+
+		if s.character.Inventory()["tasks_coin"] > 5 {
+			if err := s.character.Deposit(ctx, "tasks_coin", s.character.Inventory()["tasks_coin"]-5); err != nil {
+				return err
+			}
+		}
 
 		return nil
 	}
@@ -61,7 +86,7 @@ func (s *tasksItems) Do(ctx context.Context) error {
 
 	// TODO good check craftable or not - now it is fail(
 	if goal.Craft.IsSet() && len(goal.Craft.Value.CraftSchema.Items) > 0 {
-		// TODO support multi res items
+		// TODO - may be support multi res items?
 		craft = goal.Code
 		code := goal.Craft.Value.CraftSchema.Items[0].Code
 
@@ -78,12 +103,30 @@ func (s *tasksItems) Do(ctx context.Context) error {
 
 		macro.TradeItemTask(ctx, s.character, s.game, task.Code, min(s.character.Inventory()[task.Code], task.Total-task.Current))
 
+		macro.Deposit(ctx, s.character, s.game, "tasks_coin")
 		return nil
 	}
 
-	spot, err := s.game.Find(goal.Code, s.character.Location())
-	if err != nil {
-		return fmt.Errorf("not found: %s", goal.Code)
+	var spot game.Point
+	for _, event := range s.events {
+		if event, err := s.game.GetEvent(event); err == nil {
+			spot = event
+			break
+		}
+	}
+
+	if spot.Name == "" {
+		spot, err = s.game.Find(goal.Code, s.character.Location())
+		if err != nil {
+			return fmt.Errorf("not found: %s", goal.Code)
+		}
+	}
+
+	if s.current != spot.Name {
+		if err := macro.SwitchTools(ctx, s.character, s.game, spot); err != nil {
+			return fmt.Errorf("switch tools: %w", err)
+		}
+		s.current = spot.Name
 	}
 
 	err = s.character.Move(ctx, spot)

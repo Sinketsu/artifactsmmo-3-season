@@ -9,6 +9,7 @@ import (
 	"github.com/Sinketsu/artifactsmmo-3-season/gen/oas"
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/game"
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/generic"
+	"golang.org/x/exp/maps"
 )
 
 func CraftFromInventory(ctx context.Context, character *generic.Character, game *game.Game, items ...string) {
@@ -88,7 +89,10 @@ func Recycle(ctx context.Context, character *generic.Character, game *game.Game,
 	}
 }
 
-func Deposit(ctx context.Context, character *generic.Character, game *game.Game, items ...string) {
+func Deposit(ctx context.Context, character *generic.Character, game *game.Game, except ...string) {
+	items := character.Inventory()
+	maps.DeleteFunc(items, func(item string, _ int) bool { return slices.Contains(except, item) })
+
 	if len(items) == 0 {
 		return
 	}
@@ -98,23 +102,13 @@ func Deposit(ctx context.Context, character *generic.Character, game *game.Game,
 		return
 	}
 
-	needSync := false
-	defer func() {
-		if needSync {
-			game.SyncBank()
-		}
-	}()
+	defer game.SyncBank()
 
-	for code, q := range character.Inventory() {
-		if !slices.Contains(items, code) {
-			continue
-		}
-
+	for code, q := range items {
 		if err := character.Deposit(ctx, code, q); err != nil {
 			slog.Error("fail to deposit item "+code, slog.Any("error", err))
 			continue
 		}
-		needSync = true
 	}
 }
 
@@ -208,6 +202,18 @@ func CraftFromBank(ctx context.Context, character *generic.Character, game *game
 	}
 }
 
+func AcceptMonsterTask(ctx context.Context, character *generic.Character, game *game.Game) {
+	if err := character.Move(ctx, game.TaskMasterMonstersLocation(character.Location())); err != nil {
+		slog.Error("fail to move", slog.Any("error", err))
+		return
+	}
+
+	if _, err := character.AcceptNewTask(ctx); err != nil {
+		slog.Error("fail to accept new task", slog.Any("error", err))
+		return
+	}
+}
+
 func AcceptItemTask(ctx context.Context, character *generic.Character, game *game.Game) {
 	if err := character.Move(ctx, game.TaskMasterItemsLocation(character.Location())); err != nil {
 		slog.Error("fail to move", slog.Any("error", err))
@@ -232,7 +238,7 @@ func TradeItemTask(ctx context.Context, character *generic.Character, game *game
 	}
 }
 
-func CompleteTask(ctx context.Context, character *generic.Character, game *game.Game) {
+func CompleteItemTask(ctx context.Context, character *generic.Character, game *game.Game) {
 	if err := character.Move(ctx, game.TaskMasterItemsLocation(character.Location())); err != nil {
 		slog.Error("fail to move", slog.Any("error", err))
 		return
@@ -240,6 +246,42 @@ func CompleteTask(ctx context.Context, character *generic.Character, game *game.
 
 	if _, err := character.CompleteTask(ctx); err != nil {
 		slog.Error("fail to complete task", slog.Any("error", err))
+		return
+	}
+}
+
+func CompleteMonsterTask(ctx context.Context, character *generic.Character, game *game.Game) {
+	if err := character.Move(ctx, game.TaskMasterMonstersLocation(character.Location())); err != nil {
+		slog.Error("fail to move", slog.Any("error", err))
+		return
+	}
+
+	if _, err := character.CompleteTask(ctx); err != nil {
+		slog.Error("fail to complete task", slog.Any("error", err))
+		return
+	}
+}
+
+func CancelMonsterTask(ctx context.Context, character *generic.Character, game *game.Game) {
+	if err := character.Move(ctx, game.TaskMasterMonstersLocation(character.Location())); err != nil {
+		slog.Error("fail to move", slog.Any("error", err))
+		return
+	}
+
+	if err := character.CancelTask(ctx); err != nil {
+		slog.Error("fail to cancel task", slog.Any("error", err))
+		return
+	}
+}
+
+func CancelItemsTask(ctx context.Context, character *generic.Character, game *game.Game) {
+	if err := character.Move(ctx, game.TaskMasterItemsLocation(character.Location())); err != nil {
+		slog.Error("fail to move", slog.Any("error", err))
+		return
+	}
+
+	if err := character.CancelTask(ctx); err != nil {
+		slog.Error("fail to cancel task", slog.Any("error", err))
 		return
 	}
 }
