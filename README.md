@@ -4,7 +4,7 @@ This is my repository for the `3rd` season of [artifactsmmo](https://artifactsmm
 
 ## Main goal
 
-The main goal was to get all the achievements before the end of the season.
+The main goal was to get all the achievements before the end of the season. And yes, I achieved this and was on 9-th place.
 
 Of the additional goals were:
 - use of observability, such as logs and metrics
