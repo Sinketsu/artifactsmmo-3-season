@@ -56,6 +56,7 @@ func (s *service) Fight(c Character, items []oas.ItemSchema, monster oas.Monster
 		Turns:                int(turnsToWin),
 		Seconds:              int(round((2*2*turnsToWin - 1) * (1 - speed/100))),
 		RemainingCharacterHp: totalHp - int((turnsToWin-1)*monsterDamage),
+		NeedHeal:             int((turnsToWin - 1) * monsterDamage),
 	}
 }
 

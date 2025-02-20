@@ -69,13 +69,29 @@ func Test_compact(t *testing.T) {
 	}, 4))
 }
 
+func TestBestGear(t *testing.T) {
+	require.NoError(t, godotenv.Load("../../local.env"))
+
+	client, err := api.New(os.Getenv("SERVER_URL"), os.Getenv("SERVER_TOKEN"))
+	require.NoError(t, err)
+
+	c := generic.NewCharacter("Frederica", client)
+	c.Init()
+	g := game.New(client)
+
+	gear := GetBestGearForMonster(c, g, "efreet_sultan", 1, "air_res_potion", "fire_res_potion")
+	for _, i := range gear {
+		t.Log(i.Code)
+	}
+}
+
 func TestAllWithBestGear(t *testing.T) {
 	require.NoError(t, godotenv.Load("../../local.env"))
 
 	client, err := api.New(os.Getenv("SERVER_URL"), os.Getenv("SERVER_TOKEN"))
 	require.NoError(t, err)
 
-	c := generic.NewCharacter("Emilia", client)
+	c := generic.NewCharacter("Frederica", client)
 	c.Init()
 	g := game.New(client)
 
@@ -85,7 +101,7 @@ func TestAllWithBestGear(t *testing.T) {
 	require.NoError(t, err)
 
 	for _, monster := range monsters.Data {
-		if len(GetBestGearForMonster(c, g, monster.Code)) > 0 {
+		if len(GetBestGearForMonster(c, g, monster.Code, 5)) > 0 {
 			t.Logf("%s (%d): true\n", monster.Code, monster.Level)
 		} else {
 			t.Logf("%s (%d): false\n", monster.Code, monster.Level)

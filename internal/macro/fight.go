@@ -86,12 +86,12 @@ func Heal(ctx context.Context, character *generic.Character, game *game.Game, fo
 	return nil
 }
 
-func SwitchGear(ctx context.Context, character *generic.Character, game *game.Game, monster game.Point) error {
+func SwitchGear(ctx context.Context, character *generic.Character, game *game.Game, monster game.Point, levelDelta int, extra ...string) error {
 	game.LockBank()
 	defer game.UnlockBank()
 
 	start := time.Now()
-	gear := GetBestGearForMonster(character, game, monster.Name)
+	gear := GetBestGearForMonster(character, game, monster.Name, levelDelta, extra...)
 	character.Log(fmt.Sprintf("choose best gear for monster %s: %v", monster.Name, time.Since(start)), slog.Any("items", gear))
 
 	if err := Wear(ctx, character, game, gear); err != nil {

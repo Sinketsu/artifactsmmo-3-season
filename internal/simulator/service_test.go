@@ -29,8 +29,24 @@ func TestSimple(t *testing.T) {
 
 	items := []oas.ItemSchema{}
 
-	for _, code := range []string{"death_knight_sword", "steel_shield", "piggy_helmet", "skeleton_armor",
-		"skeleton_pants", "steel_boots", "forest_ring", "forest_ring", "skull_amulet"} {
+	for _, code := range []string{
+		"bloodblade",
+		"celest_ring",
+		"celest_ring",
+		"magic_stone_amulet",
+		"cultist_boots",
+		"cursed_hat",
+		"fire_shield",
+		"mithril_platebody",
+		"mithril_platelegs",
+		// artifacts
+		"malefic_crystal",
+		"christmas_star",
+		"life_crystal",
+		// elixirs
+		"fire_res_potion",
+		"enchanted_boost_potion",
+	} {
 		item, err := client.GetItemItemsCodeGet(context.Background(), oas.GetItemItemsCodeGetParams{
 			Code: code,
 		})
@@ -40,11 +56,53 @@ func TestSimple(t *testing.T) {
 	}
 
 	monster, err := client.GetMonsterMonstersCodeGet(context.Background(), oas.GetMonsterMonstersCodeGetParams{
-		Code: "owlbear",
+		Code: "rosenblood",
 	})
 	require.NoError(t, err)
 
-	result := sim.Fight(&characterStub{level: 35}, items, monster.(*oas.MonsterResponseSchema).Data)
+	result := sim.Fight(&characterStub{level: 40}, items, monster.(*oas.MonsterResponseSchema).Data)
+	t.Log("monster:", monster.(*oas.MonsterResponseSchema).Data.Code)
+	t.Log("win:", result.Win)
+	t.Log("turns:", result.Turns)
+	t.Log("seconds:", result.Seconds)
+	t.Log("remainig monster hp:", result.RemainingMonsterHp)
+	t.Log("remainig character hp:", result.RemainingCharacterHp)
+	t.Log("")
+
+	items = []oas.ItemSchema{}
+	for _, code := range []string{
+		"lightning_sword",
+		"eternity_ring",
+		"eternity_ring",
+		"greater_emerald_amulet",
+		"mithril_boots",
+		"white_knight_helmet",
+		"mithril_shield",
+		"white_knight_armor",
+		"white_knight_pants",
+		// artifacts
+		"malefic_crystal",
+		"christmas_star",
+		"life_crystal",
+		// elixirs
+		"fire_res_potion",
+		"air_res_potion",
+	} {
+		item, err := client.GetItemItemsCodeGet(context.Background(), oas.GetItemItemsCodeGetParams{
+			Code: code,
+		})
+		require.NoError(t, err)
+
+		items = append(items, item.(*oas.ItemResponseSchema).Data)
+	}
+
+	monster, err = client.GetMonsterMonstersCodeGet(context.Background(), oas.GetMonsterMonstersCodeGetParams{
+		Code: "efreet_sultan",
+	})
+	require.NoError(t, err)
+
+	result = sim.Fight(&characterStub{level: 40}, items, monster.(*oas.MonsterResponseSchema).Data)
+	t.Log("monster:", monster.(*oas.MonsterResponseSchema).Data.Code)
 	t.Log("win:", result.Win)
 	t.Log("turns:", result.Turns)
 	t.Log("seconds:", result.Seconds)

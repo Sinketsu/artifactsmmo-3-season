@@ -1,7 +1,6 @@
 package live
 
 import (
-	"github.com/Sinketsu/artifactsmmo-3-season/gen/oas"
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/strategy"
 )
 
@@ -44,14 +43,12 @@ var (
 )
 
 func (c *liveCharacter) subaruStrategy() Strategy {
-	skills := c.character.Skills()
-
 	craft := strategy.SimpleCraft(c.character, c.game).
 		Buy(buyMap).
-		Items("cooked_bass", "cooked_salmon", "cooked_wolf_meat", "maple_syrup")
+		Items("cooked_salmon")
 
-	if skills[string(oas.CraftSchemaSkillWeaponcrafting)] < 40 {
-		craft.Items("elderwood_staff", "gold_sword")
+	if c.game.GetAchievment("The planet thanks you").Current < c.game.GetAchievment("The planet thanks you").Total {
+		craft.Items("copper_dagger", "air_and_water_amulet", "iron_helm")
 	}
 
 	return craft

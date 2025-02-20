@@ -75,7 +75,7 @@ func GetBestGearForResource(character *generic.Character, game *game.Game, code 
 	return candidates[:1]
 }
 
-func GetBestGearForMonster(character *generic.Character, game *game.Game, code string) []oas.ItemSchema {
+func GetBestGearForMonster(character *generic.Character, game *game.Game, code string, levelDelta int, extra ...string) []oas.ItemSchema {
 	monster, err := game.GetMonster(code)
 	if err != nil {
 		slog.Error("fail to get monster: " + code)
@@ -95,6 +95,10 @@ func GetBestGearForMonster(character *generic.Character, game *game.Game, code s
 		if item.Level > character.Level() || item.Subtype == "tool" || item.Type == "utility" || item.Type == "consumable" || item.Type == "resource" {
 			continue
 		}
+		// skip low level items
+		if item.Type != "artifact" && character.Level()-item.Level > levelDelta {
+			continue
+		}
 
 		switch item.Type {
 		case "ring":
@@ -105,6 +109,21 @@ func GetBestGearForMonster(character *generic.Character, game *game.Game, code s
 		default:
 			all[oas.EquipSchemaSlot(item.Type)] = append(all[oas.EquipSchemaSlot(item.Type)], item)
 		}
+	}
+
+	// potions, etc
+	for _, code := range extra {
+		item, err := game.GetItem(code)
+		if err != nil {
+			slog.Error("fail to get item: " + code)
+			continue
+		}
+
+		if item.Level > character.Level() {
+			continue
+		}
+
+		all[oas.EquipSchemaSlot(item.Type)] = append(all[oas.EquipSchemaSlot(item.Type)], item)
 	}
 
 	for slot, code := range character.Equiped() {
@@ -139,12 +158,13 @@ func GetBestGearForMonster(character *generic.Character, game *game.Game, code s
 	rings := omitEmpty(combinations.Combinations(all["ring"], 2))
 	helmets := omitEmpty(combinations.Combinations(all[oas.EquipSchemaSlotHelmet], 1))
 	artifacts := omitEmpty(combinations.Combinations(all["artifact"], 3))
+	utilities := omitEmpty(combinations.Combinations(all["utility"], 2))
 
 	sim := simulator.New()
 
 	best := []oas.ItemSchema(nil)
 	bestTime := 9999
-	bestRemainingHp := 0
+	bestNeedHeal := 9999
 
 	for _, w := range weapons {
 		for _, ba := range bodyArmors {
@@ -155,26 +175,28 @@ func GetBestGearForMonster(character *generic.Character, game *game.Game, code s
 							for _, b := range boots {
 								for _, h := range helmets {
 									for _, ar := range artifacts {
-										items := flatten(w, ba, la, s, a, r, b, h, ar)
-										result := sim.Fight(character, items, monster)
+										for _, u := range utilities {
+											items := flatten(w, ba, la, s, a, r, b, h, ar, u)
+											result := sim.Fight(character, items, monster)
 
-										if !result.Win {
-											continue
-										}
+											if !result.Win {
+												continue
+											}
 
-										if result.Seconds < bestTime {
-											bestTime = result.Seconds
-											best = items
-											bestRemainingHp = result.RemainingCharacterHp
-											continue
+											if result.Seconds < bestTime {
+												bestTime = result.Seconds
+												best = items
+												bestNeedHeal = result.NeedHeal
+												continue
+											}
+											if result.Seconds == bestTime && result.NeedHeal < bestNeedHeal {
+												bestTime = result.Seconds
+												best = items
+												bestNeedHeal = result.NeedHeal
+												continue
+											}
+											// may be additional criteria
 										}
-										if result.Seconds == bestTime && result.RemainingCharacterHp > bestRemainingHp {
-											bestTime = result.Seconds
-											best = items
-											bestRemainingHp = result.RemainingCharacterHp
-											continue
-										}
-										// may be additional criteria
 									}
 								}
 							}
@@ -241,14 +263,20 @@ func Wear(ctx context.Context, character *generic.Character, game *game.Game, it
 		"utility":  1,
 	}
 
+	bank := game.BankItems()
+	defer game.SyncBank()
+
+	space, _ := character.InventorySpace()
+
 	for _, item := range items {
 		slot := oas.EquipSchemaSlot(item.Type)
 		if specialSlots[slot] > 0 {
-			slot = slot + oas.EquipSchemaSlot(strconv.Itoa(specialSlots[slot]))
 			specialSlots[slot]++
+			slot = slot + oas.EquipSchemaSlot(strconv.Itoa(specialSlots[slot]-1))
 		}
 
 		current := character.Equiped()[slot]
+		utilities := character.Utilities()
 
 		if current == item.Code {
 			continue
@@ -259,20 +287,27 @@ func Wear(ctx context.Context, character *generic.Character, game *game.Game, it
 				return err
 			}
 
-			if err := character.Unequip(ctx, oas.UnequipSchemaSlot(slot), 1); err != nil {
+			count := max(1, utilities[slot])
+
+			if err := character.Unequip(ctx, oas.UnequipSchemaSlot(slot), count); err != nil {
 				return err
 			}
 
-			if err := character.Deposit(ctx, current, 1); err != nil {
+			if err := character.Deposit(ctx, current, count); err != nil {
 				return err
 			}
 		}
 
-		if err := character.Withdraw(ctx, item.Code, 1); err != nil {
+		count := 1
+		if slot == oas.EquipSchemaSlotUtility1 || slot == oas.EquipSchemaSlotUtility2 {
+			count = min(bank[item.Code], space, 100)
+		}
+
+		if err := character.Withdraw(ctx, item.Code, count); err != nil {
 			return err
 		}
 
-		if err := character.Equip(ctx, item.Code, slot, 1); err != nil {
+		if err := character.Equip(ctx, item.Code, slot, count); err != nil {
 			return err
 		}
 	}

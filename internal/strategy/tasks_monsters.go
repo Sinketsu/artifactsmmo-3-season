@@ -14,9 +14,10 @@ type tasksMonsters struct {
 	character *generic.Character
 	game      *game.Game
 
-	cancel []string
-	food   []string
-	events []string
+	cancel         []string
+	food           []string
+	events         []string
+	gearLevelDelta int
 
 	current string
 }
@@ -25,6 +26,8 @@ func TasksMonsters(character *generic.Character, game *game.Game) *tasksMonsters
 	return &tasksMonsters{
 		character: character,
 		game:      game,
+
+		gearLevelDelta: 15,
 	}
 }
 
@@ -44,6 +47,11 @@ func (s *tasksMonsters) UseFood(food ...string) *tasksMonsters {
 
 func (s *tasksMonsters) AllowEvents(events ...string) *tasksMonsters {
 	s.events = append(s.events, events...)
+	return s
+}
+
+func (s *tasksMonsters) WithGearLevelDelta(delta int) *tasksMonsters {
+	s.gearLevelDelta = delta
 	return s
 }
 
@@ -112,7 +120,7 @@ func (s *tasksMonsters) Do(ctx context.Context) error {
 	}
 
 	if s.current != monster.Name {
-		if err := macro.SwitchGear(ctx, s.character, s.game, monster); err != nil {
+		if err := macro.SwitchGear(ctx, s.character, s.game, monster, s.gearLevelDelta); err != nil {
 			return fmt.Errorf("switch gear: %w", err)
 		}
 		s.current = monster.Name

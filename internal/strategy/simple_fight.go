@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/Sinketsu/artifactsmmo-3-season/gen/oas"
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/game"
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/generic"
 	"github.com/Sinketsu/artifactsmmo-3-season/internal/macro"
@@ -18,7 +19,9 @@ type simpleFight struct {
 	depositGold     bool
 	food            []string
 	allowSwitchGear bool
+	gearLevelDelta  int
 	events          []string
+	potions         []string
 
 	current string
 }
@@ -27,6 +30,8 @@ func SimpleFight(character *generic.Character, game *game.Game) *simpleFight {
 	return &simpleFight{
 		character: character,
 		game:      game,
+
+		gearLevelDelta: 15,
 	}
 }
 
@@ -58,6 +63,16 @@ func (s *simpleFight) AllowSwitchGear() *simpleFight {
 
 func (s *simpleFight) AllowEvents(events ...string) *simpleFight {
 	s.events = append(s.events, events...)
+	return s
+}
+
+func (s *simpleFight) AllowUsePotions(potions ...string) *simpleFight {
+	s.potions = append(s.potions, potions...)
+	return s
+}
+
+func (s *simpleFight) WithGearLevelDelta(delta int) *simpleFight {
+	s.gearLevelDelta = delta
 	return s
 }
 
@@ -94,8 +109,29 @@ func (s *simpleFight) Do(ctx context.Context) error {
 		}
 	}
 
+	// temporary part
+	if len(s.potions) == 0 {
+		for slot, count := range s.character.Utilities() {
+			if count > 0 {
+				if err := s.character.Move(ctx, s.game.BankLocation(s.character.Location())); err != nil {
+					return fmt.Errorf("move: %w", err)
+				}
+
+				item := s.character.Equiped()[slot]
+
+				if err := s.character.Unequip(ctx, oas.UnequipSchemaSlot(slot), count); err != nil {
+					return fmt.Errorf("unequip utility: %w", err)
+				}
+
+				if err := s.character.Deposit(ctx, item, count); err != nil {
+					return fmt.Errorf("deposit utility: %w", err)
+				}
+			}
+		}
+	}
+
 	if s.allowSwitchGear && s.current != monster.Name {
-		if err := macro.SwitchGear(ctx, s.character, s.game, monster); err != nil {
+		if err := macro.SwitchGear(ctx, s.character, s.game, monster, s.gearLevelDelta, s.potions...); err != nil {
 			return fmt.Errorf("switch gear: %w", err)
 		}
 		s.current = monster.Name

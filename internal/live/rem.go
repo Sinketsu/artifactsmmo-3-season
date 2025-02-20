@@ -9,10 +9,11 @@ const (
 )
 
 func (c *liveCharacter) remStrategy() Strategy {
-	quests := strategy.TasksItems(c.character, c.game).
-		// AllowEvents("strange_apparition", "magic_apparition").
-		Cancel("steel", "hardwood_plank", "strange_ore", "magic_wood", "strangold", "magical_plank",
-			"cooked_salmon", "cooked_bass", "cooked_trout")
+	gather := strategy.SimpleGather(c.character, c.game).DepositGold()
 
-	return quests
+	if c.game.BankItems()["cooked_salmon"] < 1000 {
+		return gather.Spot("salmon_fishing_spot")
+	}
+
+	return strategy.TasksMonsters(c.character, c.game)
 }

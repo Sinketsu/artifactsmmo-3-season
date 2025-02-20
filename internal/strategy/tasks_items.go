@@ -62,6 +62,7 @@ func (s *tasksItems) Do(ctx context.Context) error {
 		macro.CompleteItemTask(ctx, s.character, s.game)
 
 		macro.Deposit(ctx, s.character, s.game, "tasks_coin")
+		macro.DepositGold(ctx, s.character, s.game)
 
 		if s.character.Inventory()["tasks_coin"] > 5 {
 			if err := s.character.Deposit(ctx, "tasks_coin", s.character.Inventory()["tasks_coin"]-5); err != nil {

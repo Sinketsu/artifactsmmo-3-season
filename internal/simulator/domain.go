@@ -6,4 +6,5 @@ type Result struct {
 	Seconds              int
 	RemainingMonsterHp   int
 	RemainingCharacterHp int
+	NeedHeal             int
 }
